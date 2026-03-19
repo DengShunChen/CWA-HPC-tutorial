@@ -82,7 +82,56 @@ ProgramingTutorial/
 - **支援 CUDA 的 GPU**：建議 Compute Capability >= 3.5
 - **NVIDIA 驅動程式**：與 CUDA 版本相容
 
-### 快速環境檢查
+### 先修能力
+
+| 程度 | 先修要求 |
+|------|----------|
+| **Beginner** | 會基本 Linux 指令（`cd`、`ls`、`vi` 或 `nano`）、能用 SSH 登入遠端主機 |
+| **Intermediate** | 理解迴圈/陣列概念、能讀懂簡單 Fortran 或 C++ 程式 |
+| **Professional** | 有 Fortran/C++ 實戰經驗、理解 MPI/OpenMP 概念 |
+
+### 課前環境自檢
+
+請在**上課前一天**完成以下檢查，確認環境正常：
+
+```bash
+# === Step 1: 登入 FX1000 ===
+ssh <your_account>@<fx1000_login_node>
+
+# === Step 2: 載入編譯器模組 ===
+module load lang/tcsds-1.2.37
+echo "Module loaded: OK"
+
+# === Step 3: 檢查 Fujitsu 編譯器 ===
+frtpx --version && echo "frtpx: OK" || echo "frtpx: FAILED"
+FCC --version && echo "FCC: OK" || echo "FCC: FAILED"
+
+# === Step 4: 檢查 PJM 系統 ===
+pjstat && echo "PJM: OK" || echo "PJM: FAILED"
+
+# === Step 5: 檢查教材 ===
+cd ~/CWA-HPC-tutorial   # 或教材所在路徑
+ls Part1_CPU_CrashCourse/ Part2_GPU_CrashCourse/ 00_Cheatsheets/
+echo "教材目錄: OK"
+
+# === Step 6: 測試編譯（Part 1） ===
+cd Part1_CPU_CrashCourse/01_Hello
+make clean && make all && echo "Part1 編譯: OK"
+
+# === Step 7: 檢查 CUDA（僅下半年課程） ===
+nvcc --version && echo "CUDA: OK" || echo "CUDA: NOT AVAILABLE (下半年課程需要)"
+```
+
+**自檢結果判讀**：
+
+| 結果 | 意義 | 處理 |
+|------|------|------|
+| 全部 OK | 環境正常，可直接上課 | 無需動作 |
+| frtpx/FCC FAILED | 編譯器不可用 | 聯繫系統管理員或改用 `gfortran`/`g++` |
+| PJM FAILED | 批次系統不可用 | 聯繫系統管理員；可先在本地測試 |
+| CUDA NOT AVAILABLE | GPU 環境未安裝 | 僅影響下半年課程，上半年不需要 |
+
+### 快速環境檢查（簡版）
 
 ```bash
 # 檢查 Fujitsu 編譯器
@@ -100,15 +149,23 @@ nvcc --version
 
 ## 📖 學習路徑建議
 
-### 完全初學者
-1. ✅ 先完成上半年課程，熟悉基本語法
-2. ✅ 仔細閱讀 `optimization_mindset.md`
-3. ✅ 在兩次課程之間練習 `03_Challenge` 題目
-4. ✅ 下半年課程前複習上半年重點
+本教材適用從初學者到專業 HPC 工程師的不同程度學員。詳細分級說明請參考 [docs/INSTRUCTOR_GUIDE.md](docs/INSTRUCTOR_GUIDE.md)。
 
-### 有程式基礎者
-- 可直接參考 `00_Cheatsheets/syntax_rosetta_stone.md` 快速對照語法
-- 重點學習各章節的優化技巧與效能分析
+### Beginner（入門）：無程式經驗或僅有腳本經驗
+1. 課前完成「環境自檢」（見下方）
+2. 閱讀 `00_Cheatsheets/pjm_batch_system.md` 前半段
+3. 從 `01_Hello` 開始，每個 Checkpoint 確實通過再往下
+4. 重點完成 `02_Vector_Add` 的 Must 任務（編譯 + 提交 + 驗證）
+
+### Intermediate（進階）：有 Python/MATLAB 經驗
+- 課前閱讀 `syntax_rosetta_stone.md` + `compilation_guide.md`
+- 重點學習各章節的優化技巧（Should 任務）
+- 完成 `03_Challenge` 與 `04_Matrix_Operations` 效能比較
+
+### Professional（專業）：有 Fortran/C++ 實戰經驗
+- 課前閱讀 `optimization_mindset.md` 全文
+- 關注 ARM SVE 512-bit 與 `-KSVE` 編譯選項的效能影響
+- 挑戰 `03_Heat_Diffusion_Demo` 的完整 CPU + GPU 實作（Could 任務）
 
 ---
 

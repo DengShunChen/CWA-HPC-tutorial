@@ -227,11 +227,196 @@ echo "作業已完成！"
 
 ---
 
+## 🔧 錯誤排除速查
+
+課堂上最常遇到的問題與對應解法：
+
+### 提交階段錯誤
+
+| 錯誤訊息 / 現象 | 原因 | 解法 |
+|-----------------|------|------|
+| `pjsub: command not found` | 不在 login node 上，或 PATH 未設定 | 確認已 SSH 到正確的 login node |
+| `PJM 0020 error` | `-g <your_group>` 中群組名稱錯誤 | 向管理員確認群組名，修改腳本中的 `<your_group>` |
+| `PJM 0040 error` | 指定的 `rscgrp` 不存在 | 用 `pjstat --rsc` 查看可用資源群組 |
+| `PJM 0050 error` | 請求的節點數超過限制 | 確認 `node=1`（教學用途一個節點即可） |
+| `Permission denied` | 腳本沒有執行權限或目錄無寫入權 | `chmod +x job_*.sh`；確認家目錄配額未滿 |
+
+### 執行階段錯誤
+
+| 錯誤訊息 / 現象 | 原因 | 解法 |
+|-----------------|------|------|
+| `./vec_add_fortran: No such file` | 執行檔不存在（未編譯） | 先執行 `make all` 再提交 |
+| `./vec_add_fortran: cannot execute binary` | 在 x86 上執行 ARM 執行檔 | 必須透過 PJM 提交到 A64FX 節點執行 |
+| `module: command not found` | module 環境未初始化 | 在腳本開頭加 `source /etc/profile.d/modules.sh` |
+| `Segmentation fault` | 陣列越界或記憶體不足 | 用 `-g` 重新編譯除錯版；檢查陣列索引 |
+| 輸出檔案為空 | 程式執行失敗或路徑錯誤 | 加 `-j` 合併 stderr，查看錯誤訊息 |
+
+### 佇列與資源問題
+
+| 現象 | 原因 | 解法 |
+|------|------|------|
+| 作業一直 QUEUED | 佇列滿或資源不足 | `pjstat -v <job_id>` 查看估計等待時間 |
+| 作業 RUNNING 但很久沒完成 | 程式進入無窮迴圈或 I/O 卡住 | `pjdel <job_id>` 取消後檢查程式邏輯 |
+| 輸出亂碼 | 編碼不一致 | 確認 terminal 使用 UTF-8 編碼 |
+| 同樣程式在 x86 正常但 A64FX 失敗 | 平台差異（int 大小、對齊） | 檢查是否使用了平台相依的假設 |
+
+### 快速除錯流程
+
+```
+1. 確認腳本語法
+   → 檢查 #PJM 開頭的每一行，注意引號與空格
+   
+2. 確認執行檔存在
+   → ls -la ./vec_add_fortran
+   
+3. 確認模組已載入
+   → module list  (應看到 lang/tcsds-1.2.37)
+   
+4. 小規模測試
+   → 先用 --interact 互動模式測試
+   → pjsub --interact -L "node=1" -L "elapse=00:10:00" -g <group>
+   
+5. 查看完整錯誤輸出
+   → 加上 #PJM -j 合併 stdout/stderr
+   → cat <script>.o<job_id>
+```
+
+---
+
+## ⚠️ 三大批次系統對照：PJM / PBS / Slurm
+
+氣象署同時擁有 FX1000（PJM）與 GPU 叢集（Slurm）兩套系統，部分章節也使用 PBS。三者是**不同的批次系統，指令不可互通**。以下為完整對照：
+
+### 指令對照表
+
+| 功能 | PJM (FX1000) | PBS (一般叢集) | Slurm (GPU 叢集) |
+|------|-------------|----------------|-------------------|
+| 提交作業 | `pjsub job.sh` | `qsub job.sh` | `sbatch job.sh` |
+| 查看狀態 | `pjstat` | `qstat` | `squeue` |
+| 查看自己的作業 | `pjstat` | `qstat -u $USER` | `squeue -u $USER` |
+| 詳細資訊 | `pjstat -v <id>` | `qstat -f <id>` | `scontrol show job <id>` |
+| 取消作業 | `pjdel <id>` | `qdel <id>` | `scancel <id>` |
+| 查看歷史 | `pjhist` | `qstat -H` | `sacct` |
+| 互動式作業 | `pjsub --interact ...` | `qsub -I ...` | `srun --pty bash` |
+| 查看可用資源 | `pjstat --rsc` | `pbsnodes -a` | `sinfo` |
+| 查看佇列/分區 | `pjstat --rsc` | `qstat -Q` | `sinfo -s` |
+
+### 腳本語法對照
+
+| 功能 | PJM | PBS | Slurm |
+|------|-----|-----|-------|
+| 指令前綴 | `#PJM` | `#PBS` | `#SBATCH` |
+| 作業名稱 | `#PJM -N "name"` | `#PBS -N name` | `#SBATCH -J name` |
+| 節點數 | `#PJM -L "node=1"` | `#PBS -l select=1` | `#SBATCH -N 1` |
+| 執行時間 | `#PJM -L "elapse=01:00:00"` | `#PBS -l walltime=01:00:00` | `#SBATCH -t 01:00:00` |
+| 使用者群組 | `#PJM -g <group>` | `#PBS -W group_list=<group>` | `#SBATCH -A <account>` |
+| 佇列/分區 | `#PJM -L "rscgrp=small"` | `#PBS -q workq` | `#SBATCH -p gpu` |
+| 合併輸出 | `#PJM -j` | `#PBS -j oe` | `#SBATCH -o %j.out` |
+| 輸出檔案 | `#PJM -o output.log` | `#PBS -o output.log` | `#SBATCH -o output.log` |
+| GPU 資源 | （不適用） | `#PBS -l ngpus=1` | `#SBATCH --gres=gpu:1` |
+| 工作目錄 | 自動為提交目錄 | 需 `cd $PBS_O_WORKDIR` | 自動為提交目錄 |
+
+### Slurm GPU 作業腳本範例
+
+以下為在氣象署 GPU 叢集上提交 CUDA 程式的典型腳本：
+
+```bash
+#!/bin/bash
+#SBATCH -J vec_add_gpu            # 作業名稱
+#SBATCH -p gpu                    # GPU 分區（依實際環境修改）
+#SBATCH -N 1                      # 1 個節點
+#SBATCH --gres=gpu:1              # 申請 1 張 GPU
+#SBATCH -c 4                      # 4 個 CPU 核心
+#SBATCH -t 00:10:00               # 最長 10 分鐘
+#SBATCH -A <your_account>         # 帳號/專案（請修改）
+#SBATCH -o vec_add_gpu_%j.out     # 輸出檔（%j 會替換為 job ID）
+#SBATCH -e vec_add_gpu_%j.err     # 錯誤檔
+
+# 載入 CUDA 環境
+module load cuda
+
+# 顯示 GPU 資訊
+nvidia-smi
+echo ""
+
+# 執行程式
+echo ">>> 執行 GPU 向量加法..."
+./vec_add_gpu
+
+echo "作業完成: $(date)"
+```
+
+提交方式：
+
+```bash
+# 編譯
+nvcc -O3 -arch=sm_70 vec_add_gpu.cu -o vec_add_gpu
+
+# 提交
+sbatch job_gpu.sh
+
+# 查看狀態
+squeue -u $USER
+
+# 取消
+scancel <job_id>
+
+# 查看輸出
+cat vec_add_gpu_<job_id>.out
+```
+
+### Slurm 常用指令速查
+
+| 指令 | 說明 | 範例 |
+|------|------|------|
+| `sbatch` | 提交批次作業 | `sbatch job.sh` |
+| `squeue` | 查看作業佇列 | `squeue -u $USER` |
+| `scancel` | 取消作業 | `scancel 12345` |
+| `sinfo` | 查看節點/分區狀態 | `sinfo -N -l` |
+| `sacct` | 查看歷史作業 | `sacct --format=JobID,JobName,Elapsed,State` |
+| `srun` | 互動式執行 | `srun --gres=gpu:1 --pty bash` |
+| `scontrol` | 查看作業詳情 | `scontrol show job 12345` |
+
+### Slurm GPU 專用選項
+
+| 參數 | 說明 | 範例 |
+|------|------|------|
+| `--gres=gpu:N` | 申請 N 張 GPU | `--gres=gpu:2` |
+| `--gres=gpu:v100:1` | 指定 GPU 型號 | `--gres=gpu:a100:1` |
+| `-p gpu` | 指定 GPU 分區 | `-p gpu`（依環境而異） |
+| `--mem=32G` | 申請 CPU 記憶體 | `--mem=64G` |
+| `--cpus-per-task=4` | 每任務 CPU 核心數 | `-c 8` |
+| `--ntasks-per-node=1` | 每節點任務數 | 搭配 MPI 使用 |
+
+### Slurm 常見錯誤排除
+
+| 錯誤訊息 / 現象 | 原因 | 解法 |
+|-----------------|------|------|
+| `sbatch: error: Batch job submission failed: Invalid account` | 帳號/專案名錯誤 | 用 `sacctmgr show assoc user=$USER` 查看可用帳號 |
+| `sbatch: error: invalid partition` | 分區名稱錯誤 | 用 `sinfo` 查看可用分區 |
+| 作業狀態 `PD` (PENDING) | 排隊中或資源不足 | `squeue -j <id>` 的 REASON 欄位會顯示原因 |
+| `CUDA error: no CUDA-capable device` | 未申請 GPU 或驅動問題 | 確認有 `--gres=gpu:1`；用 `nvidia-smi` 檢查 |
+| `srun: error: Unable to allocate resources` | 互動式資源不足 | 改用 `sbatch` 批次提交，或選擇較小資源 |
+
+### 本教材各章節使用的批次系統
+
+| 章節 | 批次系統 | 平台 | 說明 |
+|------|----------|------|------|
+| `02_Vector_Add/job_vec_add.sh` | **PJM** | FX1000 (A64FX) | 教學主線 |
+| `04_Matrix_Operations/job_matrix.sh` | **PBS** | x86 叢集 | 輔助對照 |
+| Part 2 GPU 課程 | **Slurm**（建議） | GPU 叢集 | 下半年課程可在 GPU 叢集執行 |
+
+教學時請以 **PJM 為主線**（上半年），下半年 GPU 課程可視環境選用 Slurm。
+
+---
+
 ## 📚 延伸閱讀
 
 - Fujitsu PRIMEHPC FX1000 使用手冊
 - PJM 官方文件
+- [Slurm 官方文件](https://slurm.schedmd.com/documentation.html)
+- [Slurm Quick Start Guide](https://slurm.schedmd.com/quickstart.html)
 
 ---
 
-**熟悉 PJM 是在 FX1000 上開發的關鍵！🚀**
+**熟悉批次系統是在 HPC 上開發的關鍵！**

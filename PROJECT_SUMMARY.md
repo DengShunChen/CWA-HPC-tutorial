@@ -108,18 +108,18 @@ make help    # 顯示說明
 
 | 文件 | 用途 |
 |------|------|
-| [README.md](README.md) | 專案說明、快速開始、環境需求 |
+| [README.md](README.md) | 專案說明、快速開始、環境需求、課前環境自檢、先修清單 |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | 技術架構與設計 |
-| [docs/INSTRUCTOR_GUIDE.md](docs/INSTRUCTOR_GUIDE.md) | 講師教學指南 |
-| [00_Cheatsheets/](00_Cheatsheets/) | 語法、編譯、優化、批次系統速查 |
+| [docs/INSTRUCTOR_GUIDE.md](docs/INSTRUCTOR_GUIDE.md) | 講師與助教完整手冊：分級地圖、授課節奏、評量標準、風險控管 |
+| [00_Cheatsheets/](00_Cheatsheets/) | 語法、編譯、優化、批次系統速查（含 PJM 錯誤排除） |
 
 ---
 
 ## 七、已知限制與注意事項
 
-1. **03_Heat_Diffusion_Demo**：僅有 README 與實作框架說明，無完整程式碼
-2. **平台差異**：主目標為 Fujitsu A64FX，部分章節使用 gfortran/g++ 適用 x86
-3. **批次系統**：`job_vec_add.sh` 使用 PJM，`job_matrix.sh` 使用 PBS
+1. **03_Heat_Diffusion_Demo**：提供分層任務框架（Must/Should/Could），尚無完整可編譯程式碼
+2. **平台差異**：主目標為 Fujitsu A64FX，部分章節（04-07）使用 gfortran/g++ 適用 x86
+3. **批次系統**：`job_vec_add.sh` 使用 PJM（FX1000 主線），`job_matrix.sh` 使用 PBS（x86 輔助）。教學時以 PJM 為主，詳見 `docs/INSTRUCTOR_GUIDE.md` 第 1.2 節
 
 ---
 
