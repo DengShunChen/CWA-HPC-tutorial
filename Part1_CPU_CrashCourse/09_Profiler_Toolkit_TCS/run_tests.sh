@@ -152,14 +152,30 @@ if [[ "${RUN_FIPPPX_TEST:-0}" == "1" ]]; then
   fi
 fi
 
-# --- FAPP（Advanced Performance Profiler）：取樣目錄有產物 ---
-# 與 FIPP 相同型別之 -C -d 介面為多數 TCS 版本慣例；若貴站 fapp 參數不同，請對照 Profiler User's Guide 調整本腳本。
+# --- FAPP（Advanced Performance Profiler）---
+# 一舉兩得：（1）測試原有的 fapp -C -d 介面；（2）若 region_fapp 已建置，
+# 再測試 fapp_start／fapp_stop 區域標記版本，並檢查輸出數字正確性。
 if [[ "${RUN_FAPP_TEST:-0}" == "1" ]] && command -v fapp >/dev/null 2>&1; then
   rm -rf tmp_fapp_autotest
   mkdir -p tmp_fapp_autotest
   fapp_ok=0
-  if fapp -C -d ./tmp_fapp_autotest ./kernel_profile_opt >/dev/null 2>&1; then
-    fapp_ok=1
+  if [[ -x ./region_fapp ]]; then
+    # region_fapp 含有 fapp_start／fapp_stop，須全程式級別啟動 fapp。
+    if fapp -C -d ./tmp_fapp_autotest -L 1 ./region_fapp >/dev/null 2>&1; then
+      fapp_ok=1
+      # 檢查區域程式散出的數字正確性
+      out_fa="$(./region_fapp 2>&1 || true)"
+      heavy_fa="$(extract_metric 'checksum_heavy' "$out_fa")"
+      if [ -n "$heavy_fa" ]; then
+        assert_close "$heavy_fa" "248.997858" "0.001" "region_fapp checksum_heavy"
+      else
+        fail "未擷取到 region_fapp checksum_heavy（輸出格式可能改變）"
+      fi
+    fi
+  else
+    if fapp -C -d ./tmp_fapp_autotest ./kernel_profile_opt >/dev/null 2>&1; then
+      fapp_ok=1
+    fi
   fi
   if [[ "$fapp_ok" -eq 1 ]]; then
     nfiles=$(count_files tmp_fapp_autotest)

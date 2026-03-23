@@ -1,4 +1,4 @@
-# 09 — Profiler Toolkit（TCS）／Instant Performance Profiler（FIPP）
+# 09 — Profiler Toolkit（TCS）／Instant Performance Profiler（FIPP）與 Advanced Performance Profiler（APP）
 
 ## 定位
 
@@ -16,7 +16,9 @@
 
 - 透過 **取樣分析** 掌握整支程式效能趨勢（**`kernel_profile_opt`**）；  
 - **`fipp_start`**／**`fipp_stop`** + **`fipp -Sregion`**（**`region_marked`**）；  
-- **MPI** 僅單 rank 量測（**`region_mpi`**）。
+- **MPI** 僅單 rank 量測（**`region_mpi`**）；  
+- **`fapp_start`**／**`fapp_stop`** 多層區域標記（**`region_fapp`**、**`region_fapp_c`**）；  
+- **MPI + FAPP** 僅單 rank 量測（**`region_fapp_mpi_f90`**、**`region_fapp_mpi_c`**）。
 
 **前置**：建議先完成 [`08_Debug_Profile`](../08_Debug_Profile/)（`frt -g`、TCS Debugger 與剖析觀念）。
 
@@ -36,6 +38,10 @@
 | `region_mpi.f90` | **MPI Fortran**：僅 **rank 0** 進入 FIPP 區段 → **`region_mpi`**（**`make region_mpi`**，需 **`mpifrt`**） |
 | `region_mpi_f90.f90` | **MPI Fortran 單檔**：僅 **rank 0** 進入 FIPP 區段 → **`region_mpi_f90`**（**`make region_mpi_f90`**） |
 | `region_mpi_c.c` | **MPI C**：僅 **rank 0** 進入 FIPP 區段 → **`region_mpi_c`**（**`make region_mpi_c`**） |
+| `region_fapp.f90` | **Fortran** 多層 **`fapp_start`**／**`fapp_stop`** 區域 → **`region_fapp`**（**`make region_fapp`**，需 **`frt`**） |
+| `region_fapp.c` | **C** 多層 **`fapp_start`**／**`fapp_stop`** 區域 → **`region_fapp_c`**（**`make region_fapp_c`**，需 **`fcc`**） |
+| `region_fapp_mpi_f90.f90` | **MPI Fortran 單檔**：僅 **rank 0** 進入 FAPP 區域 → **`region_fapp_mpi_f90`**（**`make region_fapp_mpi_f90`**） |
+| `region_fapp_mpi_c.c` | **MPI C**：僅 **rank 0** 進入 FAPP 區域 → **`region_fapp_mpi_c`**（**`make region_fapp_mpi_c`**） |
 | `Makefile` | **`frt`（fx1000）/ `frtpx`（ln23 cross）**：`kernel_profile_opt` + `region_marked`；**`make optmsg`**、**`make test`** |
 | `run_tests.sh` | 章節自測（**`make test`**）；可選 **`RUN_FIPP_TEST`／`RUN_FIPPPX_TEST`／`RUN_FAPP_TEST`**（見下） |
 | `job_kernel_profile.sh` | PJM 範例：計算節點 **`fipp`** 取樣 |
@@ -170,6 +176,71 @@ fipp -C -d ./tmp -Sregion ./region_mpi_c
 
 ---
 
+## Advanced Performance Profiler（APP）— `fapp_start`／`fapp_stop` 多層區域
+
+**APP** 比 IPP 提供更細粒度的指令級成本分析，適合在 IPP 已篩出熱點後深度挖掘。  
+介面：`fapp_start(name, number, level)` / `fapp_stop(name, number, level)`  
+- **`name`**：字串，自訂區域識別名（報告顯示為 `name+number`）。  
+- **`number`**：整數，同一 name 下的流水號。  
+- **`level`**：整數，量測深度；執行時 **`fapp -L N`** 僅啟用 `level ≤ N` 的區域。  
+
+> **C/C++ 需引入標頭**：`#include "fj_tool/fapp.h"`（Fortran 則以 `interface` 宣告即可）。  
+> **保留名稱警告**：勿使用 `name="all"`, `number=0`（系統保留全程式量測標記）。
+
+### 多層嵌套區域（Fortran 骨架）
+
+```fortran
+interface
+  subroutine fapp_start(name, number, level)
+    character(*), intent(in) :: name
+    integer,      intent(in) :: number, level
+  end subroutine fapp_start
+  subroutine fapp_stop(name, number, level)
+    character(*), intent(in) :: name
+    integer,      intent(in) :: number, level
+  end subroutine fapp_stop
+end interface
+
+call fapp_start("outer", 1, 0)   ! 外層區域（level=0）
+  call fapp_start("heavy", 1, 1) ! 子區域（level=1）
+  ! ... 計算 ...
+  call fapp_stop("heavy", 1, 1)
+  call fapp_start("light", 1, 1)
+  ! ... 計算 ...
+  call fapp_stop("light", 1, 1)
+call fapp_stop("outer", 1, 0)
+```
+
+### 建置（範例程式）
+
+```bash
+make region_fapp        # Fortran（frt / frtpx）
+make region_fapp_c      # C（fcc / fccpx）
+make region_fapp_mpi_f90  # MPI Fortran，僅 rank 0（mpifrt / mpifrtpx）
+make region_fapp_mpi_c    # MPI C，僅 rank 0（mpifcc / mpifccpx）
+```
+
+### 量測（計算節點）
+
+```bash
+mkdir -p ./tmp_fapp
+# 啟用 level ≤ 1（外層 + 子區域均量測）
+fapp -C -d ./tmp_fapp -L 1 ./region_fapp
+
+# 僅啟用 level ≤ 0（只量外層 outer）
+fapp -C -d ./tmp_fapp -L 0 ./region_fapp
+
+# MPI：4 rank，僅 rank 0 有量測資料
+mpiexec -n 4 fapp -C -d ./tmp_fapp -L 1 ./region_fapp_mpi_f90
+```
+
+> **量測模式 `-H`**：  
+> - `-Hmethod=fast`（預設）：硬體驅動，低開銷；  
+> - `-Hmethod=normal`：系統級路徑，支援較完整的系統資訊。  
+> 詳見 [`A64FX_Profiler_Reference.md`](A64FX_Profiler_Reference.md) §3.2。
+
+---
+
 ## Instant Performance Profiler（FIPP）— 建議操作順序（摘要）
 
 1. **（可選）** 區段量測：`fipp_start`／`fipp_stop` + **`fipp -Sregion`**。  
@@ -231,12 +302,13 @@ fipp -C -d ./tmp -Sregion ./region_mpi_c
 | **Must** | **`frt`** 建置並完成 **`fipp` + `fipppx`** 一輪；能說明 **`phase_heavy`** 為主要熱點 |
 | **Should** | 使用 **`region_marked`** 與 **`-Sregion`**，對照整程式量測之差異 |
 | **Could** | 建置 **`region_mpi`**，示範僅 rank 0 量測；或調整 **`KERNEL_PROFILE_N`**／**`kernel_n_default`** 做負載實驗 |
-
+| **Could+** | 建置 **`region_fapp`**，以 **`fapp_start`**／**`fapp_stop`** 做多層 APP 量測，對比 IPP 全域分析與 APP 指令級分析之差異 |
 ---
 
 ## 注意事項
 
 - 詳細參數以 **Profiler User's Guide** 與貴站文件為準。  
-- **`fapp_*`** 屬 **Advanced Performance Profiler（APP）**，與 **`fipp_*`** 層級不同；介面 **(name, number, level)**、**`-Hmethod`**、**`-L`** 等見 [`A64FX_Profiler_Reference.md`](A64FX_Profiler_Reference.md) §3。  
+- **`fapp_*`** 屬 **Advanced Performance Profiler（APP）**，介面 **(name, number, level)**；**C/C++ 需引入 `fj_tool/fapp.h`**；Fortran 以 `interface` 宣告即可。執行時以 **`fapp -L N`** 控制啟用深度；方法選項（**`-Hmethod=fast/normal`**）與保留名稱等見 [`A64FX_Profiler_Reference.md`](A64FX_Profiler_Reference.md) §3。  
 - 量測 **OpenMP** 時，執行環境請依手冊設定 **`FLIB_FASTOMP=TRUE`**（見參考手冊 §8.2）。  
-- **IPP** 抽樣在**總執行時間過短**時樣本不足；請適當調整 **`KERNEL_PROFILE_N`** 或 **`kernel_n_default`**，使程式運行足夠長（參考 §2.1）。
+- **IPP** 抽樣在**總執行時間過短**時樣本不足；請適當調整 **`KERNEL_PROFILE_N`** 或 **`kernel_n_default`**，使程式運行足夠長（參考 §2.1）。  
+- 本目錄新增 **`region_fapp.f90`**、**`region_fapp.c`**、**`region_fapp_mpi_f90.f90`**、**`region_fapp_mpi_c.c`**：示範與 FIPP 區段相同的「單 rank 量測」概念在 APP 層面之實作，以及多層巢狀 **level** 控制。
