@@ -21,7 +21,7 @@
 | `matrix_multiply.cpp` | C++ 基礎版 | i-j-k 迴圈順序 |
 | `matrix_multiply_optimized.f90` | Fortran 優化版 ⚡ | 使用內建 MATMUL |
 | `matrix_multiply_optimized.cpp` | C++ 優化版 ⚡ | i-k-j 順序 + Blocking |
-| `job_matrix.sh` | **PJM** 批次範例 | `pjsub` 於計算節點執行 `make` 與 `make run_all` |
+| `job_matrix.sh` | **PJM** 批次範例 | `pjsub` 於計算節點執行；含 MPI/OMP 設定、NUMA 綁定示範、`INFINITE_LOOP_TEST` 演練 |
 
 ---
 
@@ -46,7 +46,24 @@ make clean
 pjsub job_matrix.sh
 ```
 
-作業內會 `module load lang/tcsds-1.2.37`、重新 `make` 並執行 `make run_all`；標準輸出／錯誤合併寫入 `matrix_multiply_benchmark.log`（依腳本中 `#PJM -o` 設定）。PJM 指令與錯誤排除見 [`../../00_Cheatsheets/pjm_batch_system.md`](../../00_Cheatsheets/pjm_batch_system.md)。
+作業內會 `module load lang/tcsds-1.2.37`、重新 `make` 並執行 `make run_all`；若有 `numactl` 則示範 `--cpunodebind=0 --membind=0`。標準輸出／錯誤合併寫入 `matrix_multiply_benchmark.log`（依腳本中 `#PJM -o` 設定）。PJM 指令與錯誤排除見 [`../../00_Cheatsheets/pjm_batch_system.md`](../../00_Cheatsheets/pjm_batch_system.md)。
+
+監控建議：
+
+```bash
+pjsub job_matrix.sh
+pjstat
+pjwait <job_id>    # 若站台提供
+```
+
+安全中止演練（對齊課綱）：
+
+```bash
+# 提交前加上環境變數，工作會進入無窮迴圈
+INFINITE_LOOP_TEST=1 pjsub job_matrix.sh
+pjstat
+pjdel <job_id>     # 練習安全釋放資源
+```
 
 ---
 

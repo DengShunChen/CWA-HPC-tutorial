@@ -82,9 +82,41 @@ frt -g -Kfast -KSVE -Koptmsg=2 microbench.f90 -o microbench_opt
 
 ---
 
-## 6. 延伸閱讀
+## 6. Q&A 常見故障：OOM 與 Core dump
+
+### 6.1 OOM（Out Of Memory）快速處置
+
+常見徵兆：作業 log 出現 `Killed`、`out of memory`、或程式在大資料規模下突然中止。
+
+建議排查順序：
+
+1. 先縮小資料規模確認可重現性  
+2. 降低 MPI ranks（每 rank 可用記憶體上升）  
+3. 固定總核心數後，嘗試不同 `proc x thread` 組合  
+4. 重新觀察執行時間與記憶體峰值
+
+> 在 A64FX 單節點上，過多 ranks 常導致每行程記憶體不足；先減少 ranks 通常是最快的止血法。
+
+### 6.2 Core dump（Segmentation Fault）最小流程
+
+```bash
+ulimit -c unlimited
+./your_program
+gdb ./your_program core
+(gdb) bt
+(gdb) frame 0
+(gdb) info locals
+```
+
+若站台採集中式 core 管理，可使用 `coredumpctl list` 查詢。  
+本課主軸仍為 TCS 工具；此流程用於 Q&A 現場的第一時間定位。
+
+---
+
+## 7. 延伸閱讀
 
 - [`compilation_guide.md`](compilation_guide.md) — `frt` 完整選項  
 - [`optimization_mindset.md`](optimization_mindset.md) — 先量測再優化  
 - [`../Part1_CPU_CrashCourse/08_Debug_Profile/README.md`](../Part1_CPU_CrashCourse/08_Debug_Profile/README.md) — TCS Debugger／Profiler、**死鎖調查**、`fjdbg_summary`  
+- [`../Part1_CPU_CrashCourse/10_Troubleshooting_Clinic/README.md`](../Part1_CPU_CrashCourse/10_Troubleshooting_Clinic/README.md) — PJM 失敗、OOM、Core dump、求援流程  
 - 站臺提供之 **TCS／PRIMEHPC 使用者手冊**（Debugger／Profiler／並行偵錯專章）

@@ -17,6 +17,25 @@
 
 ---
 
+## 開始前兩件事：配額與工作區
+
+在送作業前，先確認配額與儲存位置（站台命令可能不同）：
+
+```bash
+quota -s
+lfs quota -u "$USER" /IFS
+lfs quota -u "$USER" /OFS
+```
+
+建議工作區劃分：
+
+- `/IFS`：受安管、常用於原始資料與正式執行環境
+- `/OFS`：大容量或共享資料、封存與搬移
+
+大檔搬移建議使用 `tar` + `rsync`（可續傳、可檢查進度）。
+
+---
+
 ## 🎯 什麼是 PJM？
 
 **PJM (Parallels Job Manager)** 是 Fujitsu 超級電腦系統的批次作業管理系統，類似於其他 HPC 系統的 SLURM 或 PBS。
@@ -73,6 +92,7 @@ cat job_vec_add.sh.o<job_id>
 | `pjsub` | 提交批次作業 | `pjsub job.sh` |
 | `pjstat` | 查看作業狀態 | `pjstat` |
 | `pjstat -v` | 詳細作業資訊 | `pjstat -v <job_id>` |
+| `pjwait` | 等待作業結束 | `pjwait <job_id>` |
 | `pjdel` | 取消作業 | `pjdel <job_id>` |
 | `pjhist` | 查看歷史作業 | `pjhist` |
 
@@ -259,6 +279,8 @@ echo "作業已完成！"
 | `PJM 0040 error` | 指定的 `rscgrp` 不存在 | 用 `pjstat --rsc` 查看可用資源群組 |
 | `PJM 0050 error` | 請求的節點數超過限制 | 確認 `node=1`（教學用途一個節點即可） |
 | `Permission denied` | 腳本沒有執行權限或目錄無寫入權 | `chmod +x job_*.sh`；確認家目錄配額未滿 |
+| `Code 28`（站台常見） | 資源參數與群組權限或策略不符 | 先用最小腳本測試；檢查 `-g`、`rscgrp`、`node`、`proc/thread` 組合 |
+| `Code 29`（站台常見） | 作業屬性衝突或站台限制觸發 | 移除非必要選項後重提；逐項加回並用 `pjstat -v` 比對 |
 
 ### 執行階段錯誤
 
@@ -276,6 +298,7 @@ echo "作業已完成！"
 |------|------|------|
 | 作業一直 QUEUED | 佇列滿或資源不足 | `pjstat -v <job_id>` 查看估計等待時間 |
 | 作業 RUNNING 但很久沒完成 | 程式進入無窮迴圈或 I/O 卡住 | `pjdel <job_id>` 取消後檢查程式邏輯 |
+| 作業被系統提前結束 | 可能超過 `elapse`（walltime） | 延長 `#PJM -L "elapse=..."`，並先用小資料量估算時間 |
 | 輸出亂碼 | 編碼不一致 | 確認 terminal 使用 UTF-8 編碼 |
 | 同樣程式在 x86 正常但 A64FX 失敗 | 平台差異（int 大小、對齊） | 檢查是否使用了平台相依的假設 |
 

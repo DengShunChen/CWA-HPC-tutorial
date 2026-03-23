@@ -21,10 +21,10 @@
 
 | 時間 | 實作主題 | 對應教材 | 產出／檢核 |
 |-----|---------|---------|------------|
-| 14:00-14:40 | 實務演練（一）：合規登入、互動式節點、資料操作 | [`01_Hello/`](01_Hello/)、[`../00_Cheatsheets/pjm_batch_system.md`](../00_Cheatsheets/pjm_batch_system.md) | 完成 `pjsub --interact`；確認「先取計算資源再執行」 |
+| 14:00-14:40 | 實務演練（一）：合規登入、環境建立、資料操作 | [`00_HPC_Workflow/`](00_HPC_Workflow/)、[`01_Hello/`](01_Hello/)、[`../00_Cheatsheets/pjm_batch_system.md`](../00_Cheatsheets/pjm_batch_system.md) | 完成 SSH 金鑰與 Quota 檢查、`pjsub --interact`、`/IFS`/`/OFS` + `tar` + `rsync`、跨架構套件準備 |
 | 14:40-15:30 | 實務演練（二）：A64FX 原生編譯與 Optimization Loop | [`02_Vector_Add/`](02_Vector_Add/)、[`03_Challenge/`](03_Challenge/)、[`08_Debug_Profile/`](08_Debug_Profile/) | 以 `frt`（或站臺允許下 `frtpx`）完成編譯、讀懂 `-Koptmsg=2`、至少完成 1 次 profiler 觀察 |
-| 15:45-16:30 | 實務演練（三）：PJM 批次派送、監控與安全中止 | [`04_Matrix_Operations/`](04_Matrix_Operations/)、[`../00_Cheatsheets/pjm_batch_system.md`](../00_Cheatsheets/pjm_batch_system.md) | 成功 `pjsub` + `pjstat`/`pjwait` 監控，並演練 `pjdel` 中止 |
-| 16:30-17:00 | Q&A + Troubleshooting | [`08_Debug_Profile/`](08_Debug_Profile/)、[`09_Profiler_Toolkit_TCS/`](09_Profiler_Toolkit_TCS/) | 能描述至少一個實際錯誤（登入、OOM、PJM、Crash）與排查路徑 |
+| 15:45-16:30 | 實務演練（三）：PJM 批次派送、監控與安全中止 | [`04_Matrix_Operations/`](04_Matrix_Operations/)、[`../00_Cheatsheets/pjm_batch_system.md`](../00_Cheatsheets/pjm_batch_system.md) | 成功 `pjsub` + `pjstat`/`pjwait` 監控，並演練 `pjdel`；理解 MPI/OMP 與綁定概念 |
+| 16:30-17:00 | Q&A + Troubleshooting | [`10_Troubleshooting_Clinic/`](10_Troubleshooting_Clinic/)、[`08_Debug_Profile/`](08_Debug_Profile/)、[`09_Profiler_Toolkit_TCS/`](09_Profiler_Toolkit_TCS/) | 可判讀 Code 28/29、walltime、OOM、Crash/Core dump，並描述求援路徑 |
 
 ### 進階選修（自學或延伸課程）
 
@@ -33,6 +33,7 @@
 | 函數與模組化 | [`06_Functions_Modules/`](06_Functions_Modules/) | 程式碼組織、多檔案編譯 |
 | 資料結構 | [`07_Structures/`](07_Structures/) | Derived Types、Struct/Class |
 | Instant Performance Profiler（FIPP） | [`09_Profiler_Toolkit_TCS/`](09_Profiler_Toolkit_TCS/) | `fipp`／`fipppx`、`-Nfjprof`／`-Nline`、雙階段熱點 |
+| 進階故障排除 | [`10_Troubleshooting_Clinic/`](10_Troubleshooting_Clinic/) | PJM 錯誤、OOM、Core dump、求援資訊包 |
 
 > 以上時程已對齊你提供的 CWA 全日課綱。若站臺政策要求「登入節點僅編輯／提交」，請將長時間執行統一放在互動或批次計算節點進行。**Profiler Toolkit** 深入可在 Q&A 延伸，或另開進階場次 [`09_Profiler_Toolkit_TCS/`](09_Profiler_Toolkit_TCS/)。
 
@@ -41,13 +42,26 @@
 | 路徑 | 順序 | 適用情境 |
 |------|------|----------|
 | **依資料夾編號 01→09** | 01 → 02 → 03 → **04** → 05 → 06 → 07 → **08** → **09** | 自學、`run_all_tests.sh` 預設測試順序；概念上為「語法與優化」→「矩陣／I／O／模組／結構」→「除錯與取樣剖析」→「FIPP 深入」。 |
-| **約 3 小時工作坊**（上表） | **01**（含互動式資源）→ **02/03**（Optimization Loop）→ **08**（分析）→ **04**（批次派送）→ **09**（Q&A 延伸） | 對齊 CWA 14:00–17:00 節奏：先建立合規操作習慣，再進入編譯優化、排程監控與故障排查。 |
+| **約 3 小時工作坊**（上表） | **00/01**（合規登入與互動資源）→ **02/03**（Optimization Loop）→ **08**（分析）→ **04**（批次派送）→ **10**（Troubleshooting）→ **09**（Q&A 延伸） | 對齊 CWA 14:00–17:00 節奏：先建立合規操作與資料流，再進入編譯優化、排程監控與故障排查。 |
 
 同一章節內容不因順序而改變；若你依編號自學，可無視工作坊插隊，**08 仍建議在 09 之前**（09 README 已標示前置為 08）。
 
 ---
 
 ## 📂 章節內容
+
+### [00_HPC_Workflow](00_HPC_Workflow/) - 合規登入、資料流與跨架構安裝
+
+**學習目標**：
+- 以 SSH 金鑰登入並完成 Quota 配額檢查
+- 先 `pjsub --interact` 取得計算資源後再操作
+- 建立 `/IFS`、`/OFS` 工作目錄，練習 `tar` + `rsync`
+- 於可連外節點準備 `aarch64` 套件（`CONDA_SUBDIR`／`pip download --platform`）
+
+**檔案**：
+- `README.md` - 14:00-14:40 實作步驟與 Checkpoint
+
+---
 
 ### [01_Hello](01_Hello/) - 環境測試
 
@@ -197,6 +211,19 @@
 - `run_tests.sh`／**`make test`** — 章節自測
 - `README.md` — FIPP 步驟；速查表請見 [`../00_Cheatsheets/profiler_toolkit_tcs.md`](../00_Cheatsheets/profiler_toolkit_tcs.md)
 - **`A64FX_Profiler_Reference.md`** — A64FX／**IPP／APP／CPAR** 技術參考（與 *Profiler User's Guide* 對照）
+
+---
+
+### [10_Troubleshooting_Clinic](10_Troubleshooting_Clinic/) — Q&A 實戰排錯
+
+**學習目標**：
+- 判讀 PJM 常見失敗（含 Code 28/29、walltime）
+- 進行 OOM 排查，並以調整 MPI ranks 降低單行程記憶體壓力
+- 產出並讀取 core dump（Segmentation Fault 首輪定位）
+- 整理可提交給 CWA / Fujitsu 的最小求援資訊包
+
+**檔案**：
+- `README.md` - 16:30-17:00 Q&A 實作流程
 
 ---
 
