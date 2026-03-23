@@ -277,6 +277,9 @@ Particle p(1, 1.0);
 
 ---
 
-**恭喜！您已完成 Part1_CPU_CrashCourse 的所有範例 🎉**
+**恭喜！您已完成本章（07）之粒子模擬範例 🎉**
 
-**下一步：進入 [Part2_GPU_CUDA](../../Part2_GPU_CUDA/) 學習 GPU 程式設計 🚀**
+**下一步（建議）**
+
+- 若尚未讀過除錯與剖析章節：請先 [`08_Debug_Profile`](../08_Debug_Profile/)，再選修 [`09_Profiler_Toolkit_TCS`](../09_Profiler_Toolkit_TCS/)（FIPP；前置觀念見 08）。  
+- 完成 **08**（與選修 **09**）後，再進入 [Part2_GPU_CUDA](../../Part2_GPU_CUDA/) 學習 GPU 程式設計 🚀

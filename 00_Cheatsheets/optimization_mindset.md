@@ -234,16 +234,16 @@ free(A);
 
 ```bash
 # Fortran - 基礎優化
-frtpx -Kfast program.f90 -o program
+frt -Kfast program.f90 -o program
 
 # Fortran - 完整優化（啟用 SVE 向量化）
-frtpx -Kfast -KSVE -Kopenmp program.f90 -o program
+frt -Kfast -KSVE -Kopenmp program.f90 -o program
 
 # C++ - 完整優化
 FCC -Kfast -KSVE -Kopenmp -std=c++11 program.cpp -o program
 
 # 查看向量化報告
-frtpx -Kfast -KSVE -Koptmsg=2 program.f90 -o program
+frt -Kfast -KSVE -Koptmsg=2 program.f90 -o program
 ```
 
 #### ARM SVE 向量化關鍵

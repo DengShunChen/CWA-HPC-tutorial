@@ -95,10 +95,10 @@ end program main
 
 ```bash
 # 1. 先編譯模組（會產生 .mod 檔）
-gfortran -c math_module.f90
+frt -Kfast -c math_module.f90
 
 # 2. 再編譯主程式（需要 .mod 檔）
-gfortran math_module.o main_program.f90 -o main
+frt -Kfast math_module.o main_program.f90 -o main
 ```
 
 ---

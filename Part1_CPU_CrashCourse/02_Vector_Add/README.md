@@ -223,11 +223,11 @@ AVX-512:   [A₀ A₁ ... A₇] + [B₀ B₁ ... B₇] = [C₀ C₁ ... C₇]  (
    # 大資料量 (10^8)
    ```
 
-3. **編譯器實驗**：嘗試不同優化組合
+3. **編譯器實驗**：嘗試不同優化組合（**`frt`**，與 Makefile 一致）
    ```bash
-   gfortran -O2 vec_add.f90 -o test1
-   gfortran -O3 vec_add.f90 -o test2
-   gfortran -O3 -march=native vec_add.f90 -o test3
+   frt -Kfast vec_add.f90 -o test1
+   frt -Kfast -KSVE -Koptmsg=2 vec_add.f90 -o test2
+   frt -Kfast -KSVE -Koptmsg=2 vec_add_optimized.f90 -o test3
    ```
 
 ---

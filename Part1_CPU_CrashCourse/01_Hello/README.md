@@ -36,8 +36,8 @@ make clean
 
 #### Fortran
 ```bash
-# 編譯
-gfortran -O2 -Wall hello.f90 -o hello_fortran
+# 編譯（與 Makefile 相同：需 frt）
+frt -Kfast hello.f90 -o hello_fortran
 
 # 執行
 ./hello_fortran
@@ -84,7 +84,7 @@ int main() {              // 主程式入口
 ## 🔍 常見問題
 
 ### Q: 編譯時出現 "command not found"
-**A**: 編譯器未安裝或不在系統路徑中。請聯絡系統管理員安裝 `gfortran` 或 `g++`。
+**A**: 編譯器不在 **`PATH`**。Fortran 請於 **A64FX 計算節點**載入 TCS 模組使 **`frt`** 可用；C++ 請確認 **`FCC`** 或 **`g++`**。
 
 ### Q: 為什麼 Fortran 需要 `implicit none`？
 **A**: Fortran 預設會根據變數名稱自動推斷型態（如 `i` 開頭是整數），這容易導致錯誤。`implicit none` 強制明確宣告所有變數，是現代 Fortran 的最佳實踐。

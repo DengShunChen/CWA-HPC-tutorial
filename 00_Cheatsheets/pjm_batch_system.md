@@ -1,6 +1,19 @@
 # PJM 批次系統使用指南
 
+> **本教材主線**：Part 1 範例作業腳本一律為 **PJM**（`pjsub`、`#PJM`）。PBS／Slurm 僅在本文「對照表」供其他環境參考。
+
 > Fujitsu A64FX / FX1000 專用批次作業管理系統
+
+---
+
+## 登入節點與計算節點（站臺政策與本教材約定）
+
+| 位置 | 允許／建議行為 |
+|------|----------------|
+| **登入節點** | 編輯原始碼、準備 PJM 腳本、**`pjsub`** 提交；**Fortran 建置請在計算節點**使用原生 **`frt`**（**不**用登入節點 cross **`frtpx`**）。 |
+| **計算節點** | **執行**可執行檔（數值計算、效能測試、**FIPP**／**fapp** 取樣、**`mpiexec`** 等）。此類工作請寫入 PJM 腳本，由 **`pjsub`** 排程執行。 |
+
+**請勿**在登入節點長時間或大量占用 CPU／記憶體執行計算；若貴中心政策僅允許登入節點編譯，則**執行一律以 `pjsub` 為準**。
 
 ---
 
@@ -24,10 +37,14 @@
 #PJM -g <your_group>             # 你的群組名稱（請修改）
 #PJM -j                          # 合併標準輸出與標準錯誤
 
-# 載入必要環境
-module load lang/tcsds-1.2.37   # Fujitsu 編譯器
+# 載入必要環境（計算節點上執行；由 pjsub 排程）
+module load lang/tcsds-1.2.37   # Fujitsu 編譯器（依貴站版本調整）
 
-# 執行程式
+# FX1000（部分站臺需先掛載 module 目錄）例：
+#   module use /package/fx1000/modulefiles/
+#   module load tcsds/1.2.40
+
+# 執行程式（於計算節點）
 ./vec_add_fortran
 ```
 
@@ -61,21 +78,23 @@ cat job_vec_add.sh.o<job_id>
 
 ---
 
-## 🔄 工作流程
+## 🔄 工作流程（FX1000）
 
 ```
-1. 在 x86 電腦上編輯程式碼
+1. SSH 至登入節點：編輯程式碼、module load
    ↓
-2. 使用 cross compiler 編譯（frtpx / FCC）
+2. 在 **A64FX 計算節點**（或批次工作內）以 **`frt`／`FCC`** 原生編譯 → 產生執行檔
    ↓
-3. 準備 PJM 作業腳本
+3. 撰寫 PJM 腳本（內含計算節點上要跑的指令）
    ↓
-4. 透過 pjsub 提交到 FX1000 叢集
+4. 登入節點執行 pjsub 提交作業
    ↓
-5. pjstat 監控作業狀態
+5. pjstat 監控；實際運算在計算節點執行
    ↓
-6. 查看輸出結果
+6. 檢視日誌／標準輸出（#PJM -o 等）
 ```
+
+**Part1 Fortran** 請在 **A64FX 環境**以 **`frt`** 編譯（`module load` TCS 後；登入節點通常無 `frt`）；**執行與量測仍以 `pjsub` 至計算節點為準**。
 
 ---
 
@@ -285,7 +304,7 @@ echo "作業已完成！"
 
 ## ⚠️ 三大批次系統對照：PJM / PBS / Slurm
 
-氣象署同時擁有 FX1000（PJM）與 GPU 叢集（Slurm）兩套系統，部分章節也使用 PBS。三者是**不同的批次系統，指令不可互通**。以下為完整對照：
+氣象署同時擁有 FX1000（PJM）與 GPU 叢集（Slurm）等環境。**本教材 Part 1 之範例作業腳本皆為 PJM**；PBS／Slurm 僅供對照。三者是**不同的批次系統，指令不可互通**。以下為完整對照：
 
 ### 指令對照表
 
@@ -403,10 +422,12 @@ cat vec_add_gpu_<job_id>.out
 | 章節 | 批次系統 | 平台 | 說明 |
 |------|----------|------|------|
 | `02_Vector_Add/job_vec_add.sh` | **PJM** | FX1000 (A64FX) | 教學主線 |
-| `04_Matrix_Operations/job_matrix.sh` | **PBS** | x86 叢集 | 輔助對照 |
-| Part 2 GPU 課程 | **Slurm**（建議） | GPU 叢集 | 下半年課程可在 GPU 叢集執行 |
+| `04_Matrix_Operations/job_matrix.sh` | **PJM** | FX1000 (A64FX) | 與 02 章相同 `#PJM` 語法 |
+| `09_Profiler_Toolkit_TCS/job_kernel_profile.sh` | **PJM** | FX1000（選用） | FIPP 取樣 |
+| `run_all_tests.sh --submit-pjm` | **PJM** | FX1000 | Part 1 一鍵測試 |
+| Part 2 GPU 課程 | **Slurm**（建議） | GPU 叢集 | 下半年課程 |
 
-教學時請以 **PJM 為主線**（上半年），下半年 GPU 課程可視環境選用 Slurm。
+教學時請以 **PJM 為主線**（上半年 CPU 課程），下半年 GPU 課程可視環境選用 Slurm。
 
 ---
 

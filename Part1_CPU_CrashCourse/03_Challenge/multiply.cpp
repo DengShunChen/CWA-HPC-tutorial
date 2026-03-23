@@ -1,37 +1,47 @@
 // 練習題：向量乘法 - C++
-// 任務：將向量加法改為向量乘法，並測量效能
-// 
-// 目標：C[i] = A[i] * B[i]
-//
-// 提示：
-// 1. 參考 ../02_Vector_Add/vec_add.cpp
-// 2. 把加法 (+) 改成乘法 (*)
-// 3. 加上計時功能
-// 4. 試試看能否優化你的程式碼
+// 功能：C[i] = A[i] * B[i]，並測量執行時間
 
+#include <chrono>
+#include <iomanip>
 #include <iostream>
 
 int main() {
-  // ==========================================
-  // TODO: 在此處填入你的程式碼
-  // ==========================================
-  
-  // 步驟：
-  // 1. 宣告變數 (n, A, B, C)
-  // 2. 配置記憶體 (new)
-  // 3. 初始化陣列 A 和 B
-  // 4. 開始計時 (std::chrono)
-  // 5. 計算 C = A * B (逐元素相乘)
-  // 6. 結束計時
-  // 7. 輸出結果
-  // 8. 釋放記憶體 (delete[])
-  
-  // 向量長度建議: 10000000 (一千萬)
-  
+  const int n = 10000000;
+  double *A = new double[n];
+  double *B = new double[n];
+  double *C = new double[n];
+
+  std::cout << "初始化陣列 A 和 B..." << std::endl;
+  for (int i = 0; i < n; i++) {
+    A[i] = static_cast<double>(i);
+    B[i] = static_cast<double>(i) * 2.0;
+  }
+
+  auto start = std::chrono::high_resolution_clock::now();
+
+  for (int i = 0; i < n; i++) {
+    C[i] = A[i] * B[i];
+  }
+
+  auto end = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double> elapsed = end - start;
+
+  std::cout << std::endl;
   std::cout << "=====================================" << std::endl;
-  std::cout << "  向量乘法練習題" << std::endl;
+  std::cout << "  向量乘法完成" << std::endl;
   std::cout << "=====================================" << std::endl;
-  std::cout << "請完成程式碼實作！" << std::endl;
-  
+  std::cout << "向量長度:    " << n << std::endl;
+  std::cout << "執行時間:    " << std::fixed << std::setprecision(6)
+            << elapsed.count() << " 秒" << std::endl;
+  std::cout << "前 5 個結果: ";
+  for (int i = 0; i < 5; i++) {
+    std::cout << C[i] << " ";
+  }
+  std::cout << std::endl << std::endl;
+
+  delete[] A;
+  delete[] B;
+  delete[] C;
+
   return 0;
 }

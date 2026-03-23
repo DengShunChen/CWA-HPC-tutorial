@@ -4,31 +4,31 @@
 
 ---
 
-## 1. 課程總覽
+## 1. 課程總覽 
 
 | 場次 | 時長 | 主題 | 前置需求 |
 |------|------|------|----------|
-| **上半年** | 3 小時 | CPU 程式語言速成 | 無（完全初學者） |
-| **下半年** | 3 小時 | GPU 加速與實戰 | 需完成上半年課程 |
+| **上半年** | 6 小時／日（上午說明 + 下午 CPU 上機） | CPU 程式語言速成 | 無（完全初學者） |
+| **下半年** | 6 小時／日（上午說明 + 下午 GPU 上機） | GPU 加速與實戰 | 需完成上半年課程 |
 
 ### 1.1 教學理念
 
 本課程採用**範例導向 + 分層任務**設計。每個章節同時服務三種程度的學員，透過 Must / Should / Could 三層任務卡讓不同程度的學員都能有收穫，同時避免初學者被進階內容壓垮。
 
-### 1.2 批次系統定位說明（PJM / PBS / Slurm）
+### 1.2 批次系統定位說明（**PJM 主線**；Slurm／PBS 為對照）
 
-本教材涉及三種批次系統，講師務必向學員明確區分，避免混淆：
+**本教材 Part 1 之範例作業腳本一律為 Fujitsu PJM**（`#PJM`、`pjsub`），與 FX1000 上半年實作一致：
 
-| 批次系統 | 適用章節 | 使用情境 |
-|----------|----------|----------|
-| **PJM** | `02_Vector_Add/job_vec_add.sh` | Fujitsu FX1000 (A64FX) — 上半年主線 |
-| **PBS** | `04_Matrix_Operations/job_matrix.sh` | 一般 x86 HPC 叢集（輔助對照） |
-| **Slurm** | Part 2 GPU 課程（建議） | 氣象署 GPU 叢集 — 下半年主線 |
+| 批次系統 | 適用章節／範例 | 使用情境 |
+|----------|----------------|----------|
+| **PJM** | `02_Vector_Add/job_vec_add.sh`、`04_Matrix_Operations/job_matrix.sh`、`09_Profiler_Toolkit_TCS/job_kernel_profile.sh`、`run_all_tests.sh --submit-pjm` | **Fujitsu FX1000 (A64FX)** — 上半年主線 |
+| **Slurm** | Part 2 GPU 課程（建議） | GPU 叢集 — 下半年主線 |
+| **PBS** | （本 repo **無** PBS 範例腳本） | 若學員環境為 PBS，請以 `00_Cheatsheets/pjm_batch_system.md` 對照表手動改寫 |
 
 教學時：
-- **上半年**以 PJM 為主線，PBS 僅在 04 章節作為對照補充
-- **下半年**GPU 課程建議在 Slurm GPU 叢集執行，與 FX1000 的 PJM 做環境區隔
-- 完整三系統對照表見 `00_Cheatsheets/pjm_batch_system.md`
+- **上半年**：只要求學會 **PJM** 提交與查詢（`pjsub`、`pjstat`、`pjwait` 等）；**04 矩陣章**與 **02 向量章**使用**相同** PJM 語法。
+- **下半年**：GPU 課程在 **Slurm** 上執行，與 FX1000 的 PJM 做環境區隔。
+- PBS／Slurm 與 PJM 的指令對照（選讀）見 `00_Cheatsheets/pjm_batch_system.md`。
 
 ---
 
@@ -76,6 +76,8 @@
 | 05_File_IO | Must 任務 | 快速帶過 | 跳過 | -- |
 | 06_Functions_Modules | 觀摩為主 | Should 任務 | 快速帶過 | -- |
 | 07_Structures | 選做 | Should 任務 | 快速帶過 | -- |
+| 08_Debug_Profile | Must（TCS Debugger 於 `heavy_work`） | Should（TCS Profiler 熱點） | Could（對照 `-Koptmsg=2`） | 圖形介面需 X11／VNC 時預先演練；不以 GNU 工具為主軸 |
+| 09_Profiler_Toolkit_TCS | 延伸自學 | Should（**FIPP**：`fipp`／`fipppx` 完整流程） | Could（`fipp_start`／區段或 **fapp** 進階） | 可併入進階場次；與 08 銜接 |
 | 01_CUDA_Hello | 核心 | 快速帶過 | 跳過 | -- |
 | 02_Vector_Add_GPU | Must 任務 | Should 任務（分析傳輸成本） | 核心（Kernel 調校） | 需補充 Kernel 調校引導 |
 | 03_Heat_Diffusion | 觀摩為主 | Should 任務（MVP 版） | 核心 | 無完整程式碼，需補 MVP 與進階版 |
@@ -120,37 +122,40 @@
 
 ## 4. 上半年課程（Part 1）教學流程
 
-### 4.1 建議時程（3 小時 = 180 分鐘）
+### 4.0 單日節奏（6 小時）
 
-| 時間 | 分鐘 | 主題 | 資料夾 | 教學重點 | 任務層級 |
-|------|------|------|--------|----------|----------|
-| 0:00-0:20 | 20 | 開場 + 本日 KPI | -- | 課程目標、分組、前測收回 | -- |
-| 0:20-0:40 | 20 | Hello World | 01_Hello | 環境測試、編譯流程、PJM 提交 | Must: 編譯成功 |
-| 0:40-1:10 | 30 | 向量加法示範 | 02_Vector_Add | Live Coding：慢版 vs 快版、SVE 向量化 | 講師示範 |
-| 1:10-1:30 | 20 | 第一輪實作 | 02_Vector_Add | 學員動手：編譯、提交、比較效能 | Must + Should |
-| 1:30-1:40 | 10 | **休息 + 問題蒐集** | -- | 助教收集紅/黃旗問題 | -- |
-| 1:40-2:10 | 30 | 練習挑戰 | 03_Challenge | 向量加法改乘法，獨立實作 | Must: 完成乘法 / Could: 加計時 |
-| 2:10-2:40 | 30 | 矩陣運算與快取 | 04_Matrix_Operations | 迴圈順序、Blocking 概念、Row/Column-major | Should: 跑優化版 / Could: 自寫 Blocking |
-| 2:40-2:55 | 15 | 成果分享 | -- | 每組 2-3 分鐘展示效能比較結果 | -- |
-| 2:55-3:00 | 5 | 收斂重點 + 課後作業 | -- | 重點回顧、課後作業說明、回饋表 | -- |
+- **上午（約 180 分鐘）**：課程說明 — HPC 與本日目標、工具鏈（frt／FCC／Make）、優化思維與 Cheatsheets 導讀、PJM 主線說明；**FX1000 TCS Debugger／TCS Profiler 與 `frt -g` 角色**（見 `00_Cheatsheets/debug_and_profiler.md`，**不以 GNU gdb／perf 為主軸**）；預告下午實作節奏與 Checkpoint。
+- **下午（約 180 分鐘）**：上機實作 — 建議時程見 **4.1**（下列表格以**下午**為 0:00 起算）。
 
-**重要時間保護**：05_File_IO、06_Functions_Modules、07_Structures 為**自學補充**，不安排在 3 小時主線中。若學員提前完成，可引導至這些章節作為加分練習。
+### 4.1 建議時程 — 下午上機（180 分鐘，對齊 CWA 課綱）
+
+| 時間 | 分鐘 | 主題 | 資料夾／文件 | 教學重點 | 任務層級 |
+|------|------|------|-------------|----------|----------|
+| 14:00-14:40 | 40 | 實務演練（一）：合規登入、互動式資源、資料處理 | `01_Hello`、`00_Cheatsheets/pjm_batch_system.md` | 先 `pjsub --interact` 再操作；示範 Quota、/IFS / /OFS 工作目錄、tar+rsync 流程 | Must: 成功進入互動節點並完成一次資料搬移 |
+| 14:40-15:30 | 50 | 實務演練（二）：A64FX 原生編譯與 Optimization Loop | `02_Vector_Add`、`03_Challenge`、`08_Debug_Profile` | `frt`/`FCC` 編譯、`-Kfast` + `-Koptmsg=2` 判讀、TCS Profiler（fapp/fipp）熱點觀察 | Must + Should |
+| 15:30-15:45 | 15 | **休息 + 問題蒐集** | -- | 助教整理紅/黃旗問題，準備批次派送段落 | -- |
+| 15:45-16:30 | 45 | 實務演練（三）：PJM 批次派送與監控防護 | `04_Matrix_Operations/job_matrix.sh`、`00_Cheatsheets/pjm_batch_system.md` | 撰寫/修改 `#PJM`、`pjsub` 提交、`pjstat`/`pjwait` 監控、`pjdel` 安全中止 | Must: 完成提交流程；Could: 演練無窮迴圈中止 |
+| 16:30-17:00 | 30 | Q&A + Troubleshooting | `08_Debug_Profile`、`09_Profiler_Toolkit_TCS`、Cheatsheets | PJM 錯誤碼、OOM、Crash/Core dump、求援流程與錄影回放索引 | -- |
+
+**重要時間保護**：`05_File_IO`、`06_Functions_Modules`、`07_Structures` 為自學補充。`09_Profiler_Toolkit_TCS` 定位為 Q&A 延伸或第二次進階場次，與 `08_Debug_Profile` 銜接。
 
 ### 4.2 關鍵教學點
 
-1. **01_Hello**：確認 `frtpx`、`FCC` 可用；若 A64FX 不可用，切換至 `gfortran`/`g++`
+1. **01_Hello**：確認 **`frt`**（Fortran 必備）、**`FCC`** 或 **`g++`**（C++）可用
 2. **02_Vector_Add**：務必展示優化前後效能差異，用「為什麼快」帶出 Cache 與 SIMD 概念
-3. **03_Challenge**：留足 30 分鐘讓學員動手，卡關超過 5 分鐘才提供提示
-4. **04_Matrix_Operations**：用圖解說明 Column-major vs Row-major 在記憶體中的差異
+3. **03_Challenge**：留足時間讓學員動手，卡關超過 5 分鐘才提供提示
+4. **04_Matrix_Operations**：用圖解說明 Column-major vs Row-major 在記憶體中的差異（本節奏若時間緊，以「跑通優化版 + 一張效能對照表」為優先）
+5. **08_Debug_Profile**：**Fortran + `frt`**；除錯用 **`microbench_dbg`**（`-g`、`-Hx,CHECK_SUBSCRIPT`），分析用 **`microbench_opt`**（`-g -Kfast -KSVE -Koptmsg=2`）；**TCS Debugger** 以 `heavy_work` 中斷點為主，**TCS Profiler** 對 `microbench_opt` 取樣；`buggy_bounds` 僅示範越界與執行時檢查，勿在批次腳本中當預期成功之 job
 
-### 4.3 Checkpoint 驗證標準
+### 4.3 Checkpoint 驗證標準（對齊 14:00–17:00）
 
 | Checkpoint | 時間點 | 驗證方式 | 通過標準 |
 |------------|--------|----------|----------|
-| CP1 | 0:40 | Hello 輸出 | 看到「歡迎來到 HPC 程式設計工作坊」 |
-| CP2 | 1:30 | vec_add 輸出 | 正確輸出前 5 個元素且執行時間合理 |
-| CP3 | 2:10 | multiply 輸出 | 向量乘法結果正確（可用已知值驗算） |
-| CP4 | 2:40 | 效能比較 | 能說出基礎版與優化版的速度差異倍數 |
+| CP1 | 14:40 | 互動式資源取得 | 成功 `pjsub --interact` 並進入計算節點 shell |
+| CP2 | 15:10 | 原生編譯與優化訊息 | 成功以 `frt`/`FCC` 編譯，並可指出 `-Koptmsg=2` 至少一則關鍵訊息 |
+| CP3 | 15:30 | Optimization Loop | 完成「分析→調整→重編譯→驗證」至少 1 次迭代（可用 vec_add/challenge） |
+| CP4 | 16:15 | 批次派送與監控 | 成功 `pjsub` 後以 `pjstat`/`pjwait` 追蹤；可示範 `pjdel` 中止 |
+| CP5 | 16:50 | 排錯口頭驗證 | 能描述至少一個實際錯誤（PJM/OOM/Crash）與排查步驟 |
 
 ### 4.4 常見學員問題
 
@@ -160,12 +165,18 @@
 | 優化真的有必要嗎？ | 是，HPC 程式常跑數天，2x 優化可省一半時間與數百萬元計算成本 |
 | 編譯失敗？ | 查 `00_Cheatsheets/compilation_guide.md`；最常見原因是忘記 `module load` |
 | PJM 作業卡住？ | 查 `00_Cheatsheets/pjm_batch_system.md` 的「錯誤排除速查」章節 |
+| TCS Debugger／Profiler 無法啟動？ | 查 TCS／站臺手冊與 `module load`；圖形介面需登入節點或 VNC；**不以** GNU `gdb`／`perf` 替代正式教學目標 |
 
 ---
 
 ## 5. 下半年課程（Part 2）教學流程
 
-### 5.1 建議時程（3 小時 = 180 分鐘）
+### 5.0 單日節奏（6 小時）
+
+- **上午（約 180 分鐘）**：課程說明 — GPU 程式模型、CUDA 工具鏈（nvcc）、記憶體／效能觀念、熱傳導案例架構與分層任務說明；預告下午上機。
+- **下午（約 180 分鐘）**：上機實作 — 建議時程見 **5.1**（下列表格以**下午**為 0:00 起算）。
+
+### 5.1 建議時程 — 下午上機（180 分鐘）
 
 | 時間 | 分鐘 | 主題 | 資料夾 | 教學重點 | 任務層級 |
 |------|------|------|--------|----------|----------|
@@ -314,8 +325,8 @@
 
 | 錯誤現象 | 原因 | 解法 |
 |----------|------|------|
-| `frtpx: command not found` | 未載入模組 | `module load lang/tcsds-1.2.37` |
-| `FCC: command not found` | 同上 | 同上 |
+| `frt: command not found` | 未載入模組 | **FX1000 常見**：`module use /package/fx1000/modulefiles/` 後 `module load tcsds/1.2.40`；其他站臺可能是 `module load lang/tcsds-1.2.37` |
+| `FCC: command not found` | 同上 | 同上（與 TCS 同模組） |
 | `pjsub: command not found` | 不在計算節點上或 PATH 未設定 | 確認登入正確的 login node |
 | `PJM 0020 error` | 群組名稱錯誤 | 將 `<your_group>` 改為實際群組名 |
 | `PJM 0040 error` | 資源群組不存在 | 確認 `rscgrp=small` 在該系統可用 |
@@ -323,7 +334,7 @@
 | `Segmentation fault` | 陣列越界或未配置記憶體 | 用 `-g` 編譯除錯版；檢查陣列索引 |
 | `nvcc: command not found` | CUDA 未安裝或 PATH 未設定 | `module load cuda` 或確認 CUDA 路徑 |
 | `no CUDA-capable device` | GPU 不可用 | 切換至有 GPU 的節點；或改用純 CPU 模式 |
-| Makefile 編譯失敗 | 編譯器不匹配 | 04-07 章節使用 `gfortran`/`g++`，確認已安裝 |
+| Makefile 編譯失敗 | 編譯器不匹配 | Part1 Fortran 需 **`frt`**；C++ 為 **FCC** 或 **g++**；確認 **`module load`** 與 **PATH** |
 | `sbatch: error: invalid partition` | Slurm 分區名錯誤 | `sinfo` 查看可用分區，修改 `-p` 參數 |
 | `sbatch: error: Invalid account` | Slurm 帳號錯誤 | `sacctmgr show assoc user=$USER` 查看可用帳號 |
 | Slurm 作業 PD (PENDING) 很久 | GPU 資源排隊中 | `squeue -j <id>` 查看 REASON；考慮減少 GPU 數量 |
@@ -332,11 +343,9 @@
 
 ```
 FX1000 可用？
-├─ 是 → 正常流程（frtpx + PJM）
-└─ 否 → x86 備援
-         ├─ gfortran/g++ 可用？
-         │   ├─ 是 → 改用 gfortran/g++，跳過 PJM，本地直接執行
-         │   └─ 否 → 改用線上編譯器（如 Compiler Explorer）+ 講師示範
+├─ 是 → 正常流程（frt + PJM）
+└─ 否 → 備援
+         ├─ 僅 C++／CUDA 可嘗試本機 g++／nvcc；Fortran 教材須 **A64FX** 上 **`frt`** 或講師示範
          └─ GPU 可用？
              ├─ 是 → 正常 CUDA 流程
              └─ 否 → 僅講解 CUDA 概念與程式碼，不實際執行
@@ -352,13 +361,13 @@ FX1000 可用？
 |---|----------|--------|------|
 | 1 | FX1000 系統正常運作，login node 可 SSH 登入 | 系統管理員 | [ ] |
 | 2 | 所有學員帳號已建立，群組名稱正確 | 系統管理員 | [ ] |
-| 3 | `module load lang/tcsds-1.2.37` 可正常執行 | 講師/助教 | [ ] |
+| 3 | TCS 可載入（例：`module use /package/fx1000/modulefiles/` + `module load tcsds/1.2.40`）且 **`frt`** 在 PATH | 講師/助教 | [ ] |
 | 4 | PJM 佇列可正常提交，`rscgrp=small` 可用 | 講師/助教 | [ ] |
 | 5 | 教材已 clone 到共用目錄或各學員家目錄 | 助教 | [ ] |
 | 6 | `make all` 在 FX1000 上編譯成功 | 助教 | [ ] |
 | 7 | GPU 節點（若有）`nvidia-smi` 正常 | 助教 | [ ] |
 | 8 | 網路穩定、投影設備正常 | 現場負責人 | [ ] |
-| 9 | 備援方案已驗證（gfortran/g++ 或線上編譯器） | 講師 | [ ] |
+| 9 | 備援方案已驗證（預編譯執行檔、線上編譯器或講師示範） | 講師 | [ ] |
 
 ### 8.2 課中風險應對
 
@@ -375,7 +384,7 @@ FX1000 可用？
 
 為確保上課當天編譯行為一致，建議在課前 3 天：
 
-1. 固定 module 版本：在所有範例的 Makefile 與 job script 中明確指定 `lang/tcsds-1.2.37`
+1. 固定 module 版本：依貴站寫入（FX1000 例：`module use /package/fx1000/modulefiles/` + `tcsds/1.2.40`；或 `lang/tcsds-1.2.37`）；`Part1` 之 **`run_all_tests.sh --submit-pjm`** 預設已對齊 FX1000（見 `PJM_MODULE_USE`／`PJM_MODULE`）
 2. 預編譯所有範例，將執行檔保存在 `_prebuilt/` 目錄作為備援
 3. 記錄每個範例的預期輸出，供 Checkpoint 驗證時比對
 
@@ -385,7 +394,7 @@ FX1000 可用？
 
 ### 9.1 環境
 
-- [ ] 編譯器已安裝並可執行（`frtpx`、`FCC` 或 `gfortran`、`g++`）
+- [ ] **`frt`** 與 **`FCC`**（或 **`g++`**）已可執行；Part1 Fortran **`make` 依賴 `frt`**
 - [ ] CUDA 環境可用（`nvcc`、`nvidia-smi`）（Part 2）
 - [ ] PJM 可提交作業（`pjsub`、`pjstat` 指令可用）
 - [ ] 學員帳號可登入、有足夠磁碟配額

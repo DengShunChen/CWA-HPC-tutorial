@@ -4,20 +4,20 @@
 > 涵蓋 Fortran、C++ 與 CUDA GPU 加速
 
 > **🖥️ 本教材針對 Fujitsu A64FX (FX1000) 平台優化**  
-> - 使用 **Fujitsu frtpx (Fortran)** 與 **FCC (C++)** 編譯器  
-> - 透過 **PJM 批次系統** 提交作業  
+> - 使用 **Fujitsu frt (Fortran，A64FX 原生)** 與 **FCC (C++)** 編譯器  
+> - **Fortran 建置與執行**在 **A64FX 計算節點**（**不**用登入節點 cross **frtpx**）；長時間工作請 **`pjsub`**  
 > - 支援 **ARM SVE 512-bit 向量化**
 
 ---
 
 ## 📚 課程概覽
 
-本教材為年度系列工作坊，分兩次上課：
+本教材為**一年兩次**的工作坊；**每次共 6 小時**，**上午**課程說明、**下午**上機實作。
 
 | 場次 | 時長 | 主題 | 目標 |
 |-----|------|------|------|
-| **上半年** | 3 小時 | CPU 程式語言速成 | 掌握 Fortran 與 C++ 基礎，能讀懂並修改數值計算程式 |
-| **下半年** | 3 小時 | GPU 加速與實戰 | 理解 CUDA 平行運算，體驗 GPU 加速威力 |
+| **上半年** | 6 小時／日 | CPU 程式語言速成（下午上機） | 掌握 Fortran 與 C++ 基礎，能讀懂並修改數值計算程式 |
+| **下半年** | 6 小時／日 | GPU 加速與實戰（下午上機） | 理解 CUDA 平行運算，體驗 GPU 加速威力 |
 
 ---
 
@@ -28,7 +28,9 @@ ProgramingTutorial/
 ├── 00_Cheatsheets/           # 快速參考資料
 │   ├── syntax_rosetta_stone.md      # 三語言語法對照表
 │   ├── compilation_guide.md         # 編譯指令速查
-│   └── optimization_mindset.md      # HPC 優化思維指南
+│   ├── optimization_mindset.md      # HPC 優化思維指南
+│   ├── debug_and_profiler.md        # FX1000 TCS Debugger／Profiler、`frt`
+│   └── profiler_toolkit_tcs.md      # FIPP（fipp／fipppx，第 09 章）
 │
 ├── Part1_CPU_CrashCourse/    # 上半年：CPU 程式語言
 │   ├── 01_Hello/             # 環境測試
@@ -72,10 +74,10 @@ ProgramingTutorial/
 
 ### 上半年 (CPU 程式語言)
 - **CPU 平台**：Fujitsu A64FX (ARM v8.2-A + SVE)
-- **Fortran 編譯器**：`frtpx` (Fujitsu Compiler)
+- **Fortran 編譯器**：`frt` (Fujitsu Compiler，A64FX 原生)
 - **C++ 編譯器**：`FCC` (Fujitsu C++ Compiler)
 - **批次系統**：PJM (Parallels Job Manager)
-- **開發環境**：x86 電腦 + cross compiler
+- **開發環境**：FX1000 上 **A64FX 計算節點** + TCS（`frt`）
 
 ### 下半年 (GPU 加速)
 - **CUDA Toolkit**：建議 CUDA >= 10.0
@@ -103,7 +105,7 @@ module load lang/tcsds-1.2.37
 echo "Module loaded: OK"
 
 # === Step 3: 檢查 Fujitsu 編譯器 ===
-frtpx --version && echo "frtpx: OK" || echo "frtpx: FAILED"
+frt --version && echo "frt: OK" || echo "frt: FAILED"
 FCC --version && echo "FCC: OK" || echo "FCC: FAILED"
 
 # === Step 4: 檢查 PJM 系統 ===
@@ -127,7 +129,7 @@ nvcc --version && echo "CUDA: OK" || echo "CUDA: NOT AVAILABLE (下半年課程�
 | 結果 | 意義 | 處理 |
 |------|------|------|
 | 全部 OK | 環境正常，可直接上課 | 無需動作 |
-| frtpx/FCC FAILED | 編譯器不可用 | 聯繫系統管理員或改用 `gfortran`/`g++` |
+| frt/FCC FAILED | 編譯器不可用 | 聯繫系統管理員；Part1 Fortran 需 **`frt`**（A64FX + `module load`） |
 | PJM FAILED | 批次系統不可用 | 聯繫系統管理員；可先在本地測試 |
 | CUDA NOT AVAILABLE | GPU 環境未安裝 | 僅影響下半年課程，上半年不需要 |
 
@@ -135,7 +137,7 @@ nvcc --version && echo "CUDA: OK" || echo "CUDA: NOT AVAILABLE (下半年課程�
 
 ```bash
 # 檢查 Fujitsu 編譯器
-frtpx --version
+frt --version
 FCC --version
 
 # 檢查 PJM 系統
@@ -179,10 +181,10 @@ nvcc --version
 
 ### Fujitsu A64FX 平台特別注意
 
-1. **編譯環境**：在 x86 電腦上使用 cross compiler 編譯
-2. **執行方式**：不能直接執行，需透過 `pjsub` 提交到 FX1000
-3. **優化關鍵**：使用 `-KSVE` 啟用 ARM SVE 512-bit 向量化
-4. **模組載入**：記得在 PJM 腳本中 `module load lang/tcsds-1.2.37`
+1. **編譯**：在 **A64FX 計算節點**使用 **`frt`／`FCC`** 原生編譯（勿在登入節點長時間跑計算）。
+2. **執行**：在 FX1000 上應以 **`pjsub`** 將工作送交**計算節點**執行；與正式效能／FIPP 量測一致。
+3. **優化關鍵**：使用 **`-KSVE`** 啟用 ARM SVE 512-bit 向量化。
+4. **模組載入**：於 PJM 腳本內 **`module load`**（版本依貴站，例如 `lang/tcsds-…`）。
 
 ---
 

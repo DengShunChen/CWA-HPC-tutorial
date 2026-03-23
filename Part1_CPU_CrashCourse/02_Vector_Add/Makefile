@@ -1,16 +1,24 @@
-# Makefile for Vector Addition Examples (Fujitsu A64FX)
+# Makefile for Vector Addition Examples（Fortran：FX1000 用 frt；登入節點可用 frtpx）
 
-# 編譯器設定
-FC = frtpx        # Fujitsu Fortran 編譯器
-CXX = FCC         # Fujitsu C++ 編譯器
-
-# 基礎版本：使用 -Kfast
+ifneq ($(shell which frt 2>/dev/null),)
+FC = frt
+else ifneq ($(shell which frtpx 2>/dev/null),)
+FC = frtpx
+else
+$(error 未找到 frt / frtpx。請先 module load TCS 環境。)
+endif
 FFLAGS_BASIC = -Kfast
-CXXFLAGS_BASIC = -Kfast -std=c++11
-
-# 優化版本：使用 -Kfast + ARM SVE 向量化
 FFLAGS_OPT = -Kfast -KSVE -Koptmsg=2
-CXXFLAGS_OPT = -Kfast -KSVE -Koptmsg=2 -std=c++11
+
+ifeq ($(shell which FCC 2>/dev/null),)
+  CXX = g++
+  CXXFLAGS_BASIC = -O2 -Wall -std=c++11
+  CXXFLAGS_OPT = -O3 -march=native -funroll-loops -std=c++11
+else
+  CXX = FCC
+  CXXFLAGS_BASIC = -Kfast -std=c++11
+  CXXFLAGS_OPT = -Kfast -KSVE -Koptmsg=2 -std=c++11
+endif
 
 .PHONY: all clean run_all fortran cpp optimized
 

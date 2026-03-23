@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <numeric>
 #include <cstddef>
+#include <cmath>
 
 // ── 編譯期常數 ──────────────────────────────────
 constexpr int N = 512;            // 矩陣維度 (N x N)

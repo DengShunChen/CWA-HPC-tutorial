@@ -1,0 +1,83 @@
+[2026-03-22 20:43:00] ===== Part1 自動測試開始 =====
+[2026-03-22 20:43:01] 目錄: /users/xb80/source_code/CWA-HPC-tutorial/Part1_CPU_CrashCourse
+[2026-03-22 20:43:01] ---- make: 01_Hello ----
+gfortran -O2 -Wall hello.f90 -o hello_fortran
+Fortran 程式已編譯
+g++ -O2 -Wall -std=c++11 hello.cpp -o hello_cpp
+C++ 程式已編譯
+✓ 編譯完成。請使用 PJM 提交執行。
+[2026-03-22 20:43:04] PASS  make 01_Hello
+[2026-03-22 20:43:04] PASS  01_Hello 執行
+[2026-03-22 20:43:04] ---- make: 02_Vector_Add ----
+gfortran -O2 -Wall vec_add.f90 -o vec_add_fortran
+g++ -O2 -Wall -std=c++11 vec_add.cpp -o vec_add_cpp
+gfortran -O3 -march=native -funroll-loops vec_add_optimized.f90 -o vec_add_optimized_fortran
+g++ -O3 -march=native -funroll-loops -std=c++11 vec_add_optimized.cpp -o vec_add_optimized_cpp
+✓ 所有程式編譯完成
+請使用 'pjsub job_script.sh' 提交到 FX1000 執行
+[2026-03-22 20:44:34] PASS  make 02_Vector_Add
+[2026-03-22 20:44:34] PASS  02_Vector_Add 四程式執行
+[2026-03-22 20:44:34] ---- make: 03_Challenge ----
+gfortran -O2 -Wall multiply.f90 -o multiply_fortran
+Fortran 練習題已編譯
+g++ -O2 -Wall -std=c++11 multiply.cpp -o multiply_cpp
+C++ 練習題已編譯
+✓ 編譯完成。本機可執行 ./multiply_fortran、./multiply_cpp；叢集上可用 PJM 提交批次工作。
+[2026-03-22 20:44:36] PASS  make 03_Challenge
+[2026-03-22 20:44:36] PASS  03_Challenge 執行與 C++ 數值抽樣
+[2026-03-22 20:44:36] ---- make: 04_Matrix_Operations ----
+gfortran -O2 -Wall matrix_multiply.f90 -o matrix_multiply_fortran
+✓ 編譯完成: matrix_multiply_fortran
+g++ -O2 -Wall -std=c++11 matrix_multiply.cpp -o matrix_multiply_cpp
+✓ 編譯完成: matrix_multiply_cpp
+gfortran -O3 -march=native -funroll-loops matrix_multiply_optimized.f90 -o matrix_multiply_optimized_fortran
+✓ 編譯完成: matrix_multiply_optimized_fortran (優化版)
+g++ -O3 -march=native -funroll-loops -std=c++11 matrix_multiply_optimized.cpp -o matrix_multiply_optimized_cpp
+✓ 編譯完成: matrix_multiply_optimized_cpp (優化版)
+[2026-03-22 20:44:40] PASS  make 04_Matrix_Operations
+[2026-03-22 20:44:42] PASS  04_Matrix_Operations make run_all
+[2026-03-22 20:44:42] ---- make: 05_File_IO ----
+gfortran -O2 -Wall file_io.f90 -o file_io_fortran
+✓ 編譯完成: file_io_fortran
+g++ -O2 -Wall -std=c++11 file_io.cpp -o file_io_cpp
+✓ 編譯完成: file_io_cpp
+[2026-03-22 20:44:44] PASS  make 05_File_IO
+[2026-03-22 20:44:45] PASS  05_File_IO make run_all
+[2026-03-22 20:44:45] ---- make: 06_Functions_Modules ----
+gfortran -O2 -Wall -c math_module.f90
+✓ 模組編譯完成: math_module
+gfortran -O2 -Wall math_module.o main_program.f90 -o main_fortran
+✓ 編譯完成: main_fortran
+g++ -O2 -Wall -std=c++11 -c math_functions.cpp
+✓ 函數庫編譯完成: math_functions.o
+g++ -O2 -Wall -std=c++11 main_program.cpp math_functions.o -o main_cpp
+✓ 編譯完成: main_cpp
+[2026-03-22 20:44:48] PASS  make 06_Functions_Modules
+[2026-03-22 20:44:48] PASS  06_Functions_Modules make run_all
+[2026-03-22 20:44:48] ---- make: 07_Structures ----
+gfortran -O2 -Wall particle_simulation.f90 -o particle_fortran
+✓ 編譯完成: particle_fortran
+g++ -O2 -Wall -std=c++11 particle_simulation.cpp -o particle_cpp
+✓ 編譯完成: particle_cpp
+[2026-03-22 20:44:50] PASS  make 07_Structures
+[2026-03-22 20:44:50] PASS  07_Structures make run_all
+[2026-03-22 20:44:50] ---- make: 08_Debug_Profile ----
+gfortran -g -O0 -Wall -fcheck=bounds microbench.f90 -o microbench_dbg
+gfortran -g -O2 -Wall microbench.f90 -o microbench_opt
+gfortran -g -O0 -Wall -fcheck=bounds buggy_bounds.f90 -o buggy_bounds
+buggy_bounds.f90:11:14:
+
+   do i = 1, 5
+             2 
+     s = s + a(i)
+              1
+Warning: Array reference at (1) out of bounds (5 > 4) in loop beginning at (2)
+✓ 已建立 microbench_dbg / microbench_opt / buggy_bounds（Fortran / frtpx 主軸）
+[2026-03-22 20:44:52] PASS  make 08_Debug_Profile
+[2026-03-22 20:44:53] PASS  08_Debug_Profile microbench 執行
+---- 09_Profiler_Toolkit_TCS / run_tests.sh ----
+gfortran -g -O2 -Wall kernel_phases.f90 kernel_profile.f90 -o kernel_profile_opt
+✓ kernel_profile_opt
+PASS  09 章節檢查通過
+[2026-03-22 20:44:54] PASS  09_Profiler_Toolkit_TCS run_tests.sh
+[2026-03-22 20:44:54] ===== 結束：失敗項目數 = 0 =====

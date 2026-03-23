@@ -10,7 +10,7 @@
 ┌─────────────────────────────────────────────────────────────────┐
 │                     ProgramingTutorial                            │
 ├─────────────────────────────────────────────────────────────────┤
-│  00_Cheatsheets          │  參考資料層（語法、編譯、優化、批次）   │
+│  00_Cheatsheets          │  參考資料層（語法、編譯、優化、除錯／profiler、批次）   │
 ├─────────────────────────────────────────────────────────────────┤
 │  Part1_CPU_CrashCourse   │  CPU 課程層（Fortran + C++）           │
 │  Part2_GPU_CrashCourse   │  GPU 課程層（CUDA）                    │
@@ -39,15 +39,17 @@ make all
 
 | 章節 | 輸入 | 輸出 | 編譯器 |
 |------|------|------|--------|
-| 01_Hello | hello.f90, hello.cpp | hello_f, hello_cpp | frtpx, FCC 或 gfortran, g++ |
+| 01_Hello | hello.f90, hello.cpp | hello_f, hello_cpp | **frt**；C++ 為 **FCC** 或 **g++** |
 | 02_Vector_Add | vec_add*.f90, vec_add*.cpp | vec_add_f, vec_add_cpp, ... | 同上 |
-| 04_Matrix_Operations | matrix_multiply*.f90, *.cpp | matrix_multiply_f, ... | gfortran, g++ |
+| 08_Debug_Profile | microbench.f90, buggy_bounds.f90 | microbench_dbg, microbench_opt, … | **frt** |
+| 09_Profiler_Toolkit_TCS | `kernel_phases.f90` + 多主程式 | `kernel_profile_opt`、`region_marked`（FIPP）、`region_mpi`（選） | **frt**／**mpifrt** |
+| 04_Matrix_Operations | matrix_multiply*.f90, *.cpp | matrix_multiply_f, ... | **frt**；C++ 為 **FCC** 或 **g++** |
 | 01_CUDA_Hello | hello_gpu.cu, device_query.cu | hello_gpu, device_query | nvcc |
 | 02_Vector_Add_GPU | vec_add_gpu.cu | vec_add_gpu | nvcc |
 
 ### 2.3 編譯器選項（Fujitsu A64FX）
 
-- **Fortran**：`frtpx -KSVE -O3` — 啟用 SVE 512-bit 向量化
+- **Fortran**：`frt -Kfast -KSVE` — 啟用 SVE 512-bit 向量化（教材慣用）
 - **C++**：`FCC -KSVE -O3` — 同上
 - **CUDA**：`nvcc -O3` — 標準優化
 
@@ -83,8 +85,8 @@ NN_ChapterName/
 
 | 平台 | 用途 | 編譯器 |
 |------|------|--------|
-| Fujitsu A64FX (FX1000) | 主要教學平台 | frtpx, FCC |
-| x86 (一般 PC) | 部分章節、本地開發 | gfortran, g++ |
+| Fujitsu A64FX (FX1000) | 主要教學平台 | frt, FCC |
+| x86 (一般 PC) | 僅 C++ 可選 **g++**；Part1 Fortran 須 **A64FX** 上 **`frt`**（登入節點無教學用 Fortran 建置） | **g++**／**FCC**（C++） |
 | NVIDIA GPU | GPU 課程 | nvcc |
 
 ### 4.2 模組載入（PJM 腳本）
@@ -93,10 +95,15 @@ NN_ChapterName/
 module load lang/tcsds-1.2.37   # Fujitsu 編譯器模組
 ```
 
-### 4.3 批次系統
+### 4.3 批次系統（以 **PJM** 為主）
 
-- **PJM**：`job_vec_add.sh` — 向量加法
-- **PBS**：`job_matrix.sh` — 矩陣乘法（04 章節）
+本教材 Part 1 之範例作業腳本皆採 **Fujitsu PJM**（`#PJM` 指令、`pjsub` 提交）：
+
+- `02_Vector_Add/job_vec_add.sh` — 向量加法
+- `04_Matrix_Operations/job_matrix.sh` — 矩陣乘法（04 章節）
+- `09_Profiler_Toolkit_TCS/job_kernel_profile.sh` — FIPP 取樣（選用）
+
+其他批次系統（PBS、Slurm）僅在 [`00_Cheatsheets/pjm_batch_system.md`](../00_Cheatsheets/pjm_batch_system.md) 附錄對照，**不作為本 repo 範例腳本格式**。
 
 ---
 
@@ -123,4 +130,4 @@ module load lang/tcsds-1.2.37   # Fujitsu 編譯器模組
 
 1. **頂層 Makefile**：可納入 03–07 章節以統一編譯
 2. **03_Heat_Diffusion_Demo**：補齊 `main_cpu.cpp`、`main_gpu.cu` 實作
-3. **批次系統**：統一使用 PJM 或 PBS，避免混用
+3. **批次系統**：Part 1 範例以 **PJM** 為準；跨系統對照見 Cheatsheet，勿在教學 repo 混用 PBS 範例腳本

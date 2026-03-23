@@ -3,8 +3,8 @@
 > 快速參考：Fortran、C++ 與 CUDA 的常用編譯指令
 
 > **⚠️ 本課程使用 Fujitsu A64FX (FX1000) 平台**  
-> 學生在 **x86 電腦上使用 cross compiler**，通過 **PJM 批次系統** 提交作業。  
-> 編譯器為 **Fujitsu frtpx (Fortran)** 與 **FCC (C++)**，而非 gfortran/g++。
+> **Fortran** 使用 **原生 `frt`**（在 **A64FX 計算節點**或互動計算節點上編譯與執行；**不**採 x86 登入節點之 cross **`frtpx`**）。**C++** 為 **`FCC`** 或登入節點 **`g++`**（依章節 Makefile）。長時間計算與量測請 **`pjsub`** 至計算節點。  
+> **Part1 各章 `Makefile` 之 Fortran 使用 `frt`**；下文若出現 **GNU `gfortran`**，僅作一般語法／選項對照，**非**本教材預設建置路徑。
 
 ---
 
@@ -15,18 +15,19 @@
 | **CPU** | Fujitsu A64FX (ARM v8.2-A + SVE) |
 | **向量寬度** | 512-bit (ARM SVE) |
 | **記憶體** | HBM2 高頻寬記憶體 |
-| **批次系統** | PJM (Parallels Job Manager) |
-| **編譯環境** | Cross compile from x86 |
+| **批次系統** | PJM (Parallels Job Manager)；**執行可執行檔請 `pjsub`** |
+| **編譯** | **A64FX 計算節點**上以原生 **`frt`／`FCC`** 產出執行檔（`module load` TCS） |
+| **執行** | **計算節點**（由 PJM 排程） |
 
 ---
 
-## 🔧 Fortran 編譯 (Fujitsu frtpx)
+## 🔧 Fortran 編譯 (Fujitsu frt，FX1000 原生)
 
 ### 基本編譯
 
 ```bash
 # 編譯單一檔案
-frtpx hello.f90 -o hello
+frt hello.f90 -o hello
 
 # 執行（透過 PJM）
 pjsub job_script.sh
@@ -36,16 +37,16 @@ pjsub job_script.sh
 
 ```bash
 # 開啟優化 (建議使用 -Kfast)
-frtpx -Kfast program.f90 -o program
+frt -Kfast program.f90 -o program
 
 # 啟用 ARM SVE 向量化 (512-bit)
-frtpx -Kfast -KSVE program.f90 -o program
+frt -Kfast -KSVE program.f90 -o program
 
 # 除錯模式 (加入除錯符號 + 檢查陣列邊界)
-frtpx -g -Hx,CHECK_SUBSCRIPT program.f90 -o program_debug
+frt -g -Hx,CHECK_SUBSCRIPT program.f90 -o program_debug
 
 # 完整優化 + OpenMP
-frtpx -Kfast -KSVE -Kopenmp program.f90 -o program
+frt -Kfast -KSVE -Kopenmp program.f90 -o program
 ```
 
 ### Fujitsu 編譯器優化選項
@@ -62,7 +63,11 @@ frtpx -Kfast -KSVE -Kopenmp program.f90 -o program
 
 ```bash
 # 顯示向量化報告
-frtpx -Kfast -KSVE -Koptmsg=2 program.f90 -o program
+frt -Kfast -KSVE -Koptmsg=2 program.f90 -o program
+
+# Instant Performance Profiler（FIPP）量測用（詳見 profiler_toolkit_tcs.md）
+# -Nfjprof：連結 Profiler 函式庫；-Nline 或 -ffj-line：行號／迴圈對應（勿對執行檔 strip）
+frt -g -Kfast -KSVE -Koptmsg=2 -Nfjprof -Nline program.f90 -o program_fipp
 ```
 
 ---
@@ -196,7 +201,7 @@ make clean      # 清除執行檔
 
 ## ⚡ 效能優化編譯技巧
 
-### Fortran
+### Fortran（GNU 參考；Part1 請用 `frt -Kfast`／`-KSVE` 等）
 
 ```bash
 # 向量化優化報告

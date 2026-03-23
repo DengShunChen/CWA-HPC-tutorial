@@ -1,36 +1,39 @@
 ! 練習題：向量乘法 - Fortran
-! 任務：將向量加法改為向量乘法，並測量效能
-! 
-! 目標：C(i) = A(i) * B(i)
-!
-! 提示：
-! 1. 參考 ../02_Vector_Add/vec_add.f90
-! 2. 把加法 (+) 改成乘法 (*)
-! 3. 加上計時功能
-! 4. 試試看能否優化你的程式碼
+! 功能：C(i) = A(i) * B(i)，並測量執行時間
 
 program vector_multiply
   implicit none
-  
-  ! ==========================================
-  ! TODO: 在此處填入你的程式碼
-  ! ==========================================
-  
-  ! 步驟：
-  ! 1. 宣告變數 (n, A, B, C, 計時變數等)
-  ! 2. 配置記憶體
-  ! 3. 初始化陣列 A 和 B
-  ! 4. 開始計時
-  ! 5. 計算 C = A * B (逐元素相乘)
-  ! 6. 結束計時
-  ! 7. 輸出結果
-  ! 8. 釋放記憶體
-  
-  ! 向量長度建議: 10000000 (一千萬)
-  
+
+  integer, parameter :: n = 10000000
+  real(8), allocatable :: A(:), B(:), C(:)
+  integer :: i
+  real :: start_time, end_time
+
+  allocate(A(n), B(n), C(n))
+
+  print *, "初始化陣列 A 和 B..."
+  do i = 1, n
+    A(i) = real(i, 8)
+    B(i) = real(i, 8) * 2.0d0
+  end do
+
+  call cpu_time(start_time)
+
+  do i = 1, n
+    C(i) = A(i) * B(i)
+  end do
+
+  call cpu_time(end_time)
+
+  print *
   print *, "====================================="
-  print *, "  向量乘法練習題"
+  print *, "  向量乘法完成"
   print *, "====================================="
-  print *, "請完成程式碼實作！"
-  
+  print *, "向量長度:    ", n
+  print *, "執行時間:    ", end_time - start_time, " 秒"
+  print *, "前 5 個結果: ", C(1:5)
+  print *
+
+  deallocate(A, B, C)
+
 end program vector_multiply

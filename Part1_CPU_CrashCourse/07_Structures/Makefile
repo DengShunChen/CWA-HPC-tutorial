@@ -1,12 +1,21 @@
-# Makefile for Structures Example
+# Makefile for Structures Example（Fortran：FX1000 用 frt；登入節點可用 frtpx）
 
-# 編譯器設定
-FC = gfortran
+ifneq ($(shell which frt 2>/dev/null),)
+FC = frt
+else ifneq ($(shell which frtpx 2>/dev/null),)
+FC = frtpx
+else
+$(error 未找到 frt / frtpx。請先 module load TCS 環境。)
+endif
+FFLAGS = -Kfast
+
+ifeq ($(shell which FCC 2>/dev/null),)
 CXX = g++
-
-# 編譯選項
-FFLAGS = -O2 -Wall
 CXXFLAGS = -O2 -Wall -std=c++11
+else
+CXX = FCC
+CXXFLAGS = -Kfast -std=c++11
+endif
 
 # 目標執行檔
 TARGETS = particle_fortran particle_cpp

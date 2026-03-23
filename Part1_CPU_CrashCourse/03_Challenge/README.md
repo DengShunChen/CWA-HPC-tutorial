@@ -55,11 +55,10 @@ cp ../02_Vector_Add/vec_add.f90 multiply.f90
 make all
 
 # 或手動編譯（Fujitsu A64FX）
-frtpx -Kfast multiply.f90 -o multiply_fortran
+frt -Kfast multiply.f90 -o multiply_fortran
 FCC -Kfast -std=c++11 multiply.cpp -o multiply_cpp
 
-# x86 平台（gfortran/g++）
-gfortran -O2 multiply.f90 -o multiply_fortran
+# 無 FCC 時 C++ 可用 g++（Fortran 仍須 frt）
 g++ -O2 -std=c++11 multiply.cpp -o multiply_cpp
 ```
 
@@ -154,3 +153,10 @@ std::cout << "執行時間: " << elapsed.count() << " 秒" << std::endl;
 ---
 
 **祝你順利完成練習！記得：錯誤是學習的一部分 💪**
+
+---
+
+**下一步（擇一）**
+
+- **依資料夾編號自學**：進入 [`04_Matrix_Operations`](../04_Matrix_Operations/)（二維陣列與快取）。  
+- **依「約 3 小時工作坊」時程**：接 [`08_Debug_Profile`](../08_Debug_Profile/)（TCS Debugger／Profiler 入門），之後再回頭 [`04_Matrix_Operations`](../04_Matrix_Operations/) — 詳見本目錄 [`README.md`](../README.md)「兩種學習順序」。

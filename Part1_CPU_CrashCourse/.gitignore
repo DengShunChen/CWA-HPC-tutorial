@@ -1,0 +1,25 @@
+# run_all_tests.sh --submit-pjm / --inside-job 產物
+.part1_autotest_job.sh
+part1_autotest.log
+part1_autotest_report.txt
+part1_test_report_*.txt
+pjm_smoke_test.log
+
+# 08_Debug_Profile：分析工具產物／core
+perf.data
+perf.data.old
+core
+core.*
+vgcore.*
+
+# 09：編譯器優化訊息（本機產生）
+optmsg_frtpx.log
+optmsg_frt.log
+optmsg_fujitsu.log
+
+# FIPP 量測輸出目錄（名稱自訂，常見 tmp/）
+tmp/
+fipp_out/
+tmp_fipp_autotest/
+tmp_fipppx_autotest/
+tmp_fapp_autotest/

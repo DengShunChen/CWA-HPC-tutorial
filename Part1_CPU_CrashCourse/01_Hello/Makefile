@@ -1,10 +1,21 @@
-# Makefile for Hello World examples (Fujitsu A64FX)
+# Makefile for Hello World examples（Fortran：FX1000 用 frt；登入節點可用 frtpx）
 
+ifneq ($(shell which frt 2>/dev/null),)
+FC = frt
+else ifneq ($(shell which frtpx 2>/dev/null),)
 FC = frtpx
-CXX = FCC
-
+else
+$(error 未找到 frt / frtpx。請先 module load TCS 環境。)
+endif
 FFLAGS = -Kfast
-CXXFLAGS = -Kfast -std=c++11
+
+ifeq ($(shell which FCC 2>/dev/null),)
+  CXX = g++
+  CXXFLAGS = -O2 -Wall -std=c++11
+else
+  CXX = FCC
+  CXXFLAGS = -Kfast -std=c++11
+endif
 
 .PHONY: all clean fortran cpp
 

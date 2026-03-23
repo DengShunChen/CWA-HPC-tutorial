@@ -1,36 +1,33 @@
 #!/bin/bash
-#PBS -N matrix_multiply
-#PBS -l select=1:ncpus=1
-#PBS -l walltime=00:10:00
-#PBS -q workq
+# PJM 範例：於計算節點執行矩陣乘法效能對比（與 02_Vector_Add/job_vec_add.sh 相同批次語法）
+# 使用方式：在 04_Matrix_Operations 目錄下 pjsub job_matrix.sh（請先將 <your_group> 改為實際群組）
 
-# 矩陣乘法作業腳本
-# 用於提交到 HPC 叢集
+#PJM -L "rscgrp=small"
+#PJM -L "node=1"
+#PJM -L "elapse=00:15:00"
+#PJM -g <your_group>              # ← 請修改為您的群組名稱
+#PJM -j
+#PJM -o matrix_multiply_benchmark.log
 
-cd $PBS_O_WORKDIR
+module load lang/tcsds-1.2.37
+
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+cd "${PJM_O_WORKDIR:-$HERE}" || exit 1
 
 echo "========================================"
-echo "  矩陣乘法效能測試"
+echo "  矩陣乘法效能測試（PJM）"
 echo "========================================"
 echo "主機名稱: $(hostname)"
 echo "工作目錄: $(pwd)"
+echo "時間: $(date)"
 echo ""
 
-# 執行基礎版本
-echo "--- Fortran 基礎版本 ---"
-./matrix_multiply_fortran
+make clean && make
 
 echo ""
-echo "--- Fortran 優化版本 ---"
-./matrix_multiply_optimized_fortran
+make run_all
 
 echo ""
-echo "--- C++ 基礎版本 ---"
-./matrix_multiply_cpp
-
-echo ""
-echo "--- C++ 優化版本 ---"
-./matrix_multiply_optimized_cpp
-
-echo ""
-echo "測試完成！"
+echo "========================================="
+echo "  測試完成: $(date)"
+echo "========================================="

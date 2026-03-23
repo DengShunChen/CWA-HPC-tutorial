@@ -21,6 +21,7 @@
 | `matrix_multiply.cpp` | C++ 基礎版 | i-j-k 迴圈順序 |
 | `matrix_multiply_optimized.f90` | Fortran 優化版 ⚡ | 使用內建 MATMUL |
 | `matrix_multiply_optimized.cpp` | C++ 優化版 ⚡ | i-k-j 順序 + Blocking |
+| `job_matrix.sh` | **PJM** 批次範例 | `pjsub` 於計算節點執行 `make` 與 `make run_all` |
 
 ---
 
@@ -36,6 +37,16 @@ make run_all
 # 清除執行檔
 make clean
 ```
+
+### 於 FX1000 上以 PJM 提交（主線）
+
+本章 `job_matrix.sh` 與 [`02_Vector_Add/job_vec_add.sh`](../02_Vector_Add/job_vec_add.sh) 相同，使用 **Fujitsu PJM**（`#PJM` 指令列、`pjsub` 提交）。請將腳本內 `<your_group>` 改為實際群組後，在 **`04_Matrix_Operations` 目錄**執行：
+
+```bash
+pjsub job_matrix.sh
+```
+
+作業內會 `module load lang/tcsds-1.2.37`、重新 `make` 並執行 `make run_all`；標準輸出／錯誤合併寫入 `matrix_multiply_benchmark.log`（依腳本中 `#PJM -o` 設定）。PJM 指令與錯誤排除見 [`../../00_Cheatsheets/pjm_batch_system.md`](../../00_Cheatsheets/pjm_batch_system.md)。
 
 ---
 
