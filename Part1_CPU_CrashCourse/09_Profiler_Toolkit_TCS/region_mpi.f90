@@ -6,7 +6,7 @@ program region_mpi
   implicit none
   integer :: ierr, rank, nprocs
   integer(ik) :: n
-  real(8) :: s1, s2
+  real(8) :: s_heavy, s_stream, s_branch, s_light
 
   interface
     subroutine fipp_start
@@ -23,10 +23,13 @@ program region_mpi
 
   if (rank == 0) then
     call fipp_start
-    call phase_heavy(n, s1)
-    call phase_light(n, s2)
+    call phase_heavy(n, s_heavy)
+    call phase_stream(n, s_stream)
+    call phase_branch(n, s_branch)
+    call phase_light(n, s_light)
     call fipp_stop
-    print *, 'rank 0 checksum_heavy=', s1, ' checksum_light=', s2, ' nprocs=', nprocs
+    print *, 'rank 0 checksum_heavy=', s_heavy, ' checksum_stream=', s_stream, &
+             ' checksum_branch=', s_branch, ' checksum_light=', s_light, ' nprocs=', nprocs
   end if
 
   call MPI_Barrier(MPI_COMM_WORLD, ierr)

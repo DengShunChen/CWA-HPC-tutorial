@@ -120,13 +120,41 @@ gdb ./buggy_program core
 
 ---
 
+## 6) 軟體優化循環完整案例（Optimization Loop）
+
+本章新增可直接上課演示的完整流程，位置：
+
+- [`Optimization_Loop_Demo/`](./Optimization_Loop_Demo/)
+
+你可以完整跑一次：
+
+`profiling -> analysis profiling report -> identify slow coding -> optimize coding -> check output result -> reprofiling`
+
+快速執行：
+
+```bash
+cd Optimization_Loop_Demo
+chmod +x run_optimization_loop.sh
+./run_optimization_loop.sh
+```
+
+或用 PJM：
+
+```bash
+pjsub job_optimization_loop.sh
+```
+
+會產出 `loop_reports/summary.txt`，包含 baseline/optimized time 與 speedup。
+
+---
+
 ## 任務分級（Must / Should / Could）
 
 | 層級 | 任務 |
 |------|------|
 | **Must** | 能解釋一個 PJM 失敗案例，並給出下一步檢查命令 |
-| **Should** | 完成一次 OOM 重現與「降低 MPI ranks」修正 |
-| **Could** | 產出 core 並回報 top frame 函式名稱 |
+| **Should** | 完成一次 OOM 重現與「降低 MPI ranks」修正；完成 1 次 Optimization Loop（含重剖析） |
+| **Could** | 產出 core 並回報 top frame 函式名稱；調大 `LOOP_DEMO_N/REPS` 比較 speedup 變化 |
 
 ---
 

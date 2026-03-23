@@ -224,6 +224,7 @@
 
 **檔案**：
 - `README.md` - 16:30-17:00 Q&A 實作流程
+- `Optimization_Loop_Demo/` - 完整軟體優化循環案例（profiling → analysis → identify → optimize → verify → reprofiling）
 
 ---
 

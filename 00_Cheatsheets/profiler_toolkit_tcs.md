@@ -205,4 +205,6 @@ frt -g -Kfast -KSVE -Koptmsg=2 -Nfjprof -Nline kernel_phases.f90 kernel_profile.
 
 - [`debug_and_profiler.md`](debug_and_profiler.md) — TCS Debugger／整體觀念  
 - [`compilation_guide.md`](compilation_guide.md) — `frt` 常用選項  
-- `Part1_CPU_CrashCourse/09_Profiler_Toolkit_TCS/README.md` — 範例程式與 PJM／`fipp` 指令範例
+- `Part1_CPU_CrashCourse/09_Profiler_Toolkit_TCS/README.md` — 範例程式與 PJM／`fipp` 指令範例  
+- `Part1_CPU_CrashCourse/09_Profiler_Toolkit_TCS/run_profile_workflow.sh` — 一鍵工作流（FIPP/FIPPPX/FAPP）  
+- `Part1_CPU_CrashCourse/09_Profiler_Toolkit_TCS/PROFILE_REVIEW_TEMPLATE.md` — 課堂判讀模板

@@ -1,0 +1,103 @@
+節點: b05-s3b0-06c  時間: Mon Mar 23 15:49:33 CST 2026
+工作目錄: /OFS/users/xb80/source_code/CWA-HPC-tutorial/Part1_CPU_CrashCourse/09_Profiler_Toolkit_TCS
+[INFO] 工作目錄: /OFS/users/xb80/source_code/CWA-HPC-tutorial/Part1_CPU_CrashCourse/09_Profiler_Toolkit_TCS
+[INFO] 模式: all  outdir: ./profile_out  level: 1  mpi-n: 0
+[STEP] make clean && make
+frt -g -Kfast -KSVE -Koptmsg=2 -Nfjprof -Nline kernel_phases.f90 kernel_profile.f90 -o kernel_profile_opt
+kernel_phases.f90:
+Fortran diagnostic messages: program name(kernel_phases)
+  jwd8220o-i  "kernel_phases.f90", line 10: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+ Module subprogram name(phase_heavy)
+  jwd6004s-i  "kernel_phases.f90", line 45: SIMD conversion is applied to DO loop with DO variable 'i'. The DO loop contains a reduction operation.
+  jwd8662o-i  "kernel_phases.f90", line 45: This loop is not software pipelined because no schedule is obtained.
+  jwd8202o-i  "kernel_phases.f90", line 45: Loop unrolled 8 times.
+  jwd8208o-i  "kernel_phases.f90", line 46: Method of calculating sum or product is changed.
+ Module subprogram name(phase_light)
+  jwd6004s-i  "kernel_phases.f90", line 58: SIMD conversion is applied to DO loop with DO variable 'i'. The DO loop contains a reduction operation.
+  jwd8662o-i  "kernel_phases.f90", line 58: This loop is not software pipelined because no schedule is obtained.
+  jwd8202o-i  "kernel_phases.f90", line 58: Loop unrolled 8 times.
+  jwd8208o-i  "kernel_phases.f90", line 59: Method of calculating sum or product is changed.
+ Module subprogram name(phase_stream)
+  jwd6001s-i  "kernel_phases.f90", line 73: SIMD conversion is applied to DO loop with DO variable 'i'.
+  jwd8204o-i  "kernel_phases.f90", line 73: This loop is software pipelined.
+  jwd8205o-i  "kernel_phases.f90", line 73: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 32.
+  jwd6001s-i  "kernel_phases.f90", line 80: SIMD conversion is applied to DO loop with DO variable 'i'.
+  jwd8204o-i  "kernel_phases.f90", line 80: This loop is software pipelined.
+  jwd8205o-i  "kernel_phases.f90", line 80: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 112.
+  jwd8209o-i  "kernel_phases.f90", line 81: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+  jwd6001s-i  "kernel_phases.f90", line 83: SIMD conversion is applied to DO loop with DO variable 'i'.
+  jwd8204o-i  "kernel_phases.f90", line 83: This loop is software pipelined.
+  jwd8205o-i  "kernel_phases.f90", line 83: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 128.
+  jwd6004s-i  "kernel_phases.f90", line 90: SIMD conversion is applied to DO loop with DO variable 'i'. The DO loop contains a reduction operation.
+  jwd8222o-i  "kernel_phases.f90", line 90: The prefetch instruction was output due to the number of prefetch required in this loop is greater than the allowable number of hardware-prefetch.
+  jwd8662o-i  "kernel_phases.f90", line 90: This loop is not software pipelined because no schedule is obtained.
+  jwd8202o-i  "kernel_phases.f90", line 90: Loop unrolled 8 times.
+  jwd8209o-i  "kernel_phases.f90", line 91: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+  jwd8208o-i  "kernel_phases.f90", line 91: Method of calculating sum or product is changed.
+ Module subprogram name(phase_branch)
+  jwd6229s-i  "kernel_phases.f90", line 107: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+  jwd8670o-i  "kernel_phases.f90", line 107: This loop cannot be software pipelined because the loop contains a branch instruction.
+  jwd8209o-i  "kernel_phases.f90", line 111: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+  jwd6202s-i  "kernel_phases.f90", line 111: SIMD conversion cannot be applied to DO loop: data dependency of variable 's' may cause different results from serial execution for loop.
+  jwd8209o-i  "kernel_phases.f90", line 113: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+  jwd8209o-i  "kernel_phases.f90", line 115: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+kernel_profile.f90:
+Linking:
+frt -g -Kfast -KSVE -Koptmsg=2 -Nfjprof -Nline kernel_phases.f90 region_marked.f90 -o region_marked
+kernel_phases.f90:
+Fortran diagnostic messages: program name(kernel_phases)
+  jwd8220o-i  "kernel_phases.f90", line 10: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+ Module subprogram name(phase_heavy)
+  jwd6004s-i  "kernel_phases.f90", line 45: SIMD conversion is applied to DO loop with DO variable 'i'. The DO loop contains a reduction operation.
+  jwd8662o-i  "kernel_phases.f90", line 45: This loop is not software pipelined because no schedule is obtained.
+  jwd8202o-i  "kernel_phases.f90", line 45: Loop unrolled 8 times.
+  jwd8208o-i  "kernel_phases.f90", line 46: Method of calculating sum or product is changed.
+ Module subprogram name(phase_light)
+  jwd6004s-i  "kernel_phases.f90", line 58: SIMD conversion is applied to DO loop with DO variable 'i'. The DO loop contains a reduction operation.
+  jwd8662o-i  "kernel_phases.f90", line 58: This loop is not software pipelined because no schedule is obtained.
+  jwd8202o-i  "kernel_phases.f90", line 58: Loop unrolled 8 times.
+  jwd8208o-i  "kernel_phases.f90", line 59: Method of calculating sum or product is changed.
+ Module subprogram name(phase_stream)
+  jwd6001s-i  "kernel_phases.f90", line 73: SIMD conversion is applied to DO loop with DO variable 'i'.
+  jwd8204o-i  "kernel_phases.f90", line 73: This loop is software pipelined.
+  jwd8205o-i  "kernel_phases.f90", line 73: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 32.
+  jwd6001s-i  "kernel_phases.f90", line 80: SIMD conversion is applied to DO loop with DO variable 'i'.
+  jwd8204o-i  "kernel_phases.f90", line 80: This loop is software pipelined.
+  jwd8205o-i  "kernel_phases.f90", line 80: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 112.
+  jwd8209o-i  "kernel_phases.f90", line 81: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+  jwd6001s-i  "kernel_phases.f90", line 83: SIMD conversion is applied to DO loop with DO variable 'i'.
+  jwd8204o-i  "kernel_phases.f90", line 83: This loop is software pipelined.
+  jwd8205o-i  "kernel_phases.f90", line 83: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 128.
+  jwd6004s-i  "kernel_phases.f90", line 90: SIMD conversion is applied to DO loop with DO variable 'i'. The DO loop contains a reduction operation.
+  jwd8222o-i  "kernel_phases.f90", line 90: The prefetch instruction was output due to the number of prefetch required in this loop is greater than the allowable number of hardware-prefetch.
+  jwd8662o-i  "kernel_phases.f90", line 90: This loop is not software pipelined because no schedule is obtained.
+  jwd8202o-i  "kernel_phases.f90", line 90: Loop unrolled 8 times.
+  jwd8209o-i  "kernel_phases.f90", line 91: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+  jwd8208o-i  "kernel_phases.f90", line 91: Method of calculating sum or product is changed.
+ Module subprogram name(phase_branch)
+  jwd6229s-i  "kernel_phases.f90", line 107: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+  jwd8670o-i  "kernel_phases.f90", line 107: This loop cannot be software pipelined because the loop contains a branch instruction.
+  jwd8209o-i  "kernel_phases.f90", line 111: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+  jwd6202s-i  "kernel_phases.f90", line 111: SIMD conversion cannot be applied to DO loop: data dependency of variable 's' may cause different results from serial execution for loop.
+  jwd8209o-i  "kernel_phases.f90", line 113: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+  jwd8209o-i  "kernel_phases.f90", line 115: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+region_marked.f90:
+Linking:
+✓ kernel_profile_opt
+✓ region_marked（fipp_start／fipp_stop，搭配 -Sregion）
+[STEP] 嘗試建置 FAPP 範例（region_fapp）
+[STEP] FIPP 全程式：kernel_profile_opt
+ checksum_heavy= 5975.996206899984  checksum_stream= 3532.921671817317  checksum_branch= 44596.58372945864  checksum_light= 35.99997899998510  time_s= 2.144740000000000
+ phase_time_heavy_s= 1.216050000000000  phase_time_stream_s= 0.3863579999999998  phase_time_branch_s= 0.4814250000000000  phase_time_light_s= 6.085500000000010E-02
+[STEP] FIPPPX 分析：./profile_out/fipp_all -> ./profile_out/fipp_all_analysis.txt
+[STEP] FIPP 區段：region_marked (-Sregion)
+ checksum_heavy= 5975.996206899984  checksum_stream= 3532.921671817317  checksum_branch= 44596.58372945864  checksum_light= 35.99997899998510
+[STEP] FIPPPX 分析：./profile_out/fipp_region -> ./profile_out/fipp_region_analysis.txt
+[STEP] FAPP Fortran：region_fapp (-L 1)
+ checksum_heavy= 5975.996206899984  checksum_stream= 3532.921671817317  checksum_branch= 44596.58372945864  checksum_light= 35.99997899998510
+[DONE] Profiling 完成：./profile_out
+[NEXT] 請依 PROFILE_REVIEW_TEMPLATE.md 填寫觀察結果
+完成時間: Mon Mar 23 15:49:49 CST 2026
+建議下一步（登入節點）：
+  1) 檢視 ./profile_out/**/analysis.txt
+  2) 依 PROFILE_REVIEW_TEMPLATE.md 填寫判讀結果

@@ -43,7 +43,7 @@ else
 endif
 CFLAGS_FJ = -g -Kfast -Nfjprof -Nline
 
-.PHONY: all clean run help optmsg test test-profilers \
+.PHONY: all clean run help optmsg test test-profilers workflow workflow-fipp workflow-fapp \
         region_mpi region_mpi_c region_mpi_f90 \
         region_fapp region_fapp_c region_fapp_mpi_f90 region_fapp_mpi_c
 
@@ -112,6 +112,15 @@ test:
 test-profilers:
 	RUN_FIPP_TEST=1 RUN_FIPPPX_TEST=1 RUN_FAPP_TEST=1 bash ./run_tests.sh
 
+workflow:
+	chmod +x ./run_profile_workflow.sh && ./run_profile_workflow.sh --mode all
+
+workflow-fipp:
+	chmod +x ./run_profile_workflow.sh && ./run_profile_workflow.sh --mode fipp
+
+workflow-fapp:
+	chmod +x ./run_profile_workflow.sh && ./run_profile_workflow.sh --mode fapp
+
 help:
 	@echo "make / make all       — kernel_profile_opt 與 region_marked（frt 或 frtpx）"
 	@echo "--- FIPP 區段（Instant Performance Profiler）---"
@@ -128,6 +137,9 @@ help:
 	@echo "---"
 	@echo "make run / test       — 執行主程式／章節自測"
 	@echo "make test-profilers   — fipp + fipppx + fapp 自測（需 TCS 工具）"
+	@echo "make workflow         — 一鍵執行 FIPP+FAPP 工作流（輸出 profile_out）"
+	@echo "make workflow-fipp    — 僅執行 FIPP 工作流"
+	@echo "make workflow-fapp    — 僅執行 FAPP 工作流"
 	@echo "make optmsg           — 優化訊息 → optmsg_fujitsu.log"
 	@echo "make clean"
 

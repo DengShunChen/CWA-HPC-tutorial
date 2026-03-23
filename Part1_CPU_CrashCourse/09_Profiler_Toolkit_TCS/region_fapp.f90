@@ -15,7 +15,7 @@ program region_fapp
   use kernel_phases
   implicit none
   integer(ik) :: n
-  real(8)     :: s1, s2
+  real(8)     :: s_heavy, s_stream, s_branch, s_light
 
   interface
     subroutine fapp_start(name, number, level)
@@ -35,16 +35,28 @@ program region_fapp
 
     ! --- 子區域 A：phase_heavy（level=1）---
     call fapp_start("heavy", 1, 1)
-    call phase_heavy(n, s1)
+    call phase_heavy(n, s_heavy)
     call fapp_stop("heavy", 1, 1)
 
-    ! --- 子區域 B：phase_light（level=1）---
+    ! --- 子區域 B：記憶體與分支（level=1/2）---
+    call fapp_start("memory_branch_mix", 1, 1)
+      call fapp_start("stream", 1, 2)
+      call phase_stream(n, s_stream)
+      call fapp_stop("stream", 1, 2)
+
+      call fapp_start("branch", 1, 2)
+      call phase_branch(n, s_branch)
+      call fapp_stop("branch", 1, 2)
+    call fapp_stop("memory_branch_mix", 1, 1)
+
+    ! --- 子區域 C：phase_light（level=1）---
     call fapp_start("light", 1, 1)
-    call phase_light(n, s2)
+    call phase_light(n, s_light)
     call fapp_stop("light", 1, 1)
 
   call fapp_stop("main_region", 1, 0)
 
   ! I/O 留在量測區域外（示範「排除 print 開銷」之最佳實務）
-  print *, 'checksum_heavy=', s1, ' checksum_light=', s2
+  print *, 'checksum_heavy=', s_heavy, ' checksum_stream=', s_stream, &
+           ' checksum_branch=', s_branch, ' checksum_light=', s_light
 end program region_fapp

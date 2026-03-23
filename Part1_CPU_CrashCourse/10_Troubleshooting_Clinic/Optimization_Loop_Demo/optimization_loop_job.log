@@ -1,0 +1,51 @@
+node=b05-s3b0-06c start=Mon Mar 23 16:01:33 CST 2026
+=== Optimization Loop Demo ===
+workdir: /OFS/users/xb80/source_code/CWA-HPC-tutorial/Part1_CPU_CrashCourse/10_Troubleshooting_Clinic/Optimization_Loop_Demo
+outdir : ./loop_reports
+[1/7] profiling (baseline 前置編譯)
+frt -g -Koptmsg=2 -Nfjprof -Nline loop_baseline.f90 -o loop_baseline
+frt: -g specified, level of -O changed to 0.
+[2/7] analysis profiling report (baseline)
+n=1200 reps=18
+checksum=     4380.1863148953 time_s=    3.279736
+[3/7] identify slow coding
+  - 請查看 ./loop_reports/baseline_analysis.txt 的 Procedures/Loops profile
+  - baseline 版本使用不友善走訪與迴圈內分支
+[4/7] optimize coding
+frt -g -Kfast -KSVE -Koptmsg=2 -Nfjprof -Nline loop_optimized.f90 -o loop_optimized
+Fortran diagnostic messages: program name(loop_optimized)
+  jwd8220o-i  "loop_optimized.f90", line 1: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+  jwd6001s-i  "loop_optimized.f90", line 16: SIMD conversion is applied to DO loop with DO variable 'i'.
+  jwd8204o-i  "loop_optimized.f90", line 16: This loop is software pipelined.
+  jwd8205o-i  "loop_optimized.f90", line 16: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 32.
+  jwd8210o-i  "loop_optimized.f90", line 28: Loops fused at line 35.
+  jwd6001s-i  "loop_optimized.f90", line 29: SIMD conversion is applied to DO loop with DO variable 'i'.
+  jwd8204o-i  "loop_optimized.f90", line 29: This loop is software pipelined.
+  jwd8205o-i  "loop_optimized.f90", line 29: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 40.
+  jwd8209o-i  "loop_optimized.f90", line 30: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+  jwd8209o-i  "loop_optimized.f90", line 38: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+  jwd8209o-i  "loop_optimized.f90", line 40: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+  jwd6001s-i  "loop_optimized.f90", line 46: SIMD conversion is applied to DO loop with DO variable 'i'.
+  jwd8204o-i  "loop_optimized.f90", line 46: This loop is software pipelined.
+  jwd8205o-i  "loop_optimized.f90", line 46: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 128.
+  jwd6004s-i  "loop_optimized.f90", line 57: SIMD conversion is applied to DO loop with DO variable 'i'. The DO loop contains a reduction operation.
+  jwd8222o-i  "loop_optimized.f90", line 57: The prefetch instruction was output due to the number of prefetch required in this loop is greater than the allowable number of hardware-prefetch.
+  jwd8204o-i  "loop_optimized.f90", line 57: This loop is software pipelined.
+  jwd8205o-i  "loop_optimized.f90", line 57: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 256.
+  jwd8209o-i  "loop_optimized.f90", line 58: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+  jwd8208o-i  "loop_optimized.f90", line 58: Method of calculating sum or product is changed.
+[5/7] check output result
+  checksum baseline=4380.1863148953
+  checksum optimized=4380.1863148953
+[6/7] reprofiling (optimized)
+n=1200 reps=18
+checksum=     4380.1863148953 time_s=    0.181594
+[7/7] summarize
+baseline time_s=3.280048
+optimized time_s=0.181208
+speedup=18.101x
+完成：
+  - ./loop_reports/baseline_analysis.txt
+  - ./loop_reports/optimized_analysis.txt
+  - ./loop_reports/summary.txt
+done=Mon Mar 23 16:01:45 CST 2026

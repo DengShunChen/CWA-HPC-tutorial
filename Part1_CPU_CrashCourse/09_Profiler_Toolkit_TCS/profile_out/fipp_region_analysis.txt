@@ -1,0 +1,100 @@
+---------------------------------------------------------------------------------------------
+Fujitsu Instant Performance Profiler Version 4.2.5
+   Measured time                 : Mon Mar 23 15:49:46 2026
+   CPU frequency                 : Process      0  2200 (MHz) 
+   Type of program               : SERIAL
+   Average at sampling interval  : 100.4 (ms)
+   Measured region               : Specified
+---------------------------------------------------------------------------------------------
+_____________________________________________________________________________________________
+Time statistics
+
+         Elapsed(s)        User(s)      System(s)
+   ---------------------------------------------
+            2.1429         2.1189         0.0240   Application
+   ---------------------------------------------
+            2.1429         2.1189         0.0240   Process      0
+_____________________________________________________________________________________________
+Performance monitor event:statistics
+
+   *************************************************************************************
+       Application - performance monitors
+   *************************************************************************************
+
+     Execution                       Floating-point  Mem throughput  Mem throughput
+            time(s)          GFLOPS   peak ratio(%)          (GB/s)   peak ratio(%)
+   --------------------------------------------------------------------------------
+             2.1429          0.4791          0.6805          2.6915          0.2628   Application
+   --------------------------------------------------------------------------------
+             2.1429          0.4791          0.6805          2.6915          0.2628   Process      0
+
+     Effective       Floating-point  SIMD inst.      SVE operation
+        instruction       operation         rate(%)         rate(%)
+   --------------------------------------------------------------------------------
+          905364235      1026631280         25.5096         74.4973                   Application
+   --------------------------------------------------------------------------------
+          905364235      1026631280         25.5096         74.4973                   Process      0
+
+                IPC            GIPS
+   --------------------------------------------------------------------------------
+             0.1920          0.4225                                                   Application
+   --------------------------------------------------------------------------------
+             0.1920          0.4225                                                   Process      0
+_____________________________________________________________________________________________
+Procedures profile (Total thread cost basis)
+
+   *************************************************************************************
+       Application - procedures
+         Application and Process outputs the total value of the cost of each thread.
+         Procedure outputs the total value of the procedure cost of each thread.
+   *************************************************************************************
+
+              Cost          %  Operation (s)        Barrier          %    Start      End
+   -------------------------------------------------------------------------------------
+                22   100.0000         2.2087             --         --       --       --   Application
+   -------------------------------------------------------------------------------------
+                12    54.5455         1.2048             --         --       39       48   kernel_phases.phase_heavy_
+                 5    22.7273         0.5020             --         --       97      118   kernel_phases.phase_branch_
+                 4    18.1818         0.4016             --         --       63       95   kernel_phases.phase_stream_
+                 1     4.5455         0.1004             --         --       50       61   kernel_phases.phase_light_
+_____________________________________________________________________________________________
+Loops profile (Total thread cost basis)
+
+   *************************************************************************************
+       Application - loops
+         Application and Process outputs the total value of the cost of each thread.
+         Procedure outputs the total value of the loop cost of each thread.
+   *************************************************************************************
+
+              Cost          %  Operation (s)        Barrier          %    Nest    Kind     Exec    Start      End
+   --------------------------------------------------------------------------------------------------------------
+                22   100.0000         2.2087             --         --      --      --     --         --       --   Application
+   --------------------------------------------------------------------------------------------------------------
+                12    54.5455         1.2048             --         --       1   DO      SERIAL       45       47   kernel_phases.phase_heavy_
+                 5    22.7273         0.5020             --         --       1   DO      SERIAL      107      117   kernel_phases.phase_branch_
+                 3    13.6364         0.3012             --         --       1   DO      SERIAL       73       77   kernel_phases.phase_stream_
+                 1     4.5455         0.1004             --         --       2   DO      SERIAL       80       82   kernel_phases.phase_stream_
+                 1     4.5455         0.1004             --         --       1   DO      SERIAL       58       60   kernel_phases.phase_light_
+_____________________________________________________________________________________________
+Lines profile (Total thread cost basis)
+
+   *************************************************************************************
+       Application - lines
+         Application and Process outputs the total value of the cost of each thread.
+         Procedure outputs the total value of the line cost of each thread.
+   *************************************************************************************
+
+              Cost          %  Operation (s)        Barrier          %     Line
+   ----------------------------------------------------------------------------
+                22   100.0000         2.2087             --         --       --   Application
+   ----------------------------------------------------------------------------
+                12    54.5455         1.2048             --         --       46   kernel_phases.phase_heavy_
+                 2     9.0909         0.2008             --         --      109   kernel_phases.phase_branch_
+                 2     9.0909         0.2008             --         --       75   kernel_phases.phase_stream_
+                 1     4.5455         0.1004             --         --      111   kernel_phases.phase_branch_
+                 1     4.5455         0.1004             --         --      115   kernel_phases.phase_branch_
+                 1     4.5455         0.1004             --         --      113   kernel_phases.phase_branch_
+                 1     4.5455         0.1004             --         --       74   kernel_phases.phase_stream_
+                 1     4.5455         0.1004             --         --       82   kernel_phases.phase_stream_
+                 1     4.5455         0.1004             --         --       59   kernel_phases.phase_light_
+_____________________________________________________________________________________________

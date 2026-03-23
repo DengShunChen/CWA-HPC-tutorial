@@ -1,0 +1,3 @@
+baseline time_s=3.280048
+optimized time_s=0.181208
+speedup=18.101x

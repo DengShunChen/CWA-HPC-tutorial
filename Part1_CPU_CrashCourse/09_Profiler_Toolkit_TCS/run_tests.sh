@@ -74,6 +74,8 @@ out="$(./kernel_profile_opt 2>&1)" || {
 }
 
 echo "$out" | grep -q 'checksum_heavy=' || fail "輸出應含 checksum_heavy="
+echo "$out" | grep -q 'checksum_stream=' || fail "輸出應含 checksum_stream="
+echo "$out" | grep -q 'checksum_branch=' || fail "輸出應含 checksum_branch="
 echo "$out" | grep -q 'checksum_light=' || fail "輸出應含 checksum_light="
 echo "$out" | grep -q 'time_s=' || fail "輸出應含 time_s="
 
@@ -94,6 +96,8 @@ fi
 if [[ -x ./region_marked ]]; then
   out_r="$(./region_marked 2>&1)" || fail "region_marked 執行"
   echo "$out_r" | grep -q 'checksum_heavy=' || fail "region_marked 輸出格式"
+  echo "$out_r" | grep -q 'checksum_stream=' || fail "region_marked 缺 checksum_stream"
+  echo "$out_r" | grep -q 'checksum_branch=' || fail "region_marked 缺 checksum_branch"
   heavy_r="$(extract_metric 'checksum_heavy' "$out_r")"
   if [ -n "$heavy_r" ]; then
     assert_close "$heavy_r" "248.997858" "0.001" "region_marked checksum_heavy"
@@ -166,6 +170,8 @@ if [[ "${RUN_FAPP_TEST:-0}" == "1" ]] && command -v fapp >/dev/null 2>&1; then
       # 檢查區域程式散出的數字正確性
       out_fa="$(./region_fapp 2>&1 || true)"
       heavy_fa="$(extract_metric 'checksum_heavy' "$out_fa")"
+      echo "$out_fa" | grep -q 'checksum_stream=' || fail "region_fapp 缺 checksum_stream"
+      echo "$out_fa" | grep -q 'checksum_branch=' || fail "region_fapp 缺 checksum_branch"
       if [ -n "$heavy_fa" ]; then
         assert_close "$heavy_fa" "248.997858" "0.001" "region_fapp checksum_heavy"
       else

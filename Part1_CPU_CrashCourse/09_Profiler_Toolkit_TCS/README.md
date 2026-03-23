@@ -32,7 +32,7 @@
 
 | 檔案 | 用途 |
 |------|------|
-| `kernel_phases.f90` | **`module kernel_phases`**（`phase_heavy`／`phase_light`、**`resolve_kernel_profile_n`**） |
+| `kernel_phases.f90` | **`module kernel_phases`**（`phase_heavy`／`phase_stream`／`phase_branch`／`phase_light`、**`resolve_kernel_profile_n`**） |
 | `kernel_profile.f90` | 整程式量測用主程式 → 執行檔 **`kernel_profile_opt`** |
 | `region_marked.f90` | **`fipp_start`**／**`fipp_stop`** 區段範例 → **`region_marked`**（**僅 `frt` 可建置**） |
 | `region_mpi.f90` | **MPI Fortran**：僅 **rank 0** 進入 FIPP 區段 → **`region_mpi`**（**`make region_mpi`**，需 **`mpifrt`**） |
@@ -45,6 +45,9 @@
 | `Makefile` | **`frt`（fx1000）/ `frtpx`（ln23 cross）**：`kernel_profile_opt` + `region_marked`；**`make optmsg`**、**`make test`** |
 | `run_tests.sh` | 章節自測（**`make test`**）；可選 **`RUN_FIPP_TEST`／`RUN_FIPPPX_TEST`／`RUN_FAPP_TEST`**（見下） |
 | `job_kernel_profile.sh` | PJM 範例：計算節點 **`fipp`** 取樣 |
+| `run_profile_workflow.sh` | 一鍵工作流：**編譯 + FIPP/FIPPPX + FAPP**（可選 MPI） |
+| `job_profile_workflow.sh` | PJM 版一鍵工作流（課堂示範建議） |
+| `PROFILE_REVIEW_TEMPLATE.md` | 判讀模板：熱點、區段、MPI rank0 與下一輪優化行動 |
 | [`A64FX_Profiler_Reference.md`](A64FX_Profiler_Reference.md) | **A64FX／IPP／APP／CPAR** 技術參考（與官方手冊對照用） |
 
 ---
@@ -74,7 +77,7 @@ program example
 end program example
 ```
 
-本目錄之 **`region_marked.f90`** 將 **`phase_heavy`**／**`phase_light`** 包在單一區段內，**`print`** 留在區段外，示範「排除 I/O、只量純運算」之編排。
+本目錄之 **`region_marked.f90`** 將 **`phase_heavy`**／**`phase_stream`**／**`phase_branch`**／**`phase_light`** 包在單一區段內，**`print`** 留在區段外，示範「排除 I/O、只量純運算」之編排。
 
 **量測時**須加上 **`-Sregion`**：
 
@@ -277,12 +280,39 @@ mpiexec -n 4 fapp -C -d ./tmp_fapp -L 1 ./region_fapp_mpi_f90
 
 ---
 
+## 一鍵工作流（推薦給課堂）
+
+先在計算節點：
+
+```bash
+chmod +x run_profile_workflow.sh
+./run_profile_workflow.sh --mode all --outdir ./profile_out --level 1 --mpi-n 4
+```
+
+或使用 Makefile 包裝：
+
+```bash
+make workflow       # all
+make workflow-fipp  # only fipp
+make workflow-fapp  # only fapp
+```
+
+若走批次（PJM）：
+
+```bash
+pjsub job_profile_workflow.sh
+```
+
+完成後請用 `PROFILE_REVIEW_TEMPLATE.md` 做判讀記錄（可直接作為課堂驗收）。
+
+---
+
 ## 預期行為（健全性檢查）
 
 | 項目 | 說明 |
 |------|------|
-| **正確性** | `./kernel_profile_opt` 與 **`./region_marked`** 之 **checksum** 應與參考一致（見 **`run_tests.sh`**） |
-| **時間分布** | **`phase_heavy`** 應顯著重於 **`phase_light`** |
+| **正確性** | `./kernel_profile_opt` 與 **`./region_marked`** 之 `checksum_heavy` / `checksum_stream` / `checksum_branch` / `checksum_light` 應可穩定輸出（參考 **`run_tests.sh`**） |
+| **時間分布** | 報告中應可觀察到「計算密集 (`phase_heavy`)」與「記憶體/分支混合 (`phase_stream` / `phase_branch`)」的成本差異 |
 | **符號** | 未 **`strip`**；已加 **`-Nline`**（或 **`-ffj-line`**） |
 
 ---
@@ -291,7 +321,7 @@ mpiexec -n 4 fapp -C -d ./tmp_fapp -L 1 ./region_fapp_mpi_f90
 
 - **Makefile 會優先用 `frt`，否則退回 `frtpx`**；無任一編譯器時 **`make` 會失敗**，請先 **`module load`** 正確之 TCS 環境。  
 - **`./tmp`** 等量測目錄勿提交版控。  
-- **`KERNEL_PROFILE_N`（環境變數）**：未設定時迭代長度為模組內 **`kernel_n_default`**（約 5×10⁷），適合**計算節點**剖析。FX1000 上**正式流程**為：登入節點僅 **`make` 編譯**，執行與 **FIPP／fapp** 取樣請 **`pjsub`**（見 **`job_kernel_profile.sh`**），並在該腳本中 **`unset KERNEL_PROFILE_N`** 以使用完整負載。**`run_tests.sh`／`make test-profilers` 預設將 `KERNEL_PROFILE_N=5000000`**，僅供站臺允許之極短自測；與「登入節點只編譯、執行靠 `pjsub`」之政策並存時，請以站臺規範為準。
+- **`KERNEL_PROFILE_N`（環境變數）**：未設定時迭代長度為模組內 **`kernel_n_default`**（約 1.2×10⁸，較能顯示多種瓶頸），適合**計算節點**剖析。FX1000 上**正式流程**為：登入節點僅 **`make` 編譯**，執行與 **FIPP／fapp** 取樣請 **`pjsub`**（見 **`job_kernel_profile.sh`**），並在該腳本中 **`unset KERNEL_PROFILE_N`** 以使用完整負載。**`run_tests.sh`／`make test-profilers` 預設將 `KERNEL_PROFILE_N=5000000`**，僅供站臺允許之極短自測；與「登入節點只編譯、執行靠 `pjsub`」之政策並存時，請以站臺規範為準。
 
 ---
 
@@ -299,7 +329,7 @@ mpiexec -n 4 fapp -C -d ./tmp_fapp -L 1 ./region_fapp_mpi_f90
 
 | 層級 | 任務 |
 |------|------|
-| **Must** | **`frt`** 建置並完成 **`fipp` + `fipppx`** 一輪；能說明 **`phase_heavy`** 為主要熱點 |
+| **Must** | **`frt`** 建置並完成 **`fipp` + `fipppx`** 一輪；能指出至少兩種不同型態熱點（計算密集 vs 記憶體/分支） |
 | **Should** | 使用 **`region_marked`** 與 **`-Sregion`**，對照整程式量測之差異 |
 | **Could** | 建置 **`region_mpi`**，示範僅 rank 0 量測；或調整 **`KERNEL_PROFILE_N`**／**`kernel_n_default`** 做負載實驗 |
 | **Could+** | 建置 **`region_fapp`**，以 **`fapp_start`**／**`fapp_stop`** 做多層 APP 量測，對比 IPP 全域分析與 APP 指令級分析之差異 |
