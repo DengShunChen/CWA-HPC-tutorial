@@ -201,7 +201,7 @@
 **學習目標**：
 - 在 **FX1000** 上以 **`frt`**（A64FX 原生）編譯可供 **FIPP（IPP）** 量測之執行檔（**`-Nfjprof`、`-Nline`**，並可併用 **`-g`、`-Kfast`、`-KSVE`、`-Koptmsg=2`**）
 - 於**計算節點**使用 **`fipp -C -d ...`** 取樣，於**登入節點**使用 **`fipppx -A -d ...`** 產出分析
-- 解讀報告中 **`phase_heavy`**／**`phase_light`** 之時間占比，並與 **`-Koptmsg=2`** 對照
+- 解讀報告中 **`phase_heavy`**／**`phase_stream`**／**`phase_branch`**／**`phase_light`** 之時間占比，並與 **`-Koptmsg=2`** 對照
 - （延伸）理解 **IPP／APP／CPAR** 分工、**`fipp`** 關鍵選項（**`-I`、`-i`、`-S`、`-M`**）、**A64FX** 指標（GFLOPS／SVE／HBM）、**CPAR 週期核算**與 **OpenMP `FLIB_FASTOMP`** 等（見 **`A64FX_Profiler_Reference.md`**）
 
 **檔案**：
@@ -270,7 +270,7 @@ make --version
 
 ### 一鍵自動測試（`run_all_tests.sh`）
 
-在 `Part1_CPU_CrashCourse` 目錄下會依序對 **01–09** 各章執行 `make clean && make`，並**執行**對應程式（含 Fortran），**不略過任何步驟**。結束時若任一步失敗，腳本以非零 exit code 結束。
+在 `Part1_CPU_CrashCourse` 目錄下會依序對 **01–09** 各章執行 `make clean && make`，並**執行**對應程式（含 Fortran），**不略過任何步驟**。第 **10** 章屬 Q&A/Troubleshooting 與 Optimization Loop 實作，請依章節腳本另行執行。結束時若任一步失敗，腳本以非零 exit code 結束。
 
 **`run_all_tests.sh`** 須在具 **`frt`** 的 **A64FX** 環境執行（互動計算節點或 **`./run_all_tests.sh --submit-pjm`** 送批次至計算節點）。登入節點若無 `frt`，腳本會在前置檢查**直接中止（exit 3）**並提示改至計算節點。
 
@@ -298,7 +298,7 @@ export PJM_ELAPSE=01:30:00
 
 若系統有 `pjwait`，腳本會嘗試等待工作結束；否則請以 `pjstat` 或 PJM 日誌（預設 `part1_autotest.log`）查結果。計算節點上的測試摘要會寫入 `part1_autotest_report.txt`（與腳本同目錄）。不需要 Fujitsu module 時可設 `PJM_MODULE=0`。
 
-- **完整 Part1（01–09）於計算節點之結果**：請查看 **`part1_autotest.log`**（標準輸出合併）與 **`part1_autotest_report.txt`**（時間戳 PASS／FAIL 摘要）。若快照顯示 **`frt: 未找到`**，請在 **A64FX** 環境載入貴站 **`module load`**（例：`module use …` + **`tcsds/1.2.40`**）。
+- **完整 Part1 基礎章節（01–09）於計算節點之結果**：請查看 **`part1_autotest.log`**（標準輸出合併）與 **`part1_autotest_report.txt`**（時間戳 PASS／FAIL 摘要）。若快照顯示 **`frt: 未找到`**，請在 **A64FX** 環境載入貴站 **`module load`**（例：`module use …` + **`tcsds/1.2.40`**）。
 
 ### 僅測試 PJM 是否正常（煙霧測試）
 

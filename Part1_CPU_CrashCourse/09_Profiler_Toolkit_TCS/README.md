@@ -286,8 +286,10 @@ mpiexec -n 4 fapp -C -d ./tmp_fapp -L 1 ./region_fapp_mpi_f90
 
 ```bash
 chmod +x run_profile_workflow.sh
-./run_profile_workflow.sh --mode all --outdir ./profile_out --level 1 --mpi-n 4
+./run_profile_workflow.sh --mode all --outdir ./profile_out --level 1 --mpi-n 0
 ```
+
+> 若要啟用 MPI 範例，請改為 `--mpi-n 4`，並在 PJM 腳本中加入對應 `#PJM --mpi "proc=4"`（或貴站等價設定）。
 
 或使用 Makefile 包裝：
 

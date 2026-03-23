@@ -45,9 +45,9 @@ pjsub job_optimization_loop.sh
 ## 你要怎麼講解（對齊 6 步驟）
 
 1. **profiling（baseline）**  
-   `fipp -C -d baseline ./loop_baseline`
+   `fipp -C -d loop_reports/baseline ./loop_baseline`
 2. **analysis profiling report**  
-   `fipppx -A -d baseline > baseline_analysis.txt`
+   `fipppx -A -d loop_reports/baseline > loop_reports/baseline_analysis.txt`
 3. **identify slow coding**  
    從 `baseline_analysis.txt` 看 hottest procedure / loop
 4. **optimize coding**  

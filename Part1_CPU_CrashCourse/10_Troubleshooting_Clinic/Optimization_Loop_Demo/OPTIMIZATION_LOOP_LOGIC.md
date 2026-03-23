@@ -30,14 +30,14 @@
 - 程式：`loop_baseline.f90`
 - 行為：保留較差記憶體走訪與迴圈內分支
 - 指令（由 `run_optimization_loop.sh` 執行）：
-  - `fipp -C -d baseline ./loop_baseline`
+  - `fipp -C -d loop_reports/baseline ./loop_baseline`
 
 目的：建立「未優化前」的效能基準。
 
 ### 2) Analysis profiling report
 
 - 指令：
-  - `fipppx -A -d baseline > baseline_analysis.txt`
+  - `fipppx -A -d loop_reports/baseline > loop_reports/baseline_analysis.txt`
 - 觀察重點：
   - `Procedures profile`
   - `Loops profile`
@@ -76,8 +76,8 @@
 ### 6) Reprofiling
 
 - 指令：
-  - `fipp -C -d optimized ./loop_optimized`
-  - `fipppx -A -d optimized > optimized_analysis.txt`
+  - `fipp -C -d loop_reports/optimized ./loop_optimized`
+  - `fipppx -A -d loop_reports/optimized > loop_reports/optimized_analysis.txt`
 - 產出：
   - `summary.txt`（baseline/optimized time + speedup）
 

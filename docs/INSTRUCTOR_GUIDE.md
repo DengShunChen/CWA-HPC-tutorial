@@ -131,13 +131,13 @@
 
 | 時間 | 分鐘 | 主題 | 資料夾／文件 | 教學重點 | 任務層級 |
 |------|------|------|-------------|----------|----------|
-| 14:00-14:40 | 40 | 實務演練（一）：合規登入、互動式資源、資料處理 | `01_Hello`、`00_Cheatsheets/pjm_batch_system.md` | 先 `pjsub --interact` 再操作；示範 Quota、/IFS / /OFS 工作目錄、tar+rsync 流程 | Must: 成功進入互動節點並完成一次資料搬移 |
+| 14:00-14:40 | 40 | 實務演練（一）：合規登入、互動式資源、資料處理 | `00_HPC_Workflow`、`01_Hello`、`00_Cheatsheets/pjm_batch_system.md` | 先 `pjsub --interact` 再操作；示範 Quota、/IFS / /OFS 工作目錄、tar+rsync 流程 | Must: 成功進入互動節點並完成一次資料搬移 |
 | 14:40-15:30 | 50 | 實務演練（二）：A64FX 原生編譯與 Optimization Loop | `02_Vector_Add`、`03_Challenge`、`08_Debug_Profile` | `frt`/`FCC` 編譯、`-Kfast` + `-Koptmsg=2` 判讀、TCS Profiler（fapp/fipp）熱點觀察 | Must + Should |
 | 15:30-15:45 | 15 | **休息 + 問題蒐集** | -- | 助教整理紅/黃旗問題，準備批次派送段落 | -- |
 | 15:45-16:30 | 45 | 實務演練（三）：PJM 批次派送與監控防護 | `04_Matrix_Operations/job_matrix.sh`、`00_Cheatsheets/pjm_batch_system.md` | 撰寫/修改 `#PJM`、`pjsub` 提交、`pjstat`/`pjwait` 監控、`pjdel` 安全中止 | Must: 完成提交流程；Could: 演練無窮迴圈中止 |
-| 16:30-17:00 | 30 | Q&A + Troubleshooting | `08_Debug_Profile`、`09_Profiler_Toolkit_TCS`、Cheatsheets | PJM 錯誤碼、OOM、Crash/Core dump、求援流程與錄影回放索引 | -- |
+| 16:30-17:00 | 30 | Q&A + Troubleshooting | `10_Troubleshooting_Clinic`、`08_Debug_Profile`、`09_Profiler_Toolkit_TCS`、Cheatsheets | PJM 錯誤碼、OOM、Crash/Core dump、求援流程與錄影回放；可用 `Optimization_Loop_Demo` 示範完整優化閉環 | -- |
 
-**重要時間保護**：`05_File_IO`、`06_Functions_Modules`、`07_Structures` 為自學補充。`09_Profiler_Toolkit_TCS` 定位為 Q&A 延伸或第二次進階場次，與 `08_Debug_Profile` 銜接。
+**重要時間保護**：`05_File_IO`、`06_Functions_Modules`、`07_Structures` 為自學補充。`09_Profiler_Toolkit_TCS` 定位為 Q&A 延伸或第二次進階場次，與 `08_Debug_Profile` 銜接。`10_Troubleshooting_Clinic/Optimization_Loop_Demo` 可在 16:30-17:00 直接示範「profiling → analysis → optimize → verify → reprofiling」。
 
 ### 4.2 關鍵教學點
 
@@ -146,6 +146,7 @@
 3. **03_Challenge**：留足時間讓學員動手，卡關超過 5 分鐘才提供提示
 4. **04_Matrix_Operations**：用圖解說明 Column-major vs Row-major 在記憶體中的差異（本節奏若時間緊，以「跑通優化版 + 一張效能對照表」為優先）
 5. **08_Debug_Profile**：**Fortran + `frt`**；除錯用 **`microbench_dbg`**（`-g`、`-Hx,CHECK_SUBSCRIPT`），分析用 **`microbench_opt`**（`-g -Kfast -KSVE -Koptmsg=2`）；**TCS Debugger** 以 `heavy_work` 中斷點為主，**TCS Profiler** 對 `microbench_opt` 取樣；`buggy_bounds` 僅示範越界與執行時檢查，勿在批次腳本中當預期成功之 job
+6. **10_Troubleshooting_Clinic**：若時間允許，直接跑 `Optimization_Loop_Demo/run_optimization_loop.sh`，讓學員看到完整工程閉環：`profiling -> analysis -> identify -> optimize -> verify -> reprofiling`，並以 `loop_reports/summary.txt` 做驗收
 
 ### 4.3 Checkpoint 驗證標準（對齊 14:00–17:00）
 
@@ -155,7 +156,7 @@
 | CP2 | 15:10 | 原生編譯與優化訊息 | 成功以 `frt`/`FCC` 編譯，並可指出 `-Koptmsg=2` 至少一則關鍵訊息 |
 | CP3 | 15:30 | Optimization Loop | 完成「分析→調整→重編譯→驗證」至少 1 次迭代（可用 vec_add/challenge） |
 | CP4 | 16:15 | 批次派送與監控 | 成功 `pjsub` 後以 `pjstat`/`pjwait` 追蹤；可示範 `pjdel` 中止 |
-| CP5 | 16:50 | 排錯口頭驗證 | 能描述至少一個實際錯誤（PJM/OOM/Crash）與排查步驟 |
+| CP5 | 16:50 | 排錯/優化口頭驗證 | 能描述至少一個實際錯誤（PJM/OOM/Crash）與排查步驟；或完成 `Optimization_Loop_Demo` 一輪並說出 speedup |
 
 ### 4.4 常見學員問題
 
