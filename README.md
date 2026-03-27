@@ -33,9 +33,17 @@ ProgramingTutorial/
 │   └── profiler_toolkit_tcs.md      # FIPP（fipp／fipppx，第 09 章）
 │
 ├── Part1_CPU_CrashCourse/    # 上半年：CPU 程式語言
+│   ├── 00_HPC_Workflow/      # 合規登入、資料流、跨架構套件
 │   ├── 01_Hello/             # 環境測試
 │   ├── 02_Vector_Add/        # 核心範例（含優化對比）
-│   └── 03_Challenge/         # 練習題
+│   ├── 03_Challenge/         # 練習題
+│   ├── 04_Matrix_Operations/
+│   ├── 05_File_IO/
+│   ├── 06_Functions_Modules/
+│   ├── 07_Structures/
+│   ├── 08_Debug_Profile/
+│   ├── 09_Profiler_Toolkit_TCS/
+│   └── 10_Troubleshooting_Clinic/  # 排錯與 Optimization Loop 示範
 │
 └── Part2_GPU_CrashCourse/    # 下半年：GPU 加速
     ├── 01_CUDA_Hello/        # GPU 環境確認
@@ -167,7 +175,7 @@ nvcc --version
 ### Professional（專業）：有 Fortran/C++ 實戰經驗
 - 課前閱讀 `optimization_mindset.md` 全文
 - 關注 ARM SVE 512-bit 與 `-KSVE` 編譯選項的效能影響
-- 挑戰 `03_Heat_Diffusion_Demo` 的完整 CPU + GPU 實作（Could 任務）
+- 挑戰 [`Part2_GPU_CrashCourse/03_Heat_Diffusion_Demo/`](Part2_GPU_CrashCourse/03_Heat_Diffusion_Demo/) 的完整 CPU + GPU 實作（Could 任務；依該章 README 自建原始碼）
 
 ---
 

@@ -66,9 +66,10 @@
 - 測量 GPU 效能並與 CPU 對比
 
 **檔案**：
-- `vec_add_gpu.cu` - 向量加法 GPU 版本
-- `benchmark.cu` - CPU vs GPU 效能測試
+- `vec_add_gpu.cu` - 向量加法 GPU 版本（含 CUDA 事件計時）
 - `README.md` - 詳細說明與優化技巧
+
+> 本節未另附獨立 `benchmark.cu`；CPU／GPU 對照與計時概念見 `vec_add_gpu.cu` 與 README 內文。
 
 **重點概念**：
 - `cudaMalloc` / `cudaMemcpy`
@@ -84,10 +85,9 @@
 - 觀察 GPU 在數值模擬中的加速效果
 
 **檔案**：
-- `main_cpu.cpp` - CPU 版本（基準線）
-- `main_gpu.cu` - GPU 版本
-- `Makefile` - 編譯腳本
-- `README.md` - 案例說明
+- `README.md` - 分層任務（Must／Should／Could）與 **CPU／GPU 實作框架**（範例程式在 README 的 fenced code 區塊內）
+
+> 本目錄**未**附可立即 `make` 的 `main_cpu.cpp`、`main_gpu.cu` 或 `Makefile`；學員依 README 建立檔案後再以 `g++`／`nvcc` 編譯（與 [`../PROJECT_SUMMARY.md`](../PROJECT_SUMMARY.md)「尚無完整可編譯程式碼」之說明一致）。
 
 ---
 
@@ -160,9 +160,9 @@ cd ../02_Vector_Add_GPU
 make
 ./vec_add_gpu
 
-# 3. 挑戰實戰案例
+# 3. 熱傳導實戰（依 README 自建原始碼後編譯）
 cd ../03_Heat_Diffusion_Demo
-make run_all
+# 請依該目錄 README 從框架建立 main_cpu.cpp / main_gpu.cu 再編譯（無預設 Makefile）
 ```
 
 ---

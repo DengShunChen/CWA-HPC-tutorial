@@ -50,6 +50,7 @@ ProgramingTutorial/
 │   └── pjm_batch_system.md      # PJM 批次系統說明
 │
 ├── Part1_CPU_CrashCourse/        # 上半年下午：CPU 上機實作教材
+│   ├── 00_HPC_Workflow/          # 合規登入、資料流、跨架構套件
 │   ├── 01_Hello/                # 環境測試
 │   ├── 02_Vector_Add/           # 向量運算與優化（核心）
 │   ├── 03_Challenge/            # 練習題
@@ -58,7 +59,8 @@ ProgramingTutorial/
 │   ├── 06_Functions_Modules/    # 函數與模組化
 │   ├── 07_Structures/           # 資料結構
 │   ├── 08_Debug_Profile/        # TCS Debugger／Profiler（Fortran / frt）
-│   └── 09_Profiler_Toolkit_TCS/ # Instant Performance Profiler（FIPP）／fipp、fipppx
+│   ├── 09_Profiler_Toolkit_TCS/ # Instant Performance Profiler（FIPP）／fipp、fipppx
+│   └── 10_Troubleshooting_Clinic/ # 排錯實戰、Optimization_Loop_Demo
 │
 └── Part2_GPU_CrashCourse/        # 下半年下午：GPU 上機實作教材
     ├── 01_CUDA_Hello/           # GPU 環境確認

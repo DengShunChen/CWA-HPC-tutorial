@@ -28,19 +28,19 @@
 ```
 make all
   ├── make part1
-  │     ├── Part1/01_Hello/make all
-  │     └── Part1/02_Vector_Add/make all
+  │     ├── Part1_CPU_CrashCourse/01_Hello/make all
+  │     └── Part1_CPU_CrashCourse/02_Vector_Add/make all
   └── make part2
-        ├── Part2/01_CUDA_Hello/make all
-        └── Part2/02_Vector_Add_GPU/make all
+        ├── Part2_GPU_CrashCourse/01_CUDA_Hello/make all
+        └── Part2_GPU_CrashCourse/02_Vector_Add_GPU/make all
 ```
 
 ### 2.2 各章節編譯模式
 
 | 章節 | 輸入 | 輸出 | 編譯器 |
 |------|------|------|--------|
-| 01_Hello | hello.f90, hello.cpp | hello_f, hello_cpp | **frt**；C++ 為 **FCC** 或 **g++** |
-| 02_Vector_Add | vec_add*.f90, vec_add*.cpp | vec_add_f, vec_add_cpp, ... | 同上 |
+| 01_Hello | hello.f90, hello.cpp | hello_fortran, hello_cpp | **frt**；C++ 為 **FCC** 或 **g++** |
+| 02_Vector_Add | vec_add*.f90, vec_add*.cpp | vec_add_fortran, vec_add_cpp, vec_add_optimized_fortran, vec_add_optimized_cpp | 同上 |
 | 08_Debug_Profile | microbench.f90, buggy_bounds.f90 | microbench_dbg, microbench_opt, … | **frt** |
 | 09_Profiler_Toolkit_TCS | `kernel_phases.f90` + 多主程式 | `kernel_profile_opt`、`region_marked`（FIPP）、`region_mpi`（選） | **frt**／**mpifrt** |
 | 04_Matrix_Operations | matrix_multiply*.f90, *.cpp | matrix_multiply_f, ... | **frt**；C++ 為 **FCC** 或 **g++** |
