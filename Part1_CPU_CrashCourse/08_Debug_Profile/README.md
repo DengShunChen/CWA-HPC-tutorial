@@ -2,7 +2,7 @@
 
 ## 學習目標
 
-- 以 **Fujitsu `frt`** 編譯 Fortran，並使用 **`-g`** 與（選用）**`-Hx,CHECK_SUBSCRIPT`** 產生可供 **TCS Debugger** 使用的執行檔。  
+- 以 **Fujitsu `frt`** 編譯 Fortran，並使用 **`-g`** 與（選用）**`-Haefosux`** 產生可供 **TCS Debugger** 使用的執行檔（執行期檢查含陣列下標等；舊寫法 `-Hx,CHECK_SUBSCRIPT` 在部分 TCS 版本會失敗）。  
 - 在 **TCS Debugger** 中於副程式（如 `heavy_work`）設中斷點、單步執行、檢視變數。  
 - 以 **TCS Profiler** 分析 **`microbench_opt`** 這類最佳化執行檔之熱點，並與 **`-Koptmsg=2`** 編譯訊息對照（**Profiler Toolkit 深入操作**見 [`../09_Profiler_Toolkit_TCS/README.md`](../09_Profiler_Toolkit_TCS/README.md)）。  
 - （MPI／平行程式）認識 **並行應用程式偵錯器（Debugger for Parallel Applications）** 之**死鎖調查**與 **`mpiexec` 執行選項**、**`fjdbg_summary`** 之用途與限制。  
@@ -17,7 +17,7 @@
 | 檔案 | 用途 |
 |------|------|
 | `microbench.f90` | 內含熱點副程式 `heavy_work`，分別編譯為 `microbench_dbg`／`microbench_opt` |
-| `buggy_bounds.f90` | 陣列越界範例；搭配 `-Hx,CHECK_SUBSCRIPT` 示範執行時檢查 |
+| `buggy_bounds.f90` | 陣列越界範例；搭配 **`-Haefosux`** 示範執行時檢查 |
 | `Makefile` | 僅 **`frt`**（無則 **`make` 失敗**） |
 
 ---
@@ -36,7 +36,7 @@ make clean && make
 
 ### 3. TCS Debugger
 
-1. 以 **`microbench_dbg`**（含 `-g`、建議含 `-Hx,CHECK_SUBSCRIPT`）為標的。  
+1. 以 **`microbench_dbg`**（含 `-g`、建議含 **`-Haefosux`**）為標的。  
 2. 依 **TCS Debugger** 手冊建立工作階段，載入執行檔。  
 3. 於副程式 **`heavy_work`** 設中斷點，執行並單步，檢視區域變數 `i`、`s`。
 
@@ -51,7 +51,7 @@ make clean && make
 ./buggy_bounds
 ```
 
-若已以 **`-Hx,CHECK_SUBSCRIPT`** 連結，預期於越界存取時由執行時檢查攔截（實際訊息依編譯器版本而定）。
+若已以 **`-Haefosux`** 連結，預期於越界存取時由執行時檢查攔截（實際訊息依編譯器版本而定）。
 
 ---
 

@@ -1,4 +1,4 @@
-! 刻意示範：迴圈越界讀取陣列。若以 -Hx,CHECK_SUBSCRIPT 編譯，執行時應被檢查攔截。
+! 刻意示範：迴圈越界讀取陣列。若以 -Haefosux 編譯，執行時應被檢查攔截。
 ! 自動化測試不會執行本程式（非零結束／錯誤結束）。
 program buggy_bounds
   implicit none

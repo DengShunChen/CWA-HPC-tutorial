@@ -20,8 +20,8 @@
 以下與 [`compilation_guide.md`](compilation_guide.md) 一致，為本節實作**必備**基礎。
 
 ```bash
-# 除錯／執行時邊界檢查（教學用「慢但安全」）
-frt -g -Hx,CHECK_SUBSCRIPT microbench.f90 -o microbench_dbg
+# 除錯／執行時邊界檢查（教學用「慢但安全」；含陣列下標等，見 Fujitsu 手冊 -Haefosux）
+frt -g -Haefosux microbench.f90 -o microbench_dbg
 
 # 效能分析用：最佳化 + 除錯符號（實際旗標依 TCS Profiler 手冊微調）
 frt -g -Kfast -KSVE -Koptmsg=2 microbench.f90 -o microbench_opt
@@ -30,7 +30,7 @@ frt -g -Kfast -KSVE -Koptmsg=2 microbench.f90 -o microbench_opt
 | 選項 | 說明 |
 |------|------|
 | `-g` | 產生除錯資訊，供 **TCS Debugger**／**TCS Profiler** 對應原始碼 |
-| `-Hx,CHECK_SUBSCRIPT` | 執行時檢查陣列是否越界（教學示範用） |
+| `-Haefosux` | 編譯／執行期詳細檢查（含陣列形狀與下標、介面引數等；教學示範用）。舊文件常寫 `-Hx,CHECK_SUBSCRIPT`，部分 TCS 版本會報 `Invalid suboption for -H`，請改此選項 |
 | `-Kfast`、`-KSVE` | 一般最佳化與 SVE 向量化（與 Part1 其他章節一致） |
 | `-Koptmsg=2` | 輸出優化訊息，輔助理解「編譯器做了什麼」 |
 | `-Nquickdbg` | 在除錯時維持部分最佳化（依需求選用，見編譯器手冊） |
@@ -39,7 +39,7 @@ frt -g -Kfast -KSVE -Koptmsg=2 microbench.f90 -o microbench_opt
 
 ## 3. TCS Debugger（流程概念）
 
-1. 以 **`frt -g ...`**（必要時加 `-Hx,CHECK_SUBSCRIPT`）完成連結，產生可除錯執行檔。  
+1. 以 **`frt -g ...`**（必要時加 **`-Haefosux`**）完成連結，產生可除錯執行檔。  
 2. 依站臺程序啟動 **TCS Debugger**，載入執行檔與（若需要）原始碼路徑。  
 3. 在熱點副程式（例如本教材 `microbench.f90` 內之 `heavy_work`）設**中斷點**，執行並**單步**、檢視變數。  
 4. 對 **`buggy_bounds`** 一類越界範例：可觀察執行時檢查如何攔截錯誤（與未開檢查時行為對照）。

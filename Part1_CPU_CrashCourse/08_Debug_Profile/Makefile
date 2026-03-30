@@ -7,7 +7,8 @@ FC = frtpx
 else
 $(error 未找到 frt / frtpx。請先 module load TCS 環境。)
 endif
-FFLAGS_DBG = -g -Hx,CHECK_SUBSCRIPT -O0
+# 執行期／編譯期檢查（含陣列下標）：Fujitsu 手冊為 -Haefosux。舊寫法 -Hx,CHECK_SUBSCRIPT 在 tcsds 1.2.x 常出現 Invalid suboption for -H。
+FFLAGS_DBG = -g -Haefosux -O0
 FFLAGS_OPT = -g -Kfast -KSVE -Koptmsg=2
 
 .PHONY: all clean run_opt

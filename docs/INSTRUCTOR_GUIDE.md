@@ -145,7 +145,7 @@
 2. **02_Vector_Add**：務必展示優化前後效能差異，用「為什麼快」帶出 Cache 與 SIMD 概念
 3. **03_Challenge**：留足時間讓學員動手，卡關超過 5 分鐘才提供提示
 4. **04_Matrix_Operations**：用圖解說明 Column-major vs Row-major 在記憶體中的差異（本節奏若時間緊，以「跑通優化版 + 一張效能對照表」為優先）
-5. **08_Debug_Profile**：**Fortran + `frt`**；除錯用 **`microbench_dbg`**（`-g`、`-Hx,CHECK_SUBSCRIPT`），分析用 **`microbench_opt`**（`-g -Kfast -KSVE -Koptmsg=2`）；**TCS Debugger** 以 `heavy_work` 中斷點為主，**TCS Profiler** 對 `microbench_opt` 取樣；`buggy_bounds` 僅示範越界與執行時檢查，勿在批次腳本中當預期成功之 job
+5. **08_Debug_Profile**：**Fortran + `frt`**；除錯用 **`microbench_dbg`**（`-g`、**`-Haefosux`**），分析用 **`microbench_opt`**（`-g -Kfast -KSVE -Koptmsg=2`）；**TCS Debugger** 以 `heavy_work` 中斷點為主，**TCS Profiler** 對 `microbench_opt` 取樣；`buggy_bounds` 僅示範越界與執行時檢查，勿在批次腳本中當預期成功之 job
 6. **10_Troubleshooting_Clinic**：若時間允許，直接跑 `Optimization_Loop_Demo/run_optimization_loop.sh`，讓學員看到完整工程閉環：`profiling -> analysis -> identify -> optimize -> verify -> reprofiling`，並以 `loop_reports/summary.txt` 做驗收
 
 ### 4.3 Checkpoint 驗證標準（對齊 14:00–17:00）

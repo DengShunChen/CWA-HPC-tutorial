@@ -27,19 +27,19 @@ public:
     explicit Matrix(int dim, double init_val = 0.0)
         : dim_(dim), data_(static_cast<std::size_t>(dim) * dim, init_val) {}
 
-    // 二維索引存取
-    [[nodiscard]] double& operator()(int row, int col) noexcept {
+    // 二維索引存取（未使用 [[nodiscard]]：FCC 對部分 C++17 屬性僅警告）
+    double& operator()(int row, int col) noexcept {
         return data_[static_cast<std::size_t>(row) * dim_ + col];
     }
-    [[nodiscard]] const double& operator()(int row, int col) const noexcept {
+    const double& operator()(int row, int col) const noexcept {
         return data_[static_cast<std::size_t>(row) * dim_ + col];
     }
 
     // 取得底層指標 (供高效能核心使用)
-    [[nodiscard]] double*       raw() noexcept       { return data_.data(); }
-    [[nodiscard]] const double* raw() const noexcept { return data_.data(); }
+    double*       raw() noexcept       { return data_.data(); }
+    const double* raw() const noexcept { return data_.data(); }
 
-    [[nodiscard]] int dim() const noexcept { return dim_; }
+    int dim() const noexcept { return dim_; }
 
     // 填零
     void zero() noexcept { std::fill(data_.begin(), data_.end(), 0.0); }
@@ -79,8 +79,7 @@ static void blocked_matmul(const double* __restrict__ A,
     }
 }
 
-// ── 驗證用的 naive 乘法 (小範圍) ──────────────────
-[[maybe_unused]]
+// ── 驗證用的 naive 乘法 (小範圍；目前未呼叫，保留供對照) ──────────────────
 static double naive_element(const Matrix& A, const Matrix& B,
                             int row, int col) noexcept
 {

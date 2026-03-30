@@ -41,7 +41,7 @@
 
 | 路徑 | 順序 | 適用情境 |
 |------|------|----------|
-| **依資料夾編號 01→09** | 01 → 02 → 03 → **04** → 05 → 06 → 07 → **08** → **09** | 自學、`run_all_tests.sh` 預設測試順序；概念上為「語法與優化」→「矩陣／I／O／模組／結構」→「除錯與取樣剖析」→「FIPP 深入」。 |
+| **依資料夾編號 01→10** | 01 → 02 → 03 → **04** → 05 → 06 → 07 → **08** → **09** → **10**（Optimization_Loop_Demo） | 自學、`run_all_tests.sh` 預設測試順序；**00** 無程式故不在腳本內；概念上為「語法與優化」→「矩陣／I／O／模組／結構」→「除錯與取樣剖析」→「FIPP」→「Optimization Loop 編譯／checksum」。 |
 | **約 3 小時工作坊**（上表） | **00/01**（合規登入與互動資源）→ **02/03**（Optimization Loop）→ **08**（分析）→ **04**（批次派送）→ **10**（Troubleshooting）→ **09**（Q&A 延伸） | 對齊 CWA 14:00–17:00 節奏：先建立合規操作與資料流，再進入編譯優化、排程監控與故障排查。 |
 
 同一章節內容不因順序而改變；若你依編號自學，可無視工作坊插隊，**08 仍建議在 09 之前**（09 README 已標示前置為 08）。
@@ -191,7 +191,7 @@
 
 **檔案**：
 - `microbench.f90` — 熱點副程式 `heavy_work`
-- `buggy_bounds.f90` — 陣列越界範例（搭配 `-Hx,CHECK_SUBSCRIPT`）
+- `buggy_bounds.f90` — 陣列越界範例（搭配 **`-Haefosux`** 執行期檢查）
 - `README.md` — 上機步驟、**MPI 死鎖調查選項**與 **`fjdbg_summary`**；速查表請見 [`../00_Cheatsheets/debug_and_profiler.md`](../00_Cheatsheets/debug_and_profiler.md)
 
 ---
@@ -270,7 +270,7 @@ make --version
 
 ### 一鍵自動測試（`run_all_tests.sh`）
 
-在 `Part1_CPU_CrashCourse` 目錄下會依序對 **01–09** 各章執行 `make clean && make`，並**執行**對應程式（含 Fortran），**不略過任何步驟**。第 **10** 章屬 Q&A/Troubleshooting 與 Optimization Loop 實作，請依章節腳本另行執行。結束時若任一步失敗，腳本以非零 exit code 結束。
+在 `Part1_CPU_CrashCourse` 目錄下會依序對 **01–10**（**不含 00**，該章僅文件）執行 `make clean && make` 與對應執行；第 **10** 章僅測 **Optimization_Loop_Demo** 之編譯與 `loop_baseline`／`loop_optimized` 的 **checksum 一致**（**不**含 `run_optimization_loop.sh` 的 fipp 全循環，該流程請手動執行）。可用 **`PART1_SKIP_09=1`**／**`PART1_SKIP_10=1`** 略過章節。結束時若任一步失敗，腳本以非零 exit code 結束。
 
 **`run_all_tests.sh`** 須在具 **`frt`** 的 **A64FX** 環境執行（互動計算節點或 **`./run_all_tests.sh --submit-pjm`** 送批次至計算節點）。登入節點若無 `frt`，腳本會在前置檢查**直接中止（exit 3）**並提示改至計算節點。
 
@@ -298,7 +298,7 @@ export PJM_ELAPSE=01:30:00
 
 若系統有 `pjwait`，腳本會嘗試等待工作結束；否則請以 `pjstat` 或 PJM 日誌（預設 `part1_autotest.log`）查結果。計算節點上的測試摘要會寫入 `part1_autotest_report.txt`（與腳本同目錄）。不需要 Fujitsu module 時可設 `PJM_MODULE=0`。
 
-- **完整 Part1 基礎章節（01–09）於計算節點之結果**：請查看 **`part1_autotest.log`**（標準輸出合併）與 **`part1_autotest_report.txt`**（時間戳 PASS／FAIL 摘要）。若快照顯示 **`frt: 未找到`**，請在 **A64FX** 環境載入貴站 **`module load`**（例：`module use …` + **`tcsds/1.2.40`**）。
+- **完整 Part1 自動測（01–10，不含 00）於計算節點之結果**：請查看 **`part1_autotest.log`**（標準輸出合併）與 **`part1_autotest_report.txt`**（時間戳 PASS／FAIL 摘要）。若快照顯示 **`frt: 未找到`**，請在 **A64FX** 環境載入貴站 **`module load`**（例：`module use …` + **`tcsds/1.2.40`**）。
 
 ### 僅測試 PJM 是否正常（煙霧測試）
 

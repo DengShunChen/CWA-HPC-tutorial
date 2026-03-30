@@ -42,8 +42,8 @@ frt -Kfast program.f90 -o program
 # 啟用 ARM SVE 向量化 (512-bit)
 frt -Kfast -KSVE program.f90 -o program
 
-# 除錯模式 (加入除錯符號 + 檢查陣列邊界)
-frt -g -Hx,CHECK_SUBSCRIPT program.f90 -o program_debug
+# 除錯模式 (加入除錯符號 + Fujitsu 執行期檢查，含陣列下標等：-Haefosux)
+frt -g -Haefosux program.f90 -o program_debug
 
 # 完整優化 + OpenMP
 frt -Kfast -KSVE -Kopenmp program.f90 -o program
