@@ -21,6 +21,7 @@
 | 30 min | 複習 + GPU 概念 | README.md + [`01_CUDA_Hello/`](01_CUDA_Hello/) | GPU 架構、編譯流程 |
 | 90 min | CUDA 核心語法 | [`02_Vector_Add_GPU/`](02_Vector_Add_GPU/) | Kernel、記憶體管理、效能測試 |
 | 60 min | 實戰案例 | [`03_Heat_Diffusion_Demo/`](03_Heat_Diffusion_Demo/) | 熱傳導模擬、CPU vs GPU 對比 |
+| （延伸） | Singularity + PyTorch | [`04_Singularity_PyTorch_GPU/`](04_Singularity_PyTorch_GPU/) | `--nv`、容器內 CUDA、與既有 `.sif` 銜接 |
 
 ---
 
@@ -91,6 +92,23 @@
 
 ---
 
+### [04_Singularity_PyTorch_GPU](04_Singularity_PyTorch_GPU/) - Singularity 容器 + PyTorch GPU（延伸）
+
+**學習目標**：
+
+- 使用 `singularity exec --nv`（或 Apptainer 同等指令）掛載主機 NVIDIA 驅動
+- 在 **PyTorch 1.13.1 / CUDA 11.6** 映像內驗證 `torch.cuda.is_available()`
+- 與中心既有 **`$HOME/sample/singularity/torch_1.13.1_cuda11.6.sif`**（及同內容之 `.def`）銜接
+
+**檔案**：
+
+- `torch_1.13.1_cuda11.6.def` - 與範例路徑之定義檔一致，可重建 SIF
+- `test_cuda_torch.py` - GPU 煙霧測試
+- `run_singularity_gpu_test.sh` - 一鍵執行（`SINGULARITY_SIF` 可覆寫預設路徑）
+- `job_singularity_torch_gpu.sh` - PJM 批次範例
+
+---
+
 ## 🎯 GPU vs CPU 核心差異
 
 | 特性 | CPU | GPU |
@@ -111,6 +129,10 @@
 - **CUDA Toolkit**：建議 CUDA >= 10.0
 - **GPU**：支援 CUDA 的 NVIDIA GPU（Compute Capability >= 3.5）
 - **驅動程式**：與 CUDA 版本相容的 NVIDIA 驅動
+
+### 取得 GPU 節點（PJM 互動式）
+
+登入節點通常**沒有** GPU 或無法穩定編譯／執行 CUDA，請先以 PJM 申請 **GPU 互動式作業** 再進行 Part 2 實作。寫法與 CPU 章節的 `rscgrp=small` 可能不同；完整選項說明見 [`00_Cheatsheets/pjm_batch_system.md`](../00_Cheatsheets/pjm_batch_system.md) 內 **「GPU 互動式」** 小節。
 
 ### 環境測試
 
@@ -162,7 +184,12 @@ make
 
 # 3. 熱傳導實戰（依 README 自建原始碼後編譯）
 cd ../03_Heat_Diffusion_Demo
-# 請依該目錄 README 從框架建立 main_cpu.cpp / main_gpu.cu 再編譯（無預設 Makefile）
+make run_all
+
+# 4. （延伸）Singularity + PyTorch GPU
+cd ../04_Singularity_PyTorch_GPU
+chmod +x run_singularity_gpu_test.sh
+./run_singularity_gpu_test.sh
 ```
 
 ---

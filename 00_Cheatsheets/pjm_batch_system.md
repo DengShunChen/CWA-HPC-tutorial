@@ -228,6 +228,74 @@ export OMP_NUM_THREADS=48
 pjsub --interact -L "node=1" -L "elapse=00:30:00" -g <group>
 ```
 
+#### GPU 互動式（PJM：`vnode`／`gpu-share` 語法範例）
+
+下半年 CUDA 上機若不在登入節點直接跑 `nvcc`，需在 **GPU 計算節點**上操作。部分 PJM 站台使用資源單元（`ru`）、資源群組（`rg`）與 `gpu-share`，與 Part 1 常見的 `rscgrp=small`、`node=1` 寫法不同；**以下為實際可用之互動式範例，仍請以貴中心手冊為準**。
+
+```bash
+# 先建立輸出目錄（若使用 -o 寫入家目錄下路徑）
+mkdir -p "${HOME}/tmp"
+
+pjsub -N interact --interact \
+  -L ru=rscunit_pg01 \
+  -L rg=gpu-rd-small \
+  -L gpu-share=1 \
+  -L vnode=1 \
+  -L vnode-core=1 \
+  -L vnode-mem=64Gi \
+  -L elapse=1:00:00 \
+  --mpi proc=1 \
+  --sparam wait-time=600 \
+  -o "${HOME}/tmp/interact.%j" \
+  -j
+```
+
+進入互動式 shell 後再確認 GPU 與編譯環境，例如：
+
+```bash
+nvidia-smi
+nvcc --version
+```
+
+若僅有驅動、**沒有** `nvcc`，通常是未載入編譯工具鏈。x86 GPU 節點常見為 **NVIDIA HPC SDK**（`module avail` 下為 `nvhpc-hpcx-cuda12/…`，而非單純名為 `cuda` 的模組），例如：
+
+```bash
+module load nvhpc-hpcx-cuda12/25.3   # 版次以貴站 module avail 為準
+nvcc --version
+```
+
+**Part2 一鍵檢查**：可於取得互動式資源後手動執行 `bash run_part2_gpu.sh`；若貴站 PJM 支援在行尾指定**啟動腳本**（例如 `... -j run_part2_gpu.sh`），亦會直接跑該腳本。`run_part2_gpu.sh` 會自動嘗試 `module load` 多組常見 CUDA／nvhpc 模組；仍找不到 `nvcc` 時請：
+
+```bash
+export PART2_CUDA_MODULE=nvhpc-hpcx-cuda12/25.3   # 改成你的模組全名
+bash run_part2_gpu.sh
+```
+
+腳本內容：依序 `nvidia-smi`、`nvcc`、編譯 `01`–`03` CUDA 範例並執行簡短輸出；若有 Singularity 與 `torch_*.sif` 會加跑 PyTorch GPU 測試。
+
+若以**批次**驗證（日誌寫入 `/users/<帳號>/tmp/part2_gpu.%j.out`，路徑見腳本內 `#PJM -o`）：
+
+```bash
+pjsub /path/to/CWA-HPC-tutorial/Part2_GPU_CrashCourse/job_run_part2_gpu.sh
+```
+
+說明（站台相依）：
+
+| 選項 | 意義（常見用法） |
+|------|------------------|
+| `-N interact` | 作業名稱 |
+| `--interact` | 互動式配置 |
+| `-L ru=...` | 資源單元（resource unit） |
+| `-L rg=...` | 資源群組／佇列類型（此例為 GPU 相關 small） |
+| `-L gpu-share=1` | GPU 共享配額（數值依政策） |
+| `-L vnode=1` | vnode 數量 |
+| `-L vnode-core=1` / `-L vnode-mem=64Gi` | 每 vnode 之 CPU 核心與記憶體上限（範例：輕量 GPU 互動 1 core） |
+| `-L elapse=1:00:00` | 最長使用時間 |
+| `--mpi proc=1` | MPI 程序數（與 `vnode-core` 等資源需一致；範例為 1） |
+| `--sparam wait-time=600` | 互動式排隊／等待相關參數（秒；依站台） |
+| `-o ...%j` | 標準輸出路徑（`%j` 為作業 ID） |
+| `-j` | 合併 stdout／stderr |
+
 ### 2. 批次提交多個作業
 
 ```bash

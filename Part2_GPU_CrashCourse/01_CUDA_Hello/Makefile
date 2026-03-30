@@ -1,7 +1,7 @@
 # Makefile for CUDA Hello World
 
 NVCC = nvcc
-CUDAFLAGS = -O2
+CUDAFLAGS ?= -O2
 
 .PHONY: all clean run
 

@@ -1,0 +1,102 @@
+#!/bin/sh
+
+# operational jobs
+if [[ $PJM_RSCGRP == *"gpu-op"* ]] ; then
+   exit 0
+fi
+
+# low priorigy jobs
+if [[ $PJM_RSCGRP == *"-lp"* ]] ; then
+   exit 0
+fi
+
+gr=`/usr/bin/id -g -n`
+un=`id -u -n`
+
+case "$gr" in
+ncs|ncst|nwpt )
+     exit 0
+     ;;
+fdda|tfs|wrf|rfs|ait|eps )
+     group=wrf
+     ;;
+gefs )
+     case "$un" in
+     xa29|xb43|xa41|p162 )
+     group=gfs
+     ;;
+     *  )
+     group=sum
+     ;;
+     esac
+     ;;
+gfs )
+     case "$un" in
+     xb156|ncuas|ncust1|ncust2|ncust3|ncust4|xb13|xb127)
+     group=sum
+     ;;
+     xa30|xb173|xb119|xb117|xb157|a361|xb118|xb124|xb169)
+     group=sum
+     ;;
+     xb162|xb160|xb99|xb136|xb126|xb141|gfsapar)
+     group=sum
+     ;;
+     esac
+     ;;
+*  )
+     case "$un" in
+     paraadm )
+     group=3d
+     ;;
+     cwb_ncu )
+     group=gfs
+     ;;
+     *  )
+     group=$gr
+     ;;
+     esac
+     ;;
+esac
+
+#2024-07-26
+exit 0
+
+NHFILE=/users/ftl/prologue/stat_gpu/$group
+
+if [ -f $NHFILE ] ; then
+# put message in userjob's stdout
+
+   echo -e "\nYou can not run job because your group $group NH quota over limit !"
+   echo -e "\nPlease use show_account $group to check your $group NH quota !\n"
+
+   echo "You need to modify your job script to use lower priority queue"
+   echo "for example :"
+   echo "change"
+   echo "#PJM -L rscgrp=gpu-rd-large"
+   echo "to"
+   echo -e "#PJM -L rscgrp=gpu-rd-large-lp\n"
+
+   exit 4
+fi
+
+#env
+
+HWFILE=/users/ftl/prologue/hwater_gpu/$group
+if [ -f $HWFILE ] ; then
+
+   read rate avail < $HWFILE
+#  let NH_required=${PJM_NODE}*${PJM_ELAPSE_LIMIT}*1.0/3600
+   let NH_required=${PJM_NODE}*${PJM_ELAPSE_LIMIT}/3600
+   if [ ${NH_required} -gt ${avail} ] ; then
+
+      echo -e "\nAttention !!!! "
+      echo "Your Node-Hour required = ${NH_required} "
+      echo "but you only have ${avail} Node-Hour left"
+      echo -e "so your job is not allowed to run\n"
+
+      exit 4
+   fi
+fi
+
+exit 0
+

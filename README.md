@@ -48,7 +48,8 @@ ProgramingTutorial/
 └── Part2_GPU_CrashCourse/    # 下半年：GPU 加速
     ├── 01_CUDA_Hello/        # GPU 環境確認
     ├── 02_Vector_Add_GPU/    # CPU 到 GPU 轉換
-    └── 03_Heat_Diffusion_Demo/  # 實戰：熱傳導模擬
+    ├── 03_Heat_Diffusion_Demo/  # 實戰：熱傳導模擬
+    └── 04_Singularity_PyTorch_GPU/  # Singularity + PyTorch CUDA 測試（延伸）
 ```
 
 ---
