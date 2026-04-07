@@ -78,6 +78,8 @@ part2_preflight_direct() {
 
 run_part2_gpu_payload() {
   cd "$PART2_ROOT" || exit 1
+  echo ">>> run_part2_tests：將執行 run_part2_gpu.sh（編譯 01→02→03→04→05；煙霧測試 01→02→03→04→05→06）"
+  echo ""
   if [ -n "$REPORT_FILE" ]; then
     {
       echo "================================================================================"

@@ -21,12 +21,12 @@
 |-----|------|--------|------|
 | 30 min | 複習 + GPU 概念 | README.md + [`01_CUDA_Hello/`](01_CUDA_Hello/) | GPU 架構、編譯流程 |
 | 45 min | CUDA 核心語法 | [`02_Vector_Add_GPU/`](02_Vector_Add_GPU/) | Kernel、記憶體管理、效能測試 |
-| 45 min | **五語言對照** | [`05_Language_Comparison_VectorAdd/`](05_Language_Comparison_VectorAdd/) | **C、C++、Fortran（CPU）** 與 **CUDA C、CUDA Fortran（GPU）** 同題並排 |
-| （選修） | **OpenACC Fortran** | [`06_OpenACC_VectorAdd/`](06_OpenACC_VectorAdd/) | `parallel loop`、`async`／`wait`、`routine(seq)`；與 `05` 同題 |
-| 60 min | 實戰案例 | [`03_Heat_Diffusion_Demo/`](03_Heat_Diffusion_Demo/) | 熱傳導模擬、CPU vs GPU 對比 |
-| （延伸） | Singularity + PyTorch | [`04_Singularity_PyTorch_GPU/`](04_Singularity_PyTorch_GPU/) | `--nv`、容器內 CUDA、與既有 `.sif` 銜接 |
+| 45 min | **五語言對照** | [`03_Language_Comparison_VectorAdd/`](03_Language_Comparison_VectorAdd/) | **C、C++、Fortran（CPU）** 與 **CUDA C、CUDA Fortran（GPU）** 同題並排 |
+| （選修） | **OpenACC Fortran** | [`04_OpenACC_VectorAdd/`](04_OpenACC_VectorAdd/) | `parallel loop`、`async`／`wait`、`routine(seq)`；與 `03` 同題 |
+| 60 min | 實戰案例 | [`05_Heat_Diffusion_Demo/`](05_Heat_Diffusion_Demo/) | 熱傳導模擬、CPU vs GPU 對比 |
+| （延伸） | Singularity + PyTorch | [`06_Singularity_PyTorch_GPU/`](06_Singularity_PyTorch_GPU/) | `--nv`、容器內 CUDA、與既有 `.sif` 銜接 |
 
-> 下午總時數仍約 3 小時：`06` 可併入課後自修，或壓縮 `02`／`05` 的示範時間帶做；Fortran 背景較弱時可略過 `05` 的 Fortran 軌與整章 `06`。
+> 下午總時數仍約 3 小時：`04` 可併入課後自修，或壓縮 `02`／`03` 的示範時間帶做；Fortran 背景較弱時可略過 `03` 的 Fortran 軌與整章 `04`。
 
 ---
 
@@ -84,17 +84,7 @@
 
 ---
 
-### [03_Heat_Diffusion_Demo](03_Heat_Diffusion_Demo/) - 熱傳導模擬（實戰）
-
-**學習目標**：
-- 應用所學知識到實際問題
-- 觀察 GPU 在數值模擬中的加速效果
-
-**檔案**：`README.md`（分層任務 Must／Should／Could）、`Makefile`、`main_cpu.cpp`、`main_gpu.cu`；`make run_all` 可跑 CPU／GPU 對照。
-
----
-
-### [05_Language_Comparison_VectorAdd](05_Language_Comparison_VectorAdd/) - C / C++ / Fortran 與 CUDA C / CUDA Fortran 對照
+### [03_Language_Comparison_VectorAdd](03_Language_Comparison_VectorAdd/) - C / C++ / Fortran 與 CUDA C / CUDA Fortran 對照
 
 **學習目標**：
 
@@ -106,7 +96,7 @@
 
 ---
 
-### [06_OpenACC_VectorAdd](06_OpenACC_VectorAdd/) - OpenACC Fortran（與 05 同題）
+### [04_OpenACC_VectorAdd](04_OpenACC_VectorAdd/) - OpenACC Fortran（與 03 同題）
 
 **學習目標**：
 
@@ -117,7 +107,17 @@
 
 ---
 
-### [04_Singularity_PyTorch_GPU](04_Singularity_PyTorch_GPU/) - Singularity 容器 + PyTorch GPU（延伸）
+### [05_Heat_Diffusion_Demo](05_Heat_Diffusion_Demo/) - 熱傳導模擬（實戰）
+
+**學習目標**：
+- 應用所學知識到實際問題
+- 觀察 GPU 在數值模擬中的加速效果
+
+**檔案**：`README.md`（分層任務 Must／Should／Could）、`Makefile`、`main_cpu.cpp`、`main_gpu.cu`；`make run_all` 可跑 CPU／GPU 對照。
+
+---
+
+### [06_Singularity_PyTorch_GPU](06_Singularity_PyTorch_GPU/) - Singularity 容器 + PyTorch GPU（延伸）
 
 **學習目標**：
 
@@ -217,7 +217,7 @@ export PJM_GROUP=你的群組   # 必填；亦可視站臺改 PART2_PJM_* 資源
 
 ## 🚀 快速開始
 
-> **注意**：Part2 執行檔由 `make` 產生，**不在 Git 內**；clone 後請在 `Part2_GPU_CrashCourse/` 各子目錄或專案根目錄執行 `make part2`（無 `nvcc` 時仍會編出 `05` CPU 與 `03` 之 `heat_cpu`）。
+> **注意**：Part2 執行檔由 `make` 產生，**不在 Git 內**；clone 後請在 `Part2_GPU_CrashCourse/` 各子目錄或專案根目錄執行 `make part2`（無 `nvcc` 時仍會編出 `03` CPU 與 `05` 之 `heat_cpu`）。
 
 ```bash
 # 1. 確認環境
@@ -230,22 +230,22 @@ make
 ./vec_add_gpu
 
 # 3. 五語言向量加法對照（GPU 編譯器可選）
-cd ../05_Language_Comparison_VectorAdd
+cd ../03_Language_Comparison_VectorAdd
 make all
 make run_cpu
 make run_gpu
 
 # 4. OpenACC Fortran（需 nvfortran -acc）
-cd ../06_OpenACC_VectorAdd
+cd ../04_OpenACC_VectorAdd
 make all
 make run
 
 # 5. 熱傳導實戰
-cd ../03_Heat_Diffusion_Demo
+cd ../05_Heat_Diffusion_Demo
 make run_all
 
 # 6. （延伸）Singularity + PyTorch GPU
-cd ../04_Singularity_PyTorch_GPU
+cd ../06_Singularity_PyTorch_GPU
 chmod +x run_singularity_gpu_test.sh
 ./run_singularity_gpu_test.sh
 ```
@@ -257,7 +257,7 @@ chmod +x run_singularity_gpu_test.sh
 - [編譯指令速查](../00_Cheatsheets/compilation_guide.md#-cuda-編譯-nvcc) - CUDA 編譯選項
 - [優化思維指南](../00_Cheatsheets/optimization_mindset.md#-gpu-優化思維) - GPU 優化技巧
 - **CUDA C Programming Guide**：https://docs.nvidia.com/cuda/cuda-c-programming-guide/
-- **OpenACC**：[`06_OpenACC_VectorAdd`](06_OpenACC_VectorAdd/)（本倉庫內建範例）；[OpenACC 規格](https://www.openacc.org/specification)
+- **OpenACC**：[`04_OpenACC_VectorAdd`](04_OpenACC_VectorAdd/)（本倉庫內建範例）；[OpenACC 規格](https://www.openacc.org/specification)
 
 ---
 

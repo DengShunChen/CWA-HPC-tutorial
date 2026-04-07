@@ -159,4 +159,4 @@ Kernel 時間:  0.002500 秒
 
 ---
 
-**下一步：[`03_Heat_Diffusion_Demo`](../03_Heat_Diffusion_Demo/) 實戰案例！🔥**
+**下一步：[`03_Language_Comparison_VectorAdd`](../03_Language_Comparison_VectorAdd/) 五語言對照（再接 OpenACC、熱傳導實戰）**

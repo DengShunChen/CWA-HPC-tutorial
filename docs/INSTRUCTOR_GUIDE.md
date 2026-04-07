@@ -80,7 +80,7 @@
 | 09_Profiler_Toolkit_TCS | 延伸自學 | Should（**FIPP**：`fipp`／`fipppx` 完整流程） | Could（`fipp_start`／區段或 **fapp** 進階） | 可併入進階場次；與 08 銜接 |
 | 01_CUDA_Hello | 核心 | 快速帶過 | 跳過 | -- |
 | 02_Vector_Add_GPU | Must 任務 | Should 任務（分析傳輸成本） | 核心（Kernel 調校） | 需補充 Kernel 調校引導 |
-| 03_Heat_Diffusion | 觀摩為主 | Should 任務（MVP 版） | 核心 | 無完整程式碼，需補 MVP 與進階版 |
+| 05_Heat_Diffusion_Demo | 觀摩為主 | Should 任務（MVP 版） | 核心 | 無完整程式碼，需補 MVP 與進階版 |
 
 ---
 
@@ -186,7 +186,7 @@
 | 0:35-1:05 | 30 | 向量加法 GPU 示範 | 02_Vector_Add_GPU | Live Coding：cudaMalloc、cudaMemcpy、kernel launch | 講師示範 |
 | 1:05-1:30 | 25 | 第一輪實作 | 02_Vector_Add_GPU | 學員動手：編譯、執行、記錄 Kernel 時間 | Must + Should |
 | 1:30-1:40 | 10 | **休息 + 問題蒐集** | -- | 助教收集紅/黃旗問題 | -- |
-| 1:40-2:20 | 40 | 熱傳導模擬 | 03_Heat_Diffusion_Demo | CPU 版 MVP 實作 / GPU 版框架講解 | Must: MVP / Should: GPU 版 |
+| 1:40-2:20 | 40 | 熱傳導模擬 | 05_Heat_Diffusion_Demo | CPU 版 MVP 實作 / GPU 版框架講解 | Must: MVP / Should: GPU 版 |
 | 2:20-2:40 | 20 | 效能對比實作 | 02 + 03 | CPU vs GPU 執行時間比較 | Could: 不同 grid size 測試 |
 | 2:40-2:55 | 15 | 成果分享 | -- | 每組展示 CPU vs GPU 效能比較 | -- |
 | 2:55-3:00 | 5 | 收斂 + 後測 | -- | 課程總結、後測、回饋表 | -- |
@@ -195,7 +195,7 @@
 
 1. **01_CUDA_Hello**：先跑 `nvidia-smi` 與 `device_query` 確認 GPU 可用
 2. **02_Vector_Add_GPU**：對照 Part1 的 CPU 版 vec_add，強調 Host/Device 資料傳輸成本
-3. **03_Heat_Diffusion_Demo**：依學員程度選擇 MVP 或進階版（見該章節 README）
+3. **05_Heat_Diffusion_Demo**：依學員程度選擇 MVP 或進階版（見該章節 README）
 
 ### 5.3 Checkpoint 驗證標準
 

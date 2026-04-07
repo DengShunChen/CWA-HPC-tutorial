@@ -48,8 +48,12 @@ ProgramingTutorial/
 └── Part2_GPU_CrashCourse/    # 下半年：GPU 加速
     ├── 01_CUDA_Hello/        # GPU 環境確認
     ├── 02_Vector_Add_GPU/    # CPU 到 GPU 轉換
-    ├── 03_Heat_Diffusion_Demo/  # 實戰：熱傳導模擬
-    └── 04_Singularity_PyTorch_GPU/  # Singularity + PyTorch CUDA 測試（延伸）
+    ├── 03_Language_Comparison_VectorAdd/  # C／C++／Fortran 與 CUDA C／CUDA Fortran 對照
+    ├── 04_OpenACC_VectorAdd/   # OpenACC Fortran（與 03 同題）
+    ├── 05_Heat_Diffusion_Demo/  # 實戰：熱傳導模擬
+    ├── 06_Singularity_PyTorch_GPU/  # Singularity + PyTorch CUDA 測試（延伸）
+    ├── run_part2_gpu.sh      # GPU 節點一鍵編譯＋煙霧測試
+    └── run_part2_tests.sh    # 同 Part1：CN 直跑或 --submit-pjm 送批次
 ```
 
 ---
@@ -73,9 +77,11 @@ ProgramingTutorial/
 3. 重點學習 [`Part1_CPU_CrashCourse/02_Vector_Add/`](Part1_CPU_CrashCourse/02_Vector_Add/) 的優化技巧
 
 ### 下半年課程
-1. 複習上半年重點（見 `Part2_GPU_CrashCourse/README.md`）
-2. 從 [`Part2_GPU_CrashCourse/01_CUDA_Hello/`](Part2_GPU_CrashCourse/01_CUDA_Hello/) 開始
-3. 最終挑戰：[`Part2_GPU_CrashCourse/03_Heat_Diffusion_Demo/`](Part2_GPU_CrashCourse/03_Heat_Diffusion_Demo/)
+1. 複習上半年重點（見 [`Part2_GPU_CrashCourse/README.md`](Part2_GPU_CrashCourse/README.md)）
+2. 從 [`01_CUDA_Hello/`](Part2_GPU_CrashCourse/01_CUDA_Hello/) → [`02_Vector_Add_GPU/`](Part2_GPU_CrashCourse/02_Vector_Add_GPU/)
+3. 語言對照：[`03_Language_Comparison_VectorAdd/`](Part2_GPU_CrashCourse/03_Language_Comparison_VectorAdd/)（選修 OpenACC：[`04_OpenACC_VectorAdd/`](Part2_GPU_CrashCourse/04_OpenACC_VectorAdd/)）
+4. 實戰：[`05_Heat_Diffusion_Demo/`](Part2_GPU_CrashCourse/05_Heat_Diffusion_Demo/)（延伸：[`06_Singularity_PyTorch_GPU/`](Part2_GPU_CrashCourse/06_Singularity_PyTorch_GPU/)）
+5. GPU 節點驗證：[`run_part2_gpu.sh`](Part2_GPU_CrashCourse/run_part2_gpu.sh) 或 [`run_part2_tests.sh`](Part2_GPU_CrashCourse/run_part2_tests.sh)
 
 ---
 
@@ -176,7 +182,7 @@ nvcc --version
 ### Professional（專業）：有 Fortran/C++ 實戰經驗
 - 課前閱讀 `optimization_mindset.md` 全文
 - 關注 ARM SVE 512-bit 與 `-KSVE` 編譯選項的效能影響
-- 挑戰 [`Part2_GPU_CrashCourse/03_Heat_Diffusion_Demo/`](Part2_GPU_CrashCourse/03_Heat_Diffusion_Demo/) 的完整 CPU + GPU 實作（Could 任務；依該章 README 自建原始碼）
+- 挑戰 [`Part2_GPU_CrashCourse/05_Heat_Diffusion_Demo/`](Part2_GPU_CrashCourse/05_Heat_Diffusion_Demo/) 的完整 CPU + GPU 實作（Could 任務；依該章 README 自建原始碼）
 
 ---
 

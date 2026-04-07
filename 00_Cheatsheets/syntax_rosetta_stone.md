@@ -214,7 +214,7 @@ cudaMemcpy(h_A, d_A, size, cudaMemcpyDeviceToHost);
 
 ## 🧩 CUDA Fortran（nvfortran）與 CUDA C 對照
 
-> 編譯器：**NVIDIA HPC SDK** 之 `nvfortran`；副檔名常為 `.cuf` 或於 Fortran 原始碼中啟用 CUDA。下列與 Part2 `05_Language_Comparison_VectorAdd/` 範例一致。
+> 編譯器：**NVIDIA HPC SDK** 之 `nvfortran`；副檔名常為 `.cuf` 或於 Fortran 原始碼中啟用 CUDA。下列與 Part2 `03_Language_Comparison_VectorAdd/` 範例一致。
 
 | 項目 | CUDA C | CUDA Fortran |
 |------|--------|----------------|
@@ -250,7 +250,7 @@ end subroutine vector_add_kernel
 
 ## 🌿 OpenACC Fortran（指令式）
 
-> 編譯：`nvfortran -acc -gpu=ccXX ...`。完整可編譯範例見 Part2 `06_OpenACC_VectorAdd/`。
+> 編譯：`nvfortran -acc -gpu=ccXX ...`。完整可編譯範例見 Part2 `04_OpenACC_VectorAdd/`。
 
 ### 資料區與平行迴圈（向量加）
 

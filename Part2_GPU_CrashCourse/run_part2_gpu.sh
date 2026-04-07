@@ -79,9 +79,12 @@ fi
 nvcc --version
 echo
 
-# 依 nvidia-smi 的 compute capability 選 -arch（未手動設 CUDAFLAGS 時）
-if [[ -z "${CUDAFLAGS:-}" ]]; then
+# 依 nvidia-smi 的 compute capability：nvcc 用 sm_XX，nvfortran／OpenACC 用 ccXX（例 8.0→80→sm_80／cc80）
+cap_code=""
+if command -v nvidia-smi >/dev/null 2>&1; then
   cap_code="$(nvidia-smi --query-gpu=compute_cap --format=csv,noheader,nounits 2>/dev/null | head -1 | tr -d '.')"
+fi
+if [[ -z "${CUDAFLAGS:-}" ]]; then
   if [[ -n "$cap_code" ]]; then
     export CUDAFLAGS="-O3 -arch=sm_${cap_code}"
     echo "（自動 CUDAFLAGS=$CUDAFLAGS）"
@@ -92,74 +95,121 @@ if [[ -z "${CUDAFLAGS:-}" ]]; then
 else
   echo "（使用既有 CUDAFLAGS=$CUDAFLAGS）"
 fi
+if [[ -z "${GPUARCH:-}" ]]; then
+  if [[ -n "$cap_code" ]]; then
+    export GPUARCH="cc${cap_code}"
+    echo "（自動 GPUARCH=$GPUARCH，供 03 nvfortran／04 OpenACC 之 -gpu=）"
+  else
+    export GPUARCH=cc70
+    echo "（預設 GPUARCH=$GPUARCH）"
+  fi
+else
+  echo "（使用既有 GPUARCH=$GPUARCH）"
+fi
 echo
 
-echo "---------- 編譯 Part2（CUDA）----------"
+echo "---------- 編譯 Part2（章節編號順序：01 → 02 → 03 → 04 → 05）----------"
+echo "（06 為容器測試，不在此編譯；03／04 編譯失敗不中止，仍跑後續煙霧測試）"
+
+echo ""
+echo "########## 01_CUDA_Hello（編譯）##########"
 make -C "$HERE/01_CUDA_Hello" all
+
+echo ""
+echo "########## 02_Vector_Add_GPU（編譯）##########"
 make -C "$HERE/02_Vector_Add_GPU" all
-make -C "$HERE/05_Language_Comparison_VectorAdd" all
-make -C "$HERE/06_OpenACC_VectorAdd" all
-make -C "$HERE/03_Heat_Diffusion_Demo" heat_gpu
-echo "編譯完成"
+
+echo ""
+echo "########## 03_Language_Comparison_VectorAdd（編譯）##########"
+if ! make -C "$HERE/03_Language_Comparison_VectorAdd" all; then
+  echo "[WARN] 03 編譯未完全成功（例如缺 nvfortran）；仍嘗試執行已存在之 CPU 執行檔" >&2
+fi
+
+echo ""
+echo "########## 04_OpenACC_VectorAdd（編譯，可選）##########"
+if ! make -C "$HERE/04_OpenACC_VectorAdd" all; then
+  echo "[WARN] 04 OpenACC 編譯失敗（常見：-gpu= 與 GPU 不符或 NVHPC_CUDA_HOME）；略過 04 執行" >&2
+fi
+
+echo ""
+echo "########## 05_Heat_Diffusion_Demo（編譯 heat_gpu）##########"
+make -C "$HERE/05_Heat_Diffusion_Demo" heat_gpu
+
+echo "編譯階段結束"
 echo
 
-echo "---------- 01_CUDA_Hello / device_query ----------"
+echo "========== 煙霧測試（章節編號順序：01 → 02 → 03 → 04 → 05 → 06）=========="
+echo ""
+
+echo "########## 01_CUDA_Hello ##########"
+echo "---------- device_query ----------"
 "$HERE/01_CUDA_Hello/device_query" | head -40
 echo
-echo "---------- 01_CUDA_Hello / hello_gpu ----------"
+echo "---------- hello_gpu ----------"
 "$HERE/01_CUDA_Hello/hello_gpu" | head -20
 echo
 
-echo "---------- 02_Vector_Add_GPU / vec_add_gpu ----------"
+echo "########## 02_Vector_Add_GPU ##########"
+echo "---------- vec_add_gpu ----------"
 "$HERE/02_Vector_Add_GPU/vec_add_gpu" | head -20
 echo
-echo "---------- 02_Vector_Add_GPU / benchmark ----------"
+echo "---------- benchmark ----------"
 "$HERE/02_Vector_Add_GPU/benchmark" | head -20
 echo
 
-echo "---------- 05_Language_Comparison_VectorAdd（CPU）----------"
+echo "########## 03_Language_Comparison_VectorAdd ##########"
+echo "---------- CPU：vec_add_cpu_{c,cpp,fortran} ----------"
 for b in vec_add_cpu_c vec_add_cpu_cpp vec_add_cpu_fortran; do
-  if [[ -x "$HERE/05_Language_Comparison_VectorAdd/$b" ]]; then
-    echo "=== $b ==="
-    "$HERE/05_Language_Comparison_VectorAdd/$b" | head -12
+  if [[ -x "$HERE/03_Language_Comparison_VectorAdd/$b" ]]; then
+    echo "=== 03 CPU $b ==="
+    "$HERE/03_Language_Comparison_VectorAdd/$b" | head -12
     echo
+  else
+    echo "=== 03 CPU $b ===（略過：無執行檔，請於 03 目錄 make）"
   fi
 done
 
-echo "---------- 05_Language_Comparison_VectorAdd（GPU，若已建置）----------"
+echo "---------- GPU：vec_add_cuda_{c,fortran}（若已建置）----------"
 for b in vec_add_cuda_c vec_add_cuda_fortran; do
-  if [[ -x "$HERE/05_Language_Comparison_VectorAdd/$b" ]]; then
-    echo "=== $b ==="
-    "$HERE/05_Language_Comparison_VectorAdd/$b" | head -12
+  if [[ -x "$HERE/03_Language_Comparison_VectorAdd/$b" ]]; then
+    echo "=== 03 GPU $b ==="
+    "$HERE/03_Language_Comparison_VectorAdd/$b" | head -12
     echo
+  else
+    echo "=== 03 GPU $b ===（略過：無執行檔）"
   fi
 done
 
-echo "---------- 06_OpenACC_VectorAdd（若 nvfortran -acc 已建置）----------"
+echo ""
+echo "########## 04_OpenACC_VectorAdd ##########"
 for b in vec_add_openacc vec_add_openacc_async vec_add_openacc_routine; do
-  if [[ -x "$HERE/06_OpenACC_VectorAdd/$b" ]]; then
-    echo "=== $b ==="
-    "$HERE/06_OpenACC_VectorAdd/$b" | head -12
+  if [[ -x "$HERE/04_OpenACC_VectorAdd/$b" ]]; then
+    echo "=== 04 OpenACC $b ==="
+    "$HERE/04_OpenACC_VectorAdd/$b" | head -14
     echo
+  else
+    echo "=== 04 OpenACC $b ===（略過：無執行檔）"
   fi
 done
 
-echo "---------- 03_Heat_Diffusion_Demo / heat_gpu ----------"
-"$HERE/03_Heat_Diffusion_Demo/heat_gpu" | head -20
+echo "########## 05_Heat_Diffusion_Demo ##########"
+echo "---------- heat_gpu ----------"
+"$HERE/05_Heat_Diffusion_Demo/heat_gpu" | head -20
 echo
 
+echo "########## 06_Singularity_PyTorch_GPU（選用）##########"
 SIF="${SINGULARITY_SIF:-${HOME}/sample/singularity/torch_1.13.1_cuda11.6.sif}"
 part2_try_load_singularity_module 2>/dev/null || true
 if command -v singularity >/dev/null 2>&1 || command -v apptainer >/dev/null 2>&1; then
   if [[ -f "$SIF" ]]; then
-    echo "---------- 04_Singularity_PyTorch_GPU ----------"
-    SINGULARITY_SIF="$SIF" bash "$HERE/04_Singularity_PyTorch_GPU/run_singularity_gpu_test.sh" | head -30 || echo "(Singularity 測試非致命失敗，請看上方輸出)"
+    SINGULARITY_SIF="$SIF" bash "$HERE/06_Singularity_PyTorch_GPU/run_singularity_gpu_test.sh" | head -30 || echo "(Singularity 測試非致命失敗，請看上方輸出)"
   else
-    echo "（略過 04：無 SIF $SIF）"
+    echo "（略過：無 SIF $SIF）"
   fi
 else
-  echo "（略過 04：無 singularity / apptainer）"
+  echo "（略過：無 singularity / apptainer）"
 fi
+echo
 
 echo
 echo "========== Part2 GPU 檢查結束（成功）=========="

@@ -1,4 +1,4 @@
-# 05：C / C++ / Fortran / CUDA C / CUDA Fortran 向量加法對照
+# 03：C / C++ / Fortran / CUDA C / CUDA Fortran 向量加法對照
 
 同一題目：**長度 n=10⁷ 的單精度向量相加 C = A + B**，用五種寫法並排對照語法與執行模型差異。
 
@@ -9,7 +9,7 @@
 - 看出 **CPU 語言**（C、C++、Fortran）在迴圈、索引、計時上的差異。
 - 對照 **CUDA C** 與 **CUDA Fortran**：kernel 標記、啟動設定、裝置記憶體、事件計時。
 - 理解 **Fortran 1-based 索引** 在 host 與 **CUDA Fortran device 內建維度**（同樣常為 1-based）的寫法。
-- （銜接）對照 **OpenACC** 指令式寫法：見 [`../06_OpenACC_VectorAdd/`](../06_OpenACC_VectorAdd/)。
+- （銜接）對照 **OpenACC** 指令式寫法：見 [`../04_OpenACC_VectorAdd/`](../04_OpenACC_VectorAdd/)。
 
 ---
 
@@ -45,7 +45,7 @@
 | 編譯 | `nvfortran -cuda` | 通常 `nvfortran -acc -gpu=...`（同屬 NVIDIA HPC SDK） |
 | 適用 | 要精細控制 thread、與 CUDA C 混編 | 快速移植既有 Fortran 迴圈、漸進式加速 |
 
-**OpenACC 實作**：本倉庫 [`../06_OpenACC_VectorAdd/`](../06_OpenACC_VectorAdd/)（`parallel loop`、`kernels` + `async`、`routine(seq)` 三則）。
+**OpenACC 實作**：本倉庫 [`../04_OpenACC_VectorAdd/`](../04_OpenACC_VectorAdd/)（`parallel loop`、`kernels` + `async`、`routine(seq)` 三則）。
 
 ---
 
@@ -86,11 +86,11 @@ make run_gpu    # 需已成功建置 GPU 執行檔
 1. 為何 GPU kernel 時間遠小於 **端到端**時間？（若加上 H2D/D2H 複製會如何？）
 2. CUDA Fortran 的 `i <= n` 與 CUDA C 的 `i < n` 差一個邊界，與 **索引起點**有何關係？
 3. 何時值得用 CUDA Fortran 而非 CUDA C + `iso_c_binding` 包一層？
-4. 同樣用 `nvfortran`，**OpenACC** 與 **CUDA Fortran** 在維護成本與可控程度上各犧牲／換到什麼？（對照 [`../06_OpenACC_VectorAdd/`](../06_OpenACC_VectorAdd/) 三則範例。）
+4. 同樣用 `nvfortran`，**OpenACC** 與 **CUDA Fortran** 在維護成本與可控程度上各犧牲／換到什麼？（對照 [`../04_OpenACC_VectorAdd/`](../04_OpenACC_VectorAdd/) 三則範例。）
 
 ---
 
 ## 參考
 
 - [CUDA Fortran Programming Guide](https://docs.nvidia.com/hpc-sdk/cuda-fortran-cuda-interfaces/index.html)（NVIDIA HPC SDK 文件）
-- 本倉庫 `../06_OpenACC_VectorAdd/README.md`、`../02_Vector_Add_GPU/README.md`、`../../00_Cheatsheets/compilation_guide.md`
+- 本倉庫 `../04_OpenACC_VectorAdd/README.md`、`../02_Vector_Add_GPU/README.md`、`../../00_Cheatsheets/compilation_guide.md`

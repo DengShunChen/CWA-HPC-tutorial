@@ -1,4 +1,4 @@
-# 04_Singularity_PyTorch_GPU — Singularity + PyTorch GPU 測試
+# 06_Singularity_PyTorch_GPU — Singularity + PyTorch GPU 測試
 
 以 **Singularity／Apptainer** 掛載 NVIDIA 驅動（`--nv`），在容器內執行 **PyTorch 1.13.1（CUDA 11.6）** 並驗證 GPU 可用。映像定義與中心範例檔一致，可對照：
 
@@ -24,7 +24,7 @@
 ## 快速測試（互動式 shell 內）
 
 ```bash
-cd Part2_GPU_CrashCourse/04_Singularity_PyTorch_GPU
+cd Part2_GPU_CrashCourse/06_Singularity_PyTorch_GPU
 chmod +x run_singularity_gpu_test.sh
 ./run_singularity_gpu_test.sh
 ```
@@ -53,7 +53,7 @@ export SINGULARITY_SIF="$(pwd)/torch_1.13.1_cuda11.6.sif"
 ## PJM 批次提交（選用）
 
 ```bash
-cd Part2_GPU_CrashCourse/04_Singularity_PyTorch_GPU
+cd Part2_GPU_CrashCourse/06_Singularity_PyTorch_GPU
 pjsub job_singularity_torch_gpu.sh
 ```
 

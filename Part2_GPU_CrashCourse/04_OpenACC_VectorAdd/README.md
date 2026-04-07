@@ -1,6 +1,6 @@
-# 06：OpenACC Fortran 向量加法
+# 04：OpenACC Fortran 向量加法
 
-與 [`../05_Language_Comparison_VectorAdd/`](../05_Language_Comparison_VectorAdd/) **同一題目**（n=10⁷、單精度 C = A + B），改以 **OpenACC 指令** 讓 `nvfortran` 產生 GPU kernel，與 **顯式 CUDA Fortran（`.cuf`）** 對照。
+與 [`../03_Language_Comparison_VectorAdd/`](../03_Language_Comparison_VectorAdd/) **同一題目**（n=10⁷、單精度 C = A + B），改以 **OpenACC 指令** 讓 `nvfortran` 產生 GPU kernel，與 **顯式 CUDA Fortran（`.cuf`）** 對照。
 
 ---
 
@@ -29,10 +29,15 @@
 
 ```bash
 module load nvhpc   # 或貴中心同等模組；需有 nvfortran
-export GPUARCH=cc80   # 依 GPU 調整，與 05 章 nvfortran -gpu= 一致
+# -gpu= 須與實體 GPU 一致：A100=cc80、V100=cc70。專案根或本目錄手動 make 時請自行 export：
+export GPUARCH=cc80
 make all
 make run
 ```
+
+**建議**：在 GPU 節點執行上層 **`../run_part2_gpu.sh`** 時，腳本會依 `nvidia-smi` 自動設定 **`GPUARCH=ccXX`**（與 `CUDAFLAGS` 之 `sm_XX` 對齊），再 `make` 本章，可避免 `-gpu=cc70` 在 A100 上出現 *Rebuild with -gpu=cc80*。
+
+若出現 **CUDA Toolkit 版本與驅動不一致**（編譯用 12.8、驅動僅 12.2），請依 [NVIDIA HPC Compilers User's Guide](https://docs.nvidia.com/hpc-sdk/compilers/hpc-compilers-user-guide/) 設定 **`NVHPC_CUDA_HOME`** 指向與驅動相容之 CUDA。
 
 無 `nvfortran` 時 `make all` 不產生執行檔（`make info` 顯示 `HAVE_NVFC=0`）。
 

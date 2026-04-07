@@ -31,8 +31,12 @@ make all
   │     ├── Part1_CPU_CrashCourse/01_Hello/make all
   │     └── Part1_CPU_CrashCourse/02_Vector_Add/make all
   └── make part2
-        ├── Part2_GPU_CrashCourse/01_CUDA_Hello/make all
-        └── Part2_GPU_CrashCourse/02_Vector_Add_GPU/make all
+        ├── Part2_GPU_CrashCourse/03_Language_Comparison_VectorAdd/make all
+        ├── Part2_GPU_CrashCourse/04_OpenACC_VectorAdd/make all（有 nvfortran 時）
+        ├── Part2_GPU_CrashCourse/01_CUDA_Hello/make all（略過若無 nvcc）
+        ├── Part2_GPU_CrashCourse/02_Vector_Add_GPU/make all（略過若無 nvcc）
+        ├── Part2_GPU_CrashCourse/05_Heat_Diffusion_Demo/heat_cpu
+        └── …/heat_gpu（略過若無 nvcc）
 ```
 
 ### 2.2 各章節編譯模式
@@ -46,6 +50,9 @@ make all
 | 04_Matrix_Operations | matrix_multiply*.f90, *.cpp | matrix_multiply_f, ... | **frt**；C++ 為 **FCC** 或 **g++** |
 | 01_CUDA_Hello | hello_gpu.cu, device_query.cu | hello_gpu, device_query | nvcc |
 | 02_Vector_Add_GPU | vec_add_gpu.cu | vec_add_gpu | nvcc |
+| 03_Language_Comparison_VectorAdd | vec_add_cpu.*、vec_add_cuda.* | 多執行檔 | gcc／g++／gfortran／nvcc／nvfortran |
+| 04_OpenACC_VectorAdd | vec_add_openacc*.f90 | vec_add_openacc* | nvfortran -acc |
+| 05_Heat_Diffusion_Demo | main_cpu.cpp、main_gpu.cu | heat_cpu、heat_gpu | g++、nvcc |
 
 ### 2.3 編譯器選項（Fujitsu A64FX）
 
@@ -129,5 +136,5 @@ module load lang/tcsds-1.2.37   # Fujitsu 編譯器模組
 ## 7. 擴充建議
 
 1. **頂層 Makefile**：可納入 03–07 章節以統一編譯
-2. **03_Heat_Diffusion_Demo**：補齊 `main_cpu.cpp`、`main_gpu.cu` 實作
+2. **05_Heat_Diffusion_Demo**：補齊 `main_cpu.cpp`、`main_gpu.cu` 實作
 3. **批次系統**：Part 1 範例以 **PJM** 為準；跨系統對照見 Cheatsheet，勿在教學 repo 混用 PBS 範例腳本

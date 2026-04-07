@@ -65,10 +65,10 @@ ProgramingTutorial/
 └── Part2_GPU_CrashCourse/        # 下半年下午：GPU 上機實作教材
     ├── 01_CUDA_Hello/           # GPU 環境確認
     ├── 02_Vector_Add_GPU/      # 向量加法 GPU 版
-    ├── 05_Language_Comparison_VectorAdd/  # C/C++/Fortran 與 CUDA C/CUDA Fortran 對照
-    ├── 06_OpenACC_VectorAdd/    # OpenACC Fortran（與 05 同題）
-    ├── 03_Heat_Diffusion_Demo/  # 熱傳導模擬（CPU/GPU 參考實作）
-    └── 04_Singularity_PyTorch_GPU/  # Singularity --nv + PyTorch CUDA 測試
+    ├── 03_Language_Comparison_VectorAdd/  # C/C++/Fortran 與 CUDA C/CUDA Fortran 對照
+    ├── 04_OpenACC_VectorAdd/    # OpenACC Fortran（與 03 同題）
+    ├── 05_Heat_Diffusion_Demo/  # 熱傳導模擬（CPU/GPU 參考實作）
+    └── 06_Singularity_PyTorch_GPU/  # Singularity --nv + PyTorch CUDA 測試
 ```
 
 ---
@@ -80,7 +80,7 @@ ProgramingTutorial/
 | **語言** | Fortran 90 | 數值計算 |
 | **語言** | C++11 | 數值計算 |
 | **語言** | CUDA C | GPU 平行運算 |
-| **語言／指令** | OpenACC（Fortran） | `nvfortran -acc`，與 CUDA Fortran 對照（Part2 `06_OpenACC_VectorAdd`） |
+| **語言／指令** | OpenACC（Fortran） | `nvfortran -acc`，與 CUDA Fortran 對照（Part2 `04_OpenACC_VectorAdd`） |
 | **編譯器** | Fujitsu frt / FCC | A64FX 平台 |
 | **編譯器** | g++（無 FCC 時之 C++） | 僅部分章節之 C++；Fortran 仍 **`frt`** |
 | **編譯器** | nvcc | CUDA |
@@ -99,10 +99,10 @@ ProgramingTutorial/
 | 08_Debug_Profile | Fortran 熱點 + 越界範例 | **`frt`**、**TCS Debugger**、**TCS Profiler**、**`-Haefosux`**（執行期檢查；舊寫法 `-Hx,CHECK_SUBSCRIPT` 易與新版 TCS 不相容） |
 | 09_Profiler_Toolkit_TCS | `phase_heavy`／`phase_light` | **FIPP**：`fipp`／`fipppx`、`-Nfjprof`／`-Nline`、與 `-Koptmsg=2` 對照 |
 | 02_Vector_Add_GPU | GPU 向量加法 | CUDA kernel、Host-Device 記憶體、效能測試 |
-| 05_Language_Comparison_VectorAdd | 五語言向量加 | C / C++ / Fortran（CPU）與 CUDA C / CUDA Fortran |
-| 06_OpenACC_VectorAdd | OpenACC 向量加 | `!$acc data`、`parallel loop`、`async`／`routine(seq)` |
-| 03_Heat_Diffusion_Demo | 熱傳導模擬 | 2D 有限差分法、CPU vs GPU 對比 |
-| 04_Singularity_PyTorch_GPU | PyTorch in Singularity | `--nv`、與 `torch_1.13.1_cuda11.6.sif` 銜接、PJM 批次範例 |
+| 03_Language_Comparison_VectorAdd | 五語言向量加 | C / C++ / Fortran（CPU）與 CUDA C / CUDA Fortran |
+| 04_OpenACC_VectorAdd | OpenACC 向量加 | `!$acc data`、`parallel loop`、`async`／`routine(seq)` |
+| 05_Heat_Diffusion_Demo | 熱傳導模擬 | 2D 有限差分法、CPU vs GPU 對比 |
+| 06_Singularity_PyTorch_GPU | PyTorch in Singularity | `--nv`、與 `torch_1.13.1_cuda11.6.sif` 銜接、PJM 批次範例 |
 
 ---
 
@@ -146,7 +146,7 @@ make help    # 顯示說明
 
 ## 七、已知限制與注意事項
 
-1. **03_Heat_Diffusion_Demo**：README 仍保留分層任務說明；同目錄已提供可編譯之 `main_cpu.cpp`、`main_gpu.cu`（`make` / `make run_all`）
+1. **05_Heat_Diffusion_Demo**：README 仍保留分層任務說明；同目錄已提供可編譯之 `main_cpu.cpp`、`main_gpu.cu`（`make` / `make run_all`）
 2. **平台差異**：主目標為 Fujitsu A64FX；Part1 **Fortran** 一律 **`frt`**，C++ 可 **FCC** 或 **g++**
 3. **批次系統**：Part 1 範例作業腳本（`job_vec_add.sh`、`job_matrix.sh`、`job_kernel_profile.sh` 等）皆為 **PJM**；PBS／Slurm 僅見 Cheatsheet 對照表。詳見 `docs/INSTRUCTOR_GUIDE.md` 第 1.2 節
 4. **TCS Debugger／FIPP**：`fipp`／`fipppx` 與 **`-Nline`** 等選項依 TCS 版本而異；請以貴中心手冊為準（第 09 章為 **Instant Performance Profiler** 流程概念）
