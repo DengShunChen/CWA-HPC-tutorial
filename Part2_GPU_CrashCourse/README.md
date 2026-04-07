@@ -197,6 +197,8 @@ make
 
 ## 🚀 快速開始
 
+> **注意**：Part2 執行檔由 `make` 產生，**不在 Git 內**；clone 後請在 `Part2_GPU_CrashCourse/` 各子目錄或專案根目錄執行 `make part2`（無 `nvcc` 時仍會編出 `05` CPU 與 `03` 之 `heat_cpu`）。
+
 ```bash
 # 1. 確認環境
 cd 01_CUDA_Hello

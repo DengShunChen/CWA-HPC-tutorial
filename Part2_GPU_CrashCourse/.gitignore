@@ -1,0 +1,15 @@
+# Part2：make 產生之執行檔（勿提交；依平台／GPU 架構而異）
+01_CUDA_Hello/hello_gpu
+01_CUDA_Hello/device_query
+02_Vector_Add_GPU/vec_add_gpu
+02_Vector_Add_GPU/benchmark
+03_Heat_Diffusion_Demo/heat_cpu
+03_Heat_Diffusion_Demo/heat_gpu
+05_Language_Comparison_VectorAdd/vec_add_cpu_c
+05_Language_Comparison_VectorAdd/vec_add_cpu_cpp
+05_Language_Comparison_VectorAdd/vec_add_cpu_fortran
+05_Language_Comparison_VectorAdd/vec_add_cuda_c
+05_Language_Comparison_VectorAdd/vec_add_cuda_fortran
+06_OpenACC_VectorAdd/vec_add_openacc
+06_OpenACC_VectorAdd/vec_add_openacc_async
+06_OpenACC_VectorAdd/vec_add_openacc_routine

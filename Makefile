@@ -19,14 +19,16 @@ part1:
 	@cd Part1_CPU_CrashCourse/02_Vector_Add && $(MAKE) all
 	@echo "✓ Part 1 編譯完成"
 
+# Part2：05（CPU 三支必成）、06（僅 nvfortran）、CUDA 章節需 nvcc。登入節點無 GPU 工具時略過 nvcc 目標，不讓整個 part2 失敗。
 part2:
 	@echo ">>> 編譯 Part 2: GPU 程式設計課程"
-	@cd Part2_GPU_CrashCourse/01_CUDA_Hello && $(MAKE) all
-	@cd Part2_GPU_CrashCourse/02_Vector_Add_GPU && $(MAKE) all
 	@cd Part2_GPU_CrashCourse/05_Language_Comparison_VectorAdd && $(MAKE) all
 	@cd Part2_GPU_CrashCourse/06_OpenACC_VectorAdd && $(MAKE) all
-	@cd Part2_GPU_CrashCourse/03_Heat_Diffusion_Demo && $(MAKE) all
-	@echo "✓ Part 2 編譯完成"
+	@-cd Part2_GPU_CrashCourse/01_CUDA_Hello && $(MAKE) all
+	@-cd Part2_GPU_CrashCourse/02_Vector_Add_GPU && $(MAKE) all
+	@cd Part2_GPU_CrashCourse/03_Heat_Diffusion_Demo && $(MAKE) heat_cpu
+	@-cd Part2_GPU_CrashCourse/03_Heat_Diffusion_Demo && $(MAKE) heat_gpu
+	@echo "✓ Part 2 編譯完成（無 nvcc 時 01/02 與 heat_gpu 略過；請在 GPU 節點 module load CUDA/nvhpc 後再編譯）"
 
 clean:
 	@echo "清理所有執行檔..."

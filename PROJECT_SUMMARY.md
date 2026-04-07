@@ -120,6 +120,8 @@ make help    # 顯示說明
 
 **注意**：頂層 Makefile 僅編譯部分章節。`03_Challenge`、`04_Matrix_Operations`、`05_File_IO`、`06_Functions_Modules`、`07_Structures`、`08_Debug_Profile`、`09_Profiler_Toolkit_TCS` 需進入各章節目錄執行 `make`。
 
+**Part2**：執行檔不納入 Git（見 `Part2_GPU_CrashCourse/.gitignore`），clone 後請 `make part2`。登入節點若無 `nvcc`，`make part2` 仍會完成 `05`（CPU 三支）與 `03/heat_cpu`，CUDA 目標略過；GPU 節點載入 CUDA／nvhpc 後再編譯即可。
+
 ### 批次作業
 
 - `Part1_CPU_CrashCourse/02_Vector_Add/job_vec_add.sh` — **PJM**
