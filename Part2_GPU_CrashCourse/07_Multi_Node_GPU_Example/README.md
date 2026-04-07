@@ -1,70 +1,85 @@
-# 07_Multi_Node_GPU_Example — 多節點 GPU 作業（PJM + MPI）
+# 07_Multi_Node_GPU_Example — 多節點 GPU（MPI + CUDA）
 
-本章**不複製**你站上專用之模組路徑與可執行檔路徑；**完整可跑流程**請以家目錄下範例為準：
-
-**`$HOME/sample/GPU_multiNodes/`**
-
-（與 Part2 `06` 使用 `$HOME/sample/singularity/` 銜接容器映像同一思路：教材說明概念與 PJM 模式，實際 binary／module 留在 sample。）
+本目錄提供**可編譯、可送 PJM** 的最小範例：**每個 MPI rank** 在所屬計算節點上查 GPU、依 **節點內 local rank** 呼叫 `cudaSetDevice`，並列印 hostname／裝置名稱。適合驗證多 vnode 配置、`mpirun` 與 **hostfile** 是否正確。
 
 ---
 
-## 該目錄裡有什麼（摘要）
+## 檔案
 
-| 檔案 | 用途 |
+| 檔案 | 說明 |
 |------|------|
-| `run_gpu.sh` | **多 vnode** GPU 作業：`vnode`、`gpu`、`--mpi proc`、`PJM_O_NODEINF` 產生 hostfile、`mpirun` + `OMPI_MCA_plm_rsh_agent=/bin/pjrsh` |
-| `run.sh` | 多節點 **CPU/MPI** 探測（`pwd` 等）；同樣 hostfile 模式 |
-| `submit_gpu.sh` | 單 vnode 快速送件／`nvidia-smi` 煙霧 |
-| `sample_code/` | 例如 `mpi_openacc_example.f90`、HPL 相關範例（Fortran 原始碼） |
-| `pi-cuda`、`pi-mpi` | 目錄內既有 binary（來源可能在他處，如 `run_gpu.sh` 內之 `CMD` 路徑） |
-
-**送件前請自行對齊**：`Nodes`（腳本變數）＝ `#PJM -L vnode=`；`NProcs`＝ `#PJM --mpi proc=`；`NProcsPerNode = NProcs / Nodes` 與 `-npernode` 一致。
+| [`mpi_cuda_rank_info.cu`](mpi_cuda_rank_info.cu) | 原始碼（MPI + CUDA runtime） |
+| [`Makefile`](Makefile) | `nvcc -ccbin mpicxx` 產生 `mpi_cuda_rank_info` |
+| [`job_mpi_cuda_rank_info.sh`](job_mpi_cuda_rank_info.sh) | PJM 批次：自動 `make`、組 hostfile、`mpirun` |
 
 ---
 
-## PJM 資源行（你環境常見寫法）
-
-`GPU_multiNodes/run_gpu.sh` 類似結構：
+## 建置
 
 ```bash
-#PJM -L rscunit=rscunit_pg01
-#PJM -L rscgrp=gpu-rd-large
-#PJM -L vnode=2
-#PJM -L vnode-core=32
-#PJM -L gpu=1
-#PJM --mpi proc=64
-#PJM -L elapse=0:10:00
-#PJM -j
+cd Part2_GPU_CrashCourse/07_Multi_Node_GPU_Example
+module load ...   # 貴站：nvhpc / CUDA + HPC-X（Open MPI）等，使 nvcc、mpicxx、mpirun 可用
+make
 ```
 
-> 部分文件或互動式範例寫成 `-L ru=...`、`-L rg=...`；**與 `rscunit`／`rscgrp` 是否同義依貴中心手冊為準**（見 [`00_Cheatsheets/pjm_batch_system.md`](../../00_Cheatsheets/pjm_batch_system.md)）。
+- **`MPICXX`**：預設 `mpicxx`，可覆寫 `make MPICXX=/path/to/mpicxx`。
+- **`NVCC`**、`**CUDAFLAGS**`：與其他 Part2 章節相同慣例。
 
 ---
 
-## Hostfile + Open MPI（重點）
+## 單節點煙霧（互動 GPU shell）
 
-1. **`PJM_O_NODEINF`**：PJM 提供的節點列表；迴圈寫入 `hostfile`，每行 `hostname slots=<每節點 slot 數>`（你範例用 `PJM_PROC_BY_NODE`）。
-2. **`export OMPI_MCA_plm_rsh_agent=/bin/pjrsh`**：在 Fujitsu PJM 環境下讓 `mpirun` 用 **`pjrsh`** 啟動遠端程序（與登入節點上一般 `ssh` 不同）。
-3. **`mpirun -np $NProcs -npernode $NProcsPerNode -hostfile ... -x PATH -x LD_LIBRARY_PATH <CMD>`**：把環境帶到各 rank；**CUDA 程式**需保證每 rank 綁到正確 GPU（多卡節點時依 `OMPI_COMM_WORLD_LOCAL_RANK` 等設定 `cudaSetDevice`，見下）。
+```bash
+make run-local    # mpirun -np 2 --oversubscribe ./mpi_cuda_rank_info
+```
 
----
-
-## 多卡／多節點時的 GPU 綁定（概念）
-
-- **每節點 1 卡、每節點數個 MPI rank**：通常每 rank `cudaSetDevice(local_rank % num_gpus)`，或每節點只跑 1 GPU 1 rank（最簡教學）。
-- **每節點多卡**：必須避免多 process 預設都搶 `device 0`；請在程式內或啟動腳本設定 `CUDA_VISIBLE_DEVICES`／`local_rank`。
-
-本 repo 之 `01`–`06` 以**單節點**為主；**多節點實作與 timing** 請以 `$HOME/sample/GPU_multiNodes` 與貴中心手冊為主。
+同一台機器上兩個 rank 的 **local_rank** 會是 0 與 1；若僅一張 GPU，兩者會輪流 `cudaSetDevice(0)`（仍可比對輸出格式）。
 
 ---
 
-## 本目錄之模板腳本
+## 多節點送件（PJM）
 
-[`job_multi_node_gpu_template.sh`](job_multi_node_gpu_template.sh) 為**去個人化**的 PJM 骨架：`CMD`、`module`、資源數字請依你的 `GPU_multiNodes` 或叢集政策修改後再 `pjsub`。
+1. 編輯 [`job_mpi_cuda_rank_info.sh`](job_mpi_cuda_rank_info.sh) 頂端 **`#PJM`**，使資源與 **`Nodes` / `NProcs` / `NProcsPerNode`** 一致（`NProcs` 須整除 `Nodes`）。
+2. 在腳本內或站臺預設環境完成 **module**（與建置相同）。
+3. 於本目錄：
+
+```bash
+pjsub job_mpi_cuda_rank_info.sh
+```
+
+腳本會：
+
+- 讀 **`PJM_O_NODEINF`** 寫入 **`hostfile.$PJM_JOBID`**（每行 `hostname slots=…`，預設用 **`PJM_PROC_BY_NODE`**，否則用 `NProcsPerNode`）。
+- 設定 **`OMPI_MCA_plm_rsh_agent=/bin/pjrsh`**（Fujitsu PJM 上常需要）。
+- 執行 **`mpirun -np -npernode -hostfile`**，最後 **`nvidia-smi`**（非致命）。
+
+已編譯時可 **`export SKIP_MAKE=1`** 略過 `make`。
+
+---
+
+## 與 `ru`／`rg` 或 `rscunit`／`rscgrp`
+
+部分站台 `#PJM` 寫 **`-L ru=` / `-L rg=`**，另一些寫 **`rscunit=` / `rscgrp=`**；請依貴中心手冊擇一，並與互動式 `pjsub` 參數對齊（見 [`00_Cheatsheets/pjm_batch_system.md`](../../00_Cheatsheets/pjm_batch_system.md)）。
+
+---
+
+## 家目錄延伸：`$HOME/sample/GPU_multiNodes/`
+
+若你已有 **pi-cuda、大規模 procs、自訂 module 堆疊** 等，可繼續使用 **`$HOME/sample/GPU_multiNodes/`**（例如 `run_gpu.sh`）。本章節範例與該目錄**獨立**；進階實驗可將本目錄程式路徑替換為該處之 `CMD`，或複製本 **hostfile + mpirun** 模式到自訂腳本。
+
+---
+
+## 常見問題
+
+| 狀況 | 方向 |
+|------|------|
+| 連結階段找不到 MPI | 確認 `-ccbin $(MPICXX)` 指向的 `mpicxx` 與 `mpirun` 同一套 Open MPI／HPC-X |
+| 多 rank 全用 GPU0 | 檢查環境是否提供 **`OMPI_COMM_WORLD_LOCAL_RANK`**；多卡時本範例使用 **`local_rank % nGpu`** |
+| `PJM_O_NODEINF` 不存在 | 必須在 **PJM 啟動的批次腳本**內執行，勿在登入節點裸跑該腳本 |
 
 ---
 
 ## 延伸閱讀
 
 - [`../README.md`](../README.md) — Part2 總覽  
-- [`../../00_Cheatsheets/pjm_batch_system.md`](../../00_Cheatsheets/pjm_batch_system.md) — PJM、`vnode`、`--mpi proc`、GPU 互動式範例
+- [`../../00_Cheatsheets/pjm_batch_system.md`](../../00_Cheatsheets/pjm_batch_system.md) — PJM、GPU 互動式

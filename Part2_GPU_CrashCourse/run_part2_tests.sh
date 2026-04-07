@@ -26,7 +26,7 @@
 # 涵蓋章節（與 run_part2_gpu.sh 對齊）：
 #   01–05  編譯＋煙霧測試
 #   06     Singularity／PyTorch GPU（選用，有 SIF 與 singularity/apptainer 時）
-#   07     多節點 GPU+MPI 僅印提示（實作見 $HOME/sample/GPU_multiNodes；可用 PART2_SKIP_07_NOTICE=1 略過）
+#   07     多節點：結束後印 07 目錄與 sample 提示（範例程式為 07/mpi_cuda_rank_info；PART2_SKIP_07_NOTICE=1 略過）
 
 set -uo pipefail
 
@@ -69,7 +69,8 @@ part2_tests_chapter_07_notice() {
   echo ""
   echo "########## 07_Multi_Node_GPU_Example（教材提示，非自動測試）##########"
   echo "多節點 GPU + MPI：${PART2_ROOT}/07_Multi_Node_GPU_Example/README.md"
-  echo "實作腳本與 binary：\${HOME}/sample/GPU_multiNodes/（例：run_gpu.sh）"
+  echo "本倉庫範例：${PART2_ROOT}/07_Multi_Node_GPU_Example（make mpi_cuda_rank_info、pjsub job_mpi_cuda_rank_info.sh）"
+  echo "進階腳本可另見：\${HOME}/sample/GPU_multiNodes/"
   if [ -d "${HOME}/sample/GPU_multiNodes" ]; then
     echo "（已偵測到目錄，列舉前幾項）"
     ls -la "${HOME}/sample/GPU_multiNodes" 2>/dev/null | head -12 || true

@@ -25,7 +25,7 @@
 | （選修） | **OpenACC Fortran** | [`04_OpenACC_VectorAdd/`](04_OpenACC_VectorAdd/) | `parallel loop`、`async`／`wait`、`routine(seq)`；與 `03` 同題 |
 | 60 min | 實戰案例 | [`05_Heat_Diffusion_Demo/`](05_Heat_Diffusion_Demo/) | 熱傳導模擬、CPU vs GPU 對比 |
 | （延伸） | Singularity + PyTorch | [`06_Singularity_PyTorch_GPU/`](06_Singularity_PyTorch_GPU/) | `--nv`、容器內 CUDA、與既有 `.sif` 銜接 |
-| （延伸） | **多節點 GPU + MPI** | [`07_Multi_Node_GPU_Example/`](07_Multi_Node_GPU_Example/) | 銜接 **`$HOME/sample/GPU_multiNodes/`**；PJM `vnode`、`mpirun`、hostfile、`pjrsh` |
+| （延伸） | **多節點 GPU + MPI** | [`07_Multi_Node_GPU_Example/`](07_Multi_Node_GPU_Example/) | `mpi_cuda_rank_info` + `job_mpi_cuda_rank_info.sh`；另可參考 `$HOME/sample/GPU_multiNodes/` |
 
 > 下午總時數仍約 3 小時：`04` 可併入課後自修，或壓縮 `02`／`03` 的示範時間帶做；Fortran 背景較弱時可略過 `03` 的 Fortran 軌與整章 `04`。`07` 與家目錄 `sample/GPU_multiNodes` 為**進階／自修**，不在 `run_part2_gpu.sh` 預設流程內。
 
@@ -142,7 +142,7 @@
 - 理解 PJM 上 **多 `vnode`**、`gpu`、`--mpi proc` 與 **Open MPI `mpirun`** 的組合。
 - 由 **`PJM_O_NODEINF`** 產生 **hostfile**、設定 **`OMPI_MCA_plm_rsh_agent=/bin/pjrsh`**（Fujitsu PJM 常見）。
 
-**實作與腳本**：完整流程與你站上模組路徑請用家目錄 **`$HOME/sample/GPU_multiNodes/`**（內含 `run_gpu.sh`、`sample_code/` 等）。本 repo 僅附 [`07_Multi_Node_GPU_Example/README.md`](07_Multi_Node_GPU_Example/README.md) 說明與 [`job_multi_node_gpu_template.sh`](07_Multi_Node_GPU_Example/job_multi_node_gpu_template.sh) 模板。
+**實作與腳本**：本 repo 內 [`07_Multi_Node_GPU_Example/`](07_Multi_Node_GPU_Example/) 含 **`mpi_cuda_rank_info.cu`**、`Makefile`、**[`job_mpi_cuda_rank_info.sh`](07_Multi_Node_GPU_Example/job_mpi_cuda_rank_info.sh)**（PJM 多 vnode + `mpirun`）。進階／個人化流程可併用家目錄 **`$HOME/sample/GPU_multiNodes/`**。
 
 ---
 
@@ -262,7 +262,7 @@ chmod +x run_singularity_gpu_test.sh
 ./run_singularity_gpu_test.sh
 ```
 
-**7. （延伸）多節點 GPU + MPI**：閱讀 [`07_Multi_Node_GPU_Example/README.md`](07_Multi_Node_GPU_Example/README.md)；可跑腳本與 binary 在 **`$HOME/sample/GPU_multiNodes/`**。
+**7. （延伸）多節點 GPU + MPI**：[`07_Multi_Node_GPU_Example/`](07_Multi_Node_GPU_Example/) 內 `make` 與 `pjsub job_mpi_cuda_rank_info.sh`；進階腳本可見 **`$HOME/sample/GPU_multiNodes/`**。
 
 ---
 
@@ -272,7 +272,7 @@ chmod +x run_singularity_gpu_test.sh
 - [優化思維指南](../00_Cheatsheets/optimization_mindset.md#-gpu-優化思維) - GPU 優化技巧
 - **CUDA C Programming Guide**：https://docs.nvidia.com/cuda/cuda-c-programming-guide/
 - **OpenACC**：[`04_OpenACC_VectorAdd`](04_OpenACC_VectorAdd/)（本倉庫內建範例）；[OpenACC 規格](https://www.openacc.org/specification)
-- **多節點 GPU**：[`07_Multi_Node_GPU_Example`](07_Multi_Node_GPU_Example/) ＋ `$HOME/sample/GPU_multiNodes/`
+- **多節點 GPU**：[`07_Multi_Node_GPU_Example`](07_Multi_Node_GPU_Example/)（`mpi_cuda_rank_info`）；可再加 `$HOME/sample/GPU_multiNodes/`
 
 ---
 

@@ -53,6 +53,7 @@ make all
 | 03_Language_Comparison_VectorAdd | vec_add_cpu.*、vec_add_cuda.* | 多執行檔 | gcc／g++／gfortran／nvcc／nvfortran |
 | 04_OpenACC_VectorAdd | vec_add_openacc*.f90 | vec_add_openacc* | nvfortran -acc |
 | 05_Heat_Diffusion_Demo | main_cpu.cpp、main_gpu.cu | heat_cpu、heat_gpu | g++、nvcc |
+| 07_Multi_Node_GPU_Example | mpi_cuda_rank_info.cu | mpi_cuda_rank_info | nvcc（`-ccbin mpicxx`）+ Open MPI |
 
 ### 2.3 編譯器選項（Fujitsu A64FX）
 

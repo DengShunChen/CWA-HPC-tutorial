@@ -16,6 +16,8 @@
 04_OpenACC_VectorAdd/vec_add_openacc_routine
 05_Heat_Diffusion_Demo/heat_cpu
 05_Heat_Diffusion_Demo/heat_gpu
+07_Multi_Node_GPU_Example/mpi_cuda_rank_info
+07_Multi_Node_GPU_Example/hostfile.*
 
 # PJM／叢集暫存（例：.d<jobid>p、.d<jobid>_nodeinfo）
 .d*

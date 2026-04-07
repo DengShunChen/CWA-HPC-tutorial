@@ -69,7 +69,7 @@ ProgramingTutorial/
     ├── 04_OpenACC_VectorAdd/    # OpenACC Fortran（與 03 同題）
     ├── 05_Heat_Diffusion_Demo/  # 熱傳導模擬（CPU/GPU 參考實作）
     ├── 06_Singularity_PyTorch_GPU/  # Singularity --nv + PyTorch CUDA 測試
-    └── 07_Multi_Node_GPU_Example/   # 多節點 GPU+MPI（銜接 $HOME/sample/GPU_multiNodes）
+    └── 07_Multi_Node_GPU_Example/   # MPI+CUDA 探測、PJM 多 vnode；可併用 $HOME/sample/GPU_multiNodes
 ```
 
 ---
@@ -104,7 +104,7 @@ ProgramingTutorial/
 | 04_OpenACC_VectorAdd | OpenACC 向量加 | `!$acc data`、`parallel loop`、`async`／`routine(seq)` |
 | 05_Heat_Diffusion_Demo | 熱傳導模擬 | 2D 有限差分法、CPU vs GPU 對比 |
 | 06_Singularity_PyTorch_GPU | PyTorch in Singularity | `--nv`、與 `torch_1.13.1_cuda11.6.sif` 銜接、PJM 批次範例 |
-| 07_Multi_Node_GPU_Example | 多節點 GPU + MPI | 說明＋PJM 模板；完整腳本見 `$HOME/sample/GPU_multiNodes/` |
+| 07_Multi_Node_GPU_Example | 多節點 GPU + MPI | `mpi_cuda_rank_info.cu`、`job_mpi_cuda_rank_info.sh`；進階見 `$HOME/sample/GPU_multiNodes/` |
 
 ---
 

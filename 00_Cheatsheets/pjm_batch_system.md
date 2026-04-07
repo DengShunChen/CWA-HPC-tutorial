@@ -278,7 +278,7 @@ bash run_part2_gpu.sh
 
 腳本內容：依序 `nvidia-smi`、`nvcc`、編譯 Part2 CUDA 範例並執行簡短輸出；若有 Singularity 與 `torch_*.sif` 會加跑 PyTorch GPU 測試。
 
-**多節點 GPU + MPI**（進階）：教材 [`Part2_GPU_CrashCourse/07_Multi_Node_GPU_Example/`](../Part2_GPU_CrashCourse/07_Multi_Node_GPU_Example/) 說明 PJM `vnode`、`PJM_O_NODEINF` hostfile、`mpirun` 與 `OMPI_MCA_plm_rsh_agent=/bin/pjrsh`；實際站上腳本與 binary 常置於 **`$HOME/sample/GPU_multiNodes/`**（例如 `run_gpu.sh`）。
+**多節點 GPU + MPI**（進階）：教材 [`Part2_GPU_CrashCourse/07_Multi_Node_GPU_Example/`](../Part2_GPU_CrashCourse/07_Multi_Node_GPU_Example/) 含可編譯 **`mpi_cuda_rank_info`** 與 **`job_mpi_cuda_rank_info.sh`**（PJM、`PJM_O_NODEINF` hostfile、`mpirun`、`OMPI_MCA_plm_rsh_agent=/bin/pjrsh`）。進階／個人化腳本可另見 **`$HOME/sample/GPU_multiNodes/`**（例如 `run_gpu.sh`）。
 
 若以**批次**驗證：
 
