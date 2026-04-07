@@ -122,13 +122,14 @@ make help    # 顯示說明
 
 **Part1**：各章 `make` 產生之執行檔與 `*.mod`／`*.o` 不納入 Git（見 `Part1_CPU_CrashCourse/.gitignore`）；clone 後請於所需章節目錄 `make`，或至少執行根目錄 `make part1`（僅涵蓋 01、02）。
 
-**Part2**：執行檔不納入 Git（見 `Part2_GPU_CrashCourse/.gitignore`），clone 後請 `make part2`。登入節點若無 `nvcc`，`make part2` 仍會完成 `05`（CPU 三支）與 `03/heat_cpu`，CUDA 目標略過；GPU 節點載入 CUDA／nvhpc 後再編譯即可。
+**Part2**：執行檔不納入 Git（見 `Part2_GPU_CrashCourse/.gitignore`），clone 後請 `make part2`。登入節點若無 `nvcc`，`make part2` 仍會完成 `05`（CPU 三支）與 `03/heat_cpu`，CUDA 目標略過；GPU 節點載入 CUDA／nvhpc 後再編譯即可。GPU 節點一鍵檢查：`Part2_GPU_CrashCourse/run_part2_tests.sh`（登入節點送件：`export PJM_GROUP=… && ./run_part2_tests.sh --submit-pjm`，對齊 Part1 `run_all_tests.sh --submit-pjm`）。
 
 ### 批次作業
 
 - `Part1_CPU_CrashCourse/02_Vector_Add/job_vec_add.sh` — **PJM**
 - `Part1_CPU_CrashCourse/04_Matrix_Operations/job_matrix.sh` — **PJM**
 - `Part1_CPU_CrashCourse/09_Profiler_Toolkit_TCS/job_kernel_profile.sh` — **PJM**（選用，**`fipp -C -d ...`** 取樣）
+- `Part2_GPU_CrashCourse/run_part2_tests.sh --submit-pjm` — **PJM**（GPU 資源；亦可手寫 `pjsub job_run_part2_gpu.sh`）
 
 ---
 

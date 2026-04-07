@@ -173,6 +173,26 @@ cd 01_CUDA_Hello
 make
 ```
 
+### 在 GPU 計算節點（CN）或 PJM 批次執行（比照 Part1）
+
+登入節點通常無 GPU；**已取得 GPU 互動／批次資源後**（見上節與 [`pjm_batch_system.md`](../00_Cheatsheets/pjm_batch_system.md)）：
+
+```bash
+cd Part2_GPU_CrashCourse
+
+# 方式 A：已在 GPU CN／互動 shell（nvidia-smi 可用）
+./run_part2_tests.sh
+./run_part2_tests.sh --report part2_autotest_report.txt   # 另存一份報告
+
+# 方式 B：仍在登入節點，由腳本產生 GPU 用 #PJM 並 pjsub（與 Part1 run_all_tests.sh --submit-pjm 同概念）
+export PJM_GROUP=你的群組   # 必填；亦可視站臺改 PART2_PJM_* 資源變數
+./run_part2_tests.sh --submit-pjm
+# 日誌檔預設 part2_gpu_autotest.log（可用 PART2_PJM_LOG 覆寫）
+```
+
+- **手寫批次**：`pjsub job_run_part2_gpu.sh`（內容為 `exec bash run_part2_gpu.sh`，與方式 A 最終行為相同）。
+- **CUDA 模組**：若自動偵測不到 `nvcc`，可 `export PART2_CUDA_MODULE=nvhpc-hpcx-cuda12/…` 再跑；送批次時此變數會一併寫入產生之工作腳本。
+
 ---
 
 ## 💡 學習建議

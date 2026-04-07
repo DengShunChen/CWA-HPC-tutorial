@@ -1,6 +1,7 @@
 #!/bin/bash
 # 批次測試 Part2 GPU：與互動式相同資源語系，但使用批次輸出 log（較適合自動驗證）。
 # 提交：  pjsub job_run_part2_gpu.sh
+# 與 Part1 對齊之「登入節點一鍵送批次」：./run_part2_tests.sh --submit-pjm（會寫入 .part2_gpu_autotest_job.sh 再 pjsub）
 # 互動式：多數站台進 shell 後執行 bash run_part2_gpu.sh；若 PJM 支援行尾啟動腳本，可用 ... -j run_part2_gpu.sh
 #
 # 若需與下列互動式等價之資源，可對照修改（1 core / 1 MPI proc）：

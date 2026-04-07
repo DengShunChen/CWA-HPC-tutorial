@@ -264,7 +264,12 @@ module load nvhpc-hpcx-cuda12/25.3   # 版次以貴站 module avail 為準
 nvcc --version
 ```
 
-**Part2 一鍵檢查**：可於取得互動式資源後手動執行 `bash run_part2_gpu.sh`；若貴站 PJM 支援在行尾指定**啟動腳本**（例如 `... -j run_part2_gpu.sh`），亦會直接跑該腳本。`run_part2_gpu.sh` 會自動嘗試 `module load` 多組常見 CUDA／nvhpc 模組；仍找不到 `nvcc` 時請：
+**Part2 一鍵檢查**（與 Part1 `run_all_tests.sh` 對齊）：
+
+- **已在 GPU 計算節點／互動 shell**：`cd Part2_GPU_CrashCourse && ./run_part2_tests.sh`（可選 `--report log.txt`）。實際檢查邏輯在 `run_part2_gpu.sh`。
+- **仍在登入節點**：`export PJM_GROUP=你的群組 && ./run_part2_tests.sh --submit-pjm`（會產生 `.part2_gpu_autotest_job.sh` 並 `pjsub`，資源變數見該腳本註解）。
+
+亦可於取得互動式資源後**直接**執行 `bash run_part2_gpu.sh`；若貴站 PJM 支援行尾 **`-j run_part2_gpu.sh`**，亦會直接跑該腳本。`run_part2_gpu.sh` 會自動嘗試 `module load` 多組常見 CUDA／nvhpc 模組；仍找不到 `nvcc` 時請：
 
 ```bash
 export PART2_CUDA_MODULE=nvhpc-hpcx-cuda12/25.3   # 改成你的模組全名
@@ -273,9 +278,15 @@ bash run_part2_gpu.sh
 
 腳本內容：依序 `nvidia-smi`、`nvcc`、編譯 `01`–`03` CUDA 範例並執行簡短輸出；若有 Singularity 與 `torch_*.sif` 會加跑 PyTorch GPU 測試。
 
-若以**批次**驗證（日誌寫入 `/users/<帳號>/tmp/part2_gpu.%j.out`，路徑見腳本內 `#PJM -o`）：
+若以**批次**驗證：
 
 ```bash
+# 與 Part1 相同思路：由腳本組 GPU 資源並送件（日誌預設 part2_gpu_autotest.log）
+cd /path/to/CWA-HPC-tutorial/Part2_GPU_CrashCourse
+export PJM_GROUP=你的群組
+./run_part2_tests.sh --submit-pjm
+
+# 或手寫 PJM 腳本（日誌路徑見檔內 #PJM -o，常為 part2_gpu.%j.out）
 pjsub /path/to/CWA-HPC-tutorial/Part2_GPU_CrashCourse/job_run_part2_gpu.sh
 ```
 

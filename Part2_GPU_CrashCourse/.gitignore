@@ -1,3 +1,6 @@
+# run_part2_tests.sh --submit-pjm 產生之臨時 PJM 腳本
+.part2_gpu_autotest_job.sh
+
 # Part2：make 產生之執行檔（勿提交；依平台／GPU 架構而異）
 01_CUDA_Hello/hello_gpu
 01_CUDA_Hello/device_query
