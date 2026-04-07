@@ -18,9 +18,15 @@
 #   PART2_VNODE_CORE    預設 1
 #   PART2_VNODE_MEM     預設 64Gi
 #   PART2_MPI_PROC      預設 1（--mpi proc=）
-#   PART2_CUDA_MODULE   可選，寫入批次內 export，供 run_part2_gpu.sh 優先 module load
+#   PART2_CUDA_MODULE     可選，寫入批次內 export，供 run_part2_gpu.sh 優先 module load
+#   PART2_SKIP_07_NOTICE  設為 1 時不印 07 章節提示
 #
 # 另可沿用既有手寫批次：pjsub job_run_part2_gpu.sh（行為等同直接 exec run_part2_gpu.sh）
+#
+# 涵蓋章節（與 run_part2_gpu.sh 對齊）：
+#   01–05  編譯＋煙霧測試
+#   06     Singularity／PyTorch GPU（選用，有 SIF 與 singularity/apptainer 時）
+#   07     多節點 GPU+MPI 僅印提示（實作見 $HOME/sample/GPU_multiNodes；可用 PART2_SKIP_07_NOTICE=1 略過）
 
 set -uo pipefail
 
@@ -31,7 +37,7 @@ INSIDE_JOB=0
 VERBOSE=0
 
 usage() {
-  sed -n '2,25p' "$0" | sed 's/^# \{0,1\}//'
+  sed -n '2,30p' "$0" | sed 's/^# \{0,1\}//'
   exit 0
 }
 
@@ -56,6 +62,22 @@ fi
 
 log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"; }
 
+part2_tests_chapter_07_notice() {
+  if [ "${PART2_SKIP_07_NOTICE:-0}" = 1 ]; then
+    return 0
+  fi
+  echo ""
+  echo "########## 07_Multi_Node_GPU_Example（教材提示，非自動測試）##########"
+  echo "多節點 GPU + MPI：${PART2_ROOT}/07_Multi_Node_GPU_Example/README.md"
+  echo "實作腳本與 binary：\${HOME}/sample/GPU_multiNodes/（例：run_gpu.sh）"
+  if [ -d "${HOME}/sample/GPU_multiNodes" ]; then
+    echo "（已偵測到目錄，列舉前幾項）"
+    ls -la "${HOME}/sample/GPU_multiNodes" 2>/dev/null | head -12 || true
+  else
+    echo "（目前無 ${HOME}/sample/GPU_multiNodes，略過列舉）"
+  fi
+}
+
 part2_preflight_direct() {
   if [ "$INSIDE_JOB" -eq 1 ] || [ "$SUBMIT_PJM" -eq 1 ]; then
     return 0
@@ -78,7 +100,8 @@ part2_preflight_direct() {
 
 run_part2_gpu_payload() {
   cd "$PART2_ROOT" || exit 1
-  echo ">>> run_part2_tests：將執行 run_part2_gpu.sh（編譯 01→02→03→04→05；煙霧測試 01→02→03→04→05→06）"
+  echo ">>> run_part2_tests：run_part2_gpu.sh（編譯 01→05；煙霧 01→05 + 06 Singularity 選用）"
+  echo ">>> 結束後：07 多節點提示（PART2_SKIP_07_NOTICE=1 可關）"
   echo ""
   if [ -n "$REPORT_FILE" ]; then
     {
@@ -94,13 +117,17 @@ run_part2_gpu_payload() {
     fi
     ec=${PIPESTATUS[0]}
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] run_part2_gpu.sh 結束，exit=$ec" | tee -a "$REPORT_FILE"
+    part2_tests_chapter_07_notice 2>&1 | tee -a "$REPORT_FILE"
     return "$ec"
   fi
   if [ "$VERBOSE" = 1 ]; then
     bash -x ./run_part2_gpu.sh
   else
-    exec bash ./run_part2_gpu.sh
+    bash ./run_part2_gpu.sh
   fi
+  ec=$?
+  part2_tests_chapter_07_notice
+  exit "$ec"
 }
 
 submit_pjm_job() {
