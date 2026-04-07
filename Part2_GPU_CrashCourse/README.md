@@ -11,6 +11,7 @@
 2. 撰寫簡單的 CUDA 程式並在 GPU 上執行
 3. 體驗 GPU 加速的威力（性能對比）
 4. 認識 GPU 優化的基本概念
+5. （選修）以 **OpenACC** 在 Fortran 上做指令式 GPU 加速，並與 CUDA Fortran 對照
 
 ---
 
@@ -19,9 +20,13 @@
 | 時間 | 主題 | 資料夾 | 重點 |
 |-----|------|--------|------|
 | 30 min | 複習 + GPU 概念 | README.md + [`01_CUDA_Hello/`](01_CUDA_Hello/) | GPU 架構、編譯流程 |
-| 90 min | CUDA 核心語法 | [`02_Vector_Add_GPU/`](02_Vector_Add_GPU/) | Kernel、記憶體管理、效能測試 |
+| 45 min | CUDA 核心語法 | [`02_Vector_Add_GPU/`](02_Vector_Add_GPU/) | Kernel、記憶體管理、效能測試 |
+| 45 min | **五語言對照** | [`05_Language_Comparison_VectorAdd/`](05_Language_Comparison_VectorAdd/) | **C、C++、Fortran（CPU）** 與 **CUDA C、CUDA Fortran（GPU）** 同題並排 |
+| （選修） | **OpenACC Fortran** | [`06_OpenACC_VectorAdd/`](06_OpenACC_VectorAdd/) | `parallel loop`、`async`／`wait`、`routine(seq)`；與 `05` 同題 |
 | 60 min | 實戰案例 | [`03_Heat_Diffusion_Demo/`](03_Heat_Diffusion_Demo/) | 熱傳導模擬、CPU vs GPU 對比 |
 | （延伸） | Singularity + PyTorch | [`04_Singularity_PyTorch_GPU/`](04_Singularity_PyTorch_GPU/) | `--nv`、容器內 CUDA、與既有 `.sif` 銜接 |
+
+> 下午總時數仍約 3 小時：`06` 可併入課後自修，或壓縮 `02`／`05` 的示範時間帶做；Fortran 背景較弱時可略過 `05` 的 Fortran 軌與整章 `06`。
 
 ---
 
@@ -70,7 +75,7 @@
 - `vec_add_gpu.cu` - 向量加法 GPU 版本（含 CUDA 事件計時）
 - `README.md` - 詳細說明與優化技巧
 
-> 本節未另附獨立 `benchmark.cu`；CPU／GPU 對照與計時概念見 `vec_add_gpu.cu` 與 README 內文。
+> 另附獨立 `benchmark.cu`（吞吐／設定實驗）；CPU／GPU 向量加法主範例見 `vec_add_gpu.cu`。
 
 **重點概念**：
 - `cudaMalloc` / `cudaMemcpy`
@@ -85,10 +90,30 @@
 - 應用所學知識到實際問題
 - 觀察 GPU 在數值模擬中的加速效果
 
-**檔案**：
-- `README.md` - 分層任務（Must／Should／Could）與 **CPU／GPU 實作框架**（範例程式在 README 的 fenced code 區塊內）
+**檔案**：`README.md`（分層任務 Must／Should／Could）、`Makefile`、`main_cpu.cpp`、`main_gpu.cu`；`make run_all` 可跑 CPU／GPU 對照。
 
-> 本目錄**未**附可立即 `make` 的 `main_cpu.cpp`、`main_gpu.cu` 或 `Makefile`；學員依 README 建立檔案後再以 `g++`／`nvcc` 編譯（與 [`../PROJECT_SUMMARY.md`](../PROJECT_SUMMARY.md)「尚無完整可編譯程式碼」之說明一致）。
+---
+
+### [05_Language_Comparison_VectorAdd](05_Language_Comparison_VectorAdd/) - C / C++ / Fortran 與 CUDA C / CUDA Fortran 對照
+
+**學習目標**：
+
+- 同一向量加法題，對照 **C、C++、Fortran**（序列 CPU）與 **CUDA C、CUDA Fortran**（GPU）。
+- 理解 **索引起點**、**kernel 語法**、**裝置記憶體配置** 在兩種 CUDA 語言中的對應。
+- 認識 **NVIDIA HPC SDK** 之 `nvfortran` 與 `.cuf` 在教學／Legacy Fortran 專案中的角色。
+
+**檔案**：見該目錄 `README.md`；`make all` 會依環境自動建置（無 `nvcc`／`nvfortran` 時仍可得三支 CPU 執行檔）。
+
+---
+
+### [06_OpenACC_VectorAdd](06_OpenACC_VectorAdd/) - OpenACC Fortran（與 05 同題）
+
+**學習目標**：
+
+- 以 `!$acc data`、`copyin`／`copyout` 與 `parallel loop`（或 `kernels`）將向量加法 offload 到 GPU。
+- 試作 `async`／`wait` 與 `!$acc routine(seq)`，對照 CUDA Fortran 的顯式 kernel。
+
+**檔案**：`vec_add_openacc.f90`、`vec_add_openacc_async.f90`、`vec_add_openacc_routine.f90`、`Makefile`；需 `nvfortran -acc`（見該目錄 `README.md`）。
 
 ---
 
@@ -155,7 +180,7 @@ make
 ### 課前準備
 1. 複習上半年課程的向量加法程式
 2. 確認 GPU 環境可用（`nvidia-smi`）
-3. 瀏覽 [CUDA 語法](../00_Cheatsheets/syntax_rosetta_stone.md#-cuda-特有語法)
+3. 瀏覽 [CUDA 語法](../00_Cheatsheets/syntax_rosetta_stone.md#-cuda-特有語法)、[CUDA Fortran 小節](../00_Cheatsheets/syntax_rosetta_stone.md#-cuda-fortran-nvfortran-與-cuda-c-對照)、[OpenACC Fortran 小節](../00_Cheatsheets/syntax_rosetta_stone.md#-openacc-fortran-指令式)
 
 ### 上課方式
 1. **對比思維** - 把每個 CUDA 程式和對應的 CPU 版本對照
@@ -182,11 +207,22 @@ cd ../02_Vector_Add_GPU
 make
 ./vec_add_gpu
 
-# 3. 熱傳導實戰（依 README 自建原始碼後編譯）
+# 3. 五語言向量加法對照（GPU 編譯器可選）
+cd ../05_Language_Comparison_VectorAdd
+make all
+make run_cpu
+make run_gpu
+
+# 4. OpenACC Fortran（需 nvfortran -acc）
+cd ../06_OpenACC_VectorAdd
+make all
+make run
+
+# 5. 熱傳導實戰
 cd ../03_Heat_Diffusion_Demo
 make run_all
 
-# 4. （延伸）Singularity + PyTorch GPU
+# 6. （延伸）Singularity + PyTorch GPU
 cd ../04_Singularity_PyTorch_GPU
 chmod +x run_singularity_gpu_test.sh
 ./run_singularity_gpu_test.sh
@@ -199,6 +235,7 @@ chmod +x run_singularity_gpu_test.sh
 - [編譯指令速查](../00_Cheatsheets/compilation_guide.md#-cuda-編譯-nvcc) - CUDA 編譯選項
 - [優化思維指南](../00_Cheatsheets/optimization_mindset.md#-gpu-優化思維) - GPU 優化技巧
 - **CUDA C Programming Guide**：https://docs.nvidia.com/cuda/cuda-c-programming-guide/
+- **OpenACC**：[`06_OpenACC_VectorAdd`](06_OpenACC_VectorAdd/)（本倉庫內建範例）；[OpenACC 規格](https://www.openacc.org/specification)
 
 ---
 

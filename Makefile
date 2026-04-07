@@ -23,6 +23,8 @@ part2:
 	@echo ">>> 編譯 Part 2: GPU 程式設計課程"
 	@cd Part2_GPU_CrashCourse/01_CUDA_Hello && $(MAKE) all
 	@cd Part2_GPU_CrashCourse/02_Vector_Add_GPU && $(MAKE) all
+	@cd Part2_GPU_CrashCourse/05_Language_Comparison_VectorAdd && $(MAKE) all
+	@cd Part2_GPU_CrashCourse/06_OpenACC_VectorAdd && $(MAKE) all
 	@cd Part2_GPU_CrashCourse/03_Heat_Diffusion_Demo && $(MAKE) all
 	@echo "✓ Part 2 編譯完成"
 
@@ -32,6 +34,8 @@ clean:
 	@cd Part1_CPU_CrashCourse/02_Vector_Add && $(MAKE) clean
 	@cd Part2_GPU_CrashCourse/01_CUDA_Hello && $(MAKE) clean
 	@cd Part2_GPU_CrashCourse/02_Vector_Add_GPU && $(MAKE) clean
+	@cd Part2_GPU_CrashCourse/05_Language_Comparison_VectorAdd && $(MAKE) clean
+	@cd Part2_GPU_CrashCourse/06_OpenACC_VectorAdd && $(MAKE) clean
 	@cd Part2_GPU_CrashCourse/03_Heat_Diffusion_Demo && $(MAKE) clean
 	@echo "✓ 清理完成"
 

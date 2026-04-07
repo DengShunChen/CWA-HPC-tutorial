@@ -97,6 +97,8 @@ echo
 echo "---------- 編譯 Part2（CUDA）----------"
 make -C "$HERE/01_CUDA_Hello" all
 make -C "$HERE/02_Vector_Add_GPU" all
+make -C "$HERE/05_Language_Comparison_VectorAdd" all
+make -C "$HERE/06_OpenACC_VectorAdd" all
 make -C "$HERE/03_Heat_Diffusion_Demo" heat_gpu
 echo "編譯完成"
 echo
@@ -114,6 +116,33 @@ echo
 echo "---------- 02_Vector_Add_GPU / benchmark ----------"
 "$HERE/02_Vector_Add_GPU/benchmark" | head -20
 echo
+
+echo "---------- 05_Language_Comparison_VectorAdd（CPU）----------"
+for b in vec_add_cpu_c vec_add_cpu_cpp vec_add_cpu_fortran; do
+  if [[ -x "$HERE/05_Language_Comparison_VectorAdd/$b" ]]; then
+    echo "=== $b ==="
+    "$HERE/05_Language_Comparison_VectorAdd/$b" | head -12
+    echo
+  fi
+done
+
+echo "---------- 05_Language_Comparison_VectorAdd（GPU，若已建置）----------"
+for b in vec_add_cuda_c vec_add_cuda_fortran; do
+  if [[ -x "$HERE/05_Language_Comparison_VectorAdd/$b" ]]; then
+    echo "=== $b ==="
+    "$HERE/05_Language_Comparison_VectorAdd/$b" | head -12
+    echo
+  fi
+done
+
+echo "---------- 06_OpenACC_VectorAdd（若 nvfortran -acc 已建置）----------"
+for b in vec_add_openacc vec_add_openacc_async vec_add_openacc_routine; do
+  if [[ -x "$HERE/06_OpenACC_VectorAdd/$b" ]]; then
+    echo "=== $b ==="
+    "$HERE/06_OpenACC_VectorAdd/$b" | head -12
+    echo
+  fi
+done
 
 echo "---------- 03_Heat_Diffusion_Demo / heat_gpu ----------"
 "$HERE/03_Heat_Diffusion_Demo/heat_gpu" | head -20

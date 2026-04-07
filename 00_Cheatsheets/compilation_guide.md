@@ -148,6 +148,26 @@ nvcc -g -G kernel.cu -o kernel_debug
 nvcc --ptxas-options=-v kernel.cu -o kernel
 ```
 
+### CUDA Fortran（`nvfortran`，NVIDIA HPC SDK）
+
+```bash
+# 單檔 CUDA Fortran（副檔名 .cuf 常見）
+nvfortran -O3 -cuda -gpu=cc70 vec_add_cuda_fortran.cuf -o vec_add_cuda_fortran
+
+# -gpu= 請改為與節點 GPU 相符之 compute capability（如 cc80、cc90）
+```
+
+與 **CUDA C** 可混編、連結同一專案；教學用完整對照見 `Part2_GPU_CrashCourse/05_Language_Comparison_VectorAdd/`。
+
+### OpenACC Fortran（`nvfortran`，指令式 GPU）
+
+```bash
+# 典型：由編譯器依 !$acc 區塊產生 GPU kernel
+nvfortran -O3 -acc -gpu=cc70 program.f90 -o program_acc
+```
+
+可編譯範例：`Part2_GPU_CrashCourse/06_OpenACC_VectorAdd/`（`make all`）。
+
 ### 查詢 GPU Compute Capability
 
 ```bash

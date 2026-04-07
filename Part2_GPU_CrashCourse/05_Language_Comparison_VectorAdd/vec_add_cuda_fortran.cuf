@@ -1,0 +1,60 @@
+! 向量加法 — CUDA Fortran（NVIDIA nvfortran + cudafor）
+! Kernel 內 threadIdx / blockIdx 為 Fortran 慣例之 1-based 維度
+module vecadd_cuda_kernels
+  implicit none
+contains
+  attributes(global) subroutine vector_add_kernel(A, B, C, n)
+    real, device :: A(*), B(*), C(*)
+    integer, value :: n
+    integer :: i
+    i = threadIdx%x + (blockIdx%x - 1) * blockDim%x
+    if (i <= n) C(i) = A(i) + B(i)
+  end subroutine vector_add_kernel
+end module vecadd_cuda_kernels
+
+program vec_add_cuda_fortran
+  use cudafor
+  use vecadd_cuda_kernels
+  implicit none
+  integer, parameter :: n = 10000000
+  integer, parameter :: threads_per_block = 256
+  integer :: blocks_per_grid, i, istat
+  real, allocatable :: h_A(:), h_B(:), h_C(:)
+  real, allocatable, device :: d_A(:), d_B(:), d_C(:)
+  type(cudaEvent) :: ev_start, ev_stop
+  real :: ms
+
+  allocate(h_A(n), h_B(n), h_C(n), d_A(n), d_B(n), d_C(n))
+
+  print *, "初始化陣列..."
+  do i = 1, n
+    h_A(i) = real(i)
+    h_B(i) = real(i) * 2.0
+  end do
+
+  d_A = h_A
+  d_B = h_B
+
+  blocks_per_grid = (n + threads_per_block - 1) / threads_per_block
+
+  istat = cudaEventCreate(ev_start)
+  istat = cudaEventCreate(ev_stop)
+  istat = cudaEventRecord(ev_start, 0)
+  call vector_add_kernel<<<blocks_per_grid, threads_per_block>>>(d_A, d_B, d_C, n)
+  istat = cudaEventRecord(ev_stop, 0)
+  istat = cudaEventSynchronize(ev_stop)
+  istat = cudaEventElapsedTime(ms, ev_start, ev_stop)
+
+  h_C = d_C
+
+  print *
+  print *, "========================================="
+  print *, "  CUDA Fortran 向量加法"
+  print *, "========================================="
+  print *, "向量長度:     ", n
+  print *, "Kernel 時間:  ", ms / 1000.0, " 秒 （cudaEvent，與 CUDA C 之 ms 同源）"
+  print *, "前 5 個結果:  ", h_C(1:5)
+  print *
+
+  deallocate(h_A, h_B, h_C, d_A, d_B, d_C)
+end program vec_add_cuda_fortran

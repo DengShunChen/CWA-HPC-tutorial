@@ -212,6 +212,74 @@ cudaMemcpy(h_A, d_A, size, cudaMemcpyDeviceToHost);
 
 ---
 
+## 🧩 CUDA Fortran（nvfortran）與 CUDA C 對照
+
+> 編譯器：**NVIDIA HPC SDK** 之 `nvfortran`；副檔名常為 `.cuf` 或於 Fortran 原始碼中啟用 CUDA。下列與 Part2 `05_Language_Comparison_VectorAdd/` 範例一致。
+
+| 項目 | CUDA C | CUDA Fortran |
+|------|--------|----------------|
+| Kernel | `__global__ void foo(...)` | `attributes(global) subroutine foo(...)` |
+| 裝置資料 | 指標 + `cudaMalloc` | `real, allocatable, device :: d(:)` 等 + `allocate`；或 `cudaMalloc` |
+| Host↔Device | `cudaMemcpy` | 可 `cudaMemcpy`，或對裝置可配置陣列用賦值（如 `d = h`） |
+| 啟動 | `foo<<<grid, block>>>(...)` | `call foo<<<grid, block>>>(...)` |
+| Thread 索引 | `threadIdx.x`（**0-based**） | `threadIdx%x`（**1-based** 維度分量） |
+| 計時 | `cudaEvent_t` | `type(cudaEvent)` + `cudafor` 介面 |
+
+### Kernel 範例（向量加）
+
+```cuda
+// CUDA C
+__global__ void vectorAdd(const float *A, const float *B, float *C, int n) {
+  int i = blockIdx.x * blockDim.x + threadIdx.x;
+  if (i < n) C[i] = A[i] + B[i];
+}
+```
+
+```fortran
+! CUDA Fortran（模組內）
+attributes(global) subroutine vector_add_kernel(A, B, C, n)
+  real, device :: A(*), B(*), C(*)
+  integer, value :: n
+  integer :: i
+  i = threadIdx%x + (blockIdx%x - 1) * blockDim%x
+  if (i <= n) C(i) = A(i) + B(i)
+end subroutine vector_add_kernel
+```
+
+---
+
+## 🌿 OpenACC Fortran（指令式）
+
+> 編譯：`nvfortran -acc -gpu=ccXX ...`。完整可編譯範例見 Part2 `06_OpenACC_VectorAdd/`。
+
+### 資料區與平行迴圈（向量加）
+
+```fortran
+! Fortran + OpenACC
+!$acc data copyin(a, b) copyout(c)
+!$acc parallel loop
+do i = 1, n
+  c(i) = a(i) + b(i)
+end do
+!$acc end parallel loop
+!$acc end data
+```
+
+### 裝置端副程式（概念上對照 `__device__`）
+
+```fortran
+module m
+contains
+  !$acc routine(seq)
+  pure real function pair_add(x, y) result (z)
+    real, intent(in) :: x, y
+    z = x + y
+  end function pair_add
+end module m
+```
+
+---
+
 ## 🔍 快速查找索引
 
 - **變數宣告** → [變數與資料型態](#-變數與資料型態)
@@ -219,6 +287,8 @@ cudaMemcpy(h_A, d_A, size, cudaMemcpyDeviceToHost);
 - **陣列** → [陣列操作](#-陣列操作)
 - **數學計算** → [數學函式](#-數學函式)
 - **GPU 程式** → [CUDA 特有語法](#-cuda-特有語法)
+- **CUDA Fortran** → [CUDA Fortran（nvfortran）與 CUDA C 對照](#-cuda-fortrannvfortran-與-cuda-c-對照)
+- **OpenACC Fortran** → [OpenACC Fortran（指令式）](#-openacc-fortran-指令式)
 
 ---
 
@@ -227,6 +297,7 @@ cudaMemcpy(h_A, d_A, size, cudaMemcpyDeviceToHost);
 - **Fortran 官方文件**：https://fortran-lang.org/
 - **C++ Reference**：https://en.cppreference.com/
 - **CUDA C Programming Guide**：https://docs.nvidia.com/cuda/cuda-c-programming-guide/
+- **OpenACC 規格**：https://www.openacc.org/specification
 
 ---
 
