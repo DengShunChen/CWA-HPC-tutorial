@@ -23,3 +23,37 @@ fipp_out/
 tmp_fipp_autotest/
 tmp_fipppx_autotest/
 tmp_fapp_autotest/
+
+# Fortran 編譯中介檔（勿提交）
+*.mod
+*.o
+
+# 各章 make 產生之執行檔（平台／編譯器相依）
+01_Hello/hello_cpp
+01_Hello/hello_fortran
+02_Vector_Add/vec_add_cpp
+02_Vector_Add/vec_add_fortran
+02_Vector_Add/vec_add_optimized_cpp
+02_Vector_Add/vec_add_optimized_fortran
+03_Challenge/multiply_cpp
+03_Challenge/multiply_fortran
+04_Matrix_Operations/matrix_multiply_cpp
+04_Matrix_Operations/matrix_multiply_fortran
+04_Matrix_Operations/matrix_multiply_optimized
+04_Matrix_Operations/matrix_multiply_optimized_cpp
+04_Matrix_Operations/matrix_multiply_optimized_fortran
+05_File_IO/file_io_cpp
+05_File_IO/file_io_fortran
+06_Functions_Modules/main_cpp
+06_Functions_Modules/main_fortran
+07_Structures/particle_cpp
+07_Structures/particle_fortran
+08_Debug_Profile/buggy
+08_Debug_Profile/buggy_bounds
+08_Debug_Profile/buggy_mem
+08_Debug_Profile/microbench_dbg
+08_Debug_Profile/microbench_opt
+09_Profiler_Toolkit_TCS/kernel_profile_opt
+09_Profiler_Toolkit_TCS/region_marked
+10_Troubleshooting_Clinic/Optimization_Loop_Demo/loop_baseline
+10_Troubleshooting_Clinic/Optimization_Loop_Demo/loop_optimized
