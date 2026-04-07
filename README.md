@@ -52,6 +52,7 @@ ProgramingTutorial/
     ├── 04_OpenACC_VectorAdd/   # OpenACC Fortran（與 03 同題）
     ├── 05_Heat_Diffusion_Demo/  # 實戰：熱傳導模擬
     ├── 06_Singularity_PyTorch_GPU/  # Singularity + PyTorch CUDA 測試（延伸）
+    ├── 07_Multi_Node_GPU_Example/  # 多節點 GPU+MPI（銜接 $HOME/sample/GPU_multiNodes）
     ├── run_part2_gpu.sh      # GPU 節點一鍵編譯＋煙霧測試
     └── run_part2_tests.sh    # 同 Part1：CN 直跑或 --submit-pjm 送批次
 ```
@@ -81,7 +82,8 @@ ProgramingTutorial/
 2. 從 [`01_CUDA_Hello/`](Part2_GPU_CrashCourse/01_CUDA_Hello/) → [`02_Vector_Add_GPU/`](Part2_GPU_CrashCourse/02_Vector_Add_GPU/)
 3. 語言對照：[`03_Language_Comparison_VectorAdd/`](Part2_GPU_CrashCourse/03_Language_Comparison_VectorAdd/)（選修 OpenACC：[`04_OpenACC_VectorAdd/`](Part2_GPU_CrashCourse/04_OpenACC_VectorAdd/)）
 4. 實戰：[`05_Heat_Diffusion_Demo/`](Part2_GPU_CrashCourse/05_Heat_Diffusion_Demo/)（延伸：[`06_Singularity_PyTorch_GPU/`](Part2_GPU_CrashCourse/06_Singularity_PyTorch_GPU/)）
-5. GPU 節點驗證：[`run_part2_gpu.sh`](Part2_GPU_CrashCourse/run_part2_gpu.sh) 或 [`run_part2_tests.sh`](Part2_GPU_CrashCourse/run_part2_tests.sh)
+5. 進階多節點：[`07_Multi_Node_GPU_Example/`](Part2_GPU_CrashCourse/07_Multi_Node_GPU_Example/)，實作腳本與可執行檔見 **`$HOME/sample/GPU_multiNodes/`**
+6. GPU 節點驗證：[`run_part2_gpu.sh`](Part2_GPU_CrashCourse/run_part2_gpu.sh) 或 [`run_part2_tests.sh`](Part2_GPU_CrashCourse/run_part2_tests.sh)
 
 ---
 
