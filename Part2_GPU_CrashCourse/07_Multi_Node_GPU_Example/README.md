@@ -30,8 +30,13 @@ make
 ## 單節點煙霧（互動 GPU shell）
 
 ```bash
+./run_test_07.sh              # 自動 module／SDK 路徑探測後 make + mpirun（須 nvidia-smi 有 GPU）
+RUN_TEST_07_COMPILE_ONLY=1 ./run_test_07.sh   # 只測編譯（登入節點可用）
+# 或手動：
 make run-local    # mpirun -np 2 --oversubscribe ./mpi_cuda_rank_info
 ```
+
+> 在**無 GPU** 或 **driver 與 CUDA runtime 版本不匹配**的節點上，`cudaGetDeviceCount` 可能為 0 並導致程式 `MPI_Abort`；請與 `nvidia-smi`、`nvcc` 所連結之 runtime 一併排查。
 
 同一台機器上兩個 rank 的 **local_rank** 會是 0 與 1；若僅一張 GPU，兩者會輪流 `cudaSetDevice(0)`（仍可比對輸出格式）。
 
