@@ -1,0 +1,57 @@
+[1775851233.557848] [gpu19:91   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851233.557851] [gpu19:93   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851233.557855] [gpu19:92   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851233.557856] [gpu19:94   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851233.584050] [gpu19:93   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851233.585373] [gpu19:92   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851233.587865] [gpu19:94   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851233.587889] [gpu19:91   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851237.106122] [gpu19:92   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851237.106122] [gpu19:93   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851237.106132] [gpu19:91   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851237.106134] [gpu19:94   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851237.110829] [gpu19:92   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851237.110829] [gpu19:91   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851237.110836] [gpu19:93   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851237.110837] [gpu19:94   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851239.678843] [gpu19:91   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851239.678846] [gpu19:94   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851239.678846] [gpu19:92   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851239.678846] [gpu19:93   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851239.683620] [gpu19:92   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851239.683620] [gpu19:91   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851239.683623] [gpu19:94   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851239.683623] [gpu19:93   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851240.475624] [gpu19:91   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851240.475628] [gpu19:93   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851240.475629] [gpu19:94   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851240.475629] [gpu19:92   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851240.480354] [gpu19:94   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851240.480354] [gpu19:92   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851240.480358] [gpu19:91   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1775851240.480358] [gpu19:93   :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[rank 2/4] host=gpu19 local_rank=2 gpus_on_node=1 cudaSetDevice(0) name=NVIDIA A100-SXM4-80GB
+[rank 3/4] host=gpu19 local_rank=3 gpus_on_node=1 cudaSetDevice(0) name=NVIDIA A100-SXM4-80GB
+[rank 1/4] host=gpu19 local_rank=1 gpus_on_node=1 cudaSetDevice(0) name=NVIDIA A100-SXM4-80GB
+[rank 0/4] host=gpu19 local_rank=0 gpus_on_node=1 cudaSetDevice(0) name=NVIDIA A100-SXM4-80GB
+mpi_cuda_rank_info: OK (4 ranks).
+Sat Apr 11 04:00:42 2026       
++---------------------------------------------------------------------------------------+
+| NVIDIA-SMI 535.154.05             Driver Version: 535.154.05   CUDA Version: 12.2     |
+|-----------------------------------------+----------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |         Memory-Usage | GPU-Util  Compute M. |
+|                                         |                      |               MIG M. |
+|=========================================+======================+======================|
+|   0  NVIDIA A100-SXM4-80GB          Off | 00000000:27:00.0 Off |                    0 |
+| N/A   34C    P0              92W / 400W |      0MiB / 81920MiB |     12%      Default |
+|                                         |                      |             Disabled |
++-----------------------------------------+----------------------+----------------------+
+                                                                                         
++---------------------------------------------------------------------------------------+
+| Processes:                                                                            |
+|  GPU   GI   CI        PID   Type   Process name                            GPU Memory |
+|        ID   ID                                                             Usage      |
+|=======================================================================================|
+|  No running processes found                                                           |
++---------------------------------------------------------------------------------------+

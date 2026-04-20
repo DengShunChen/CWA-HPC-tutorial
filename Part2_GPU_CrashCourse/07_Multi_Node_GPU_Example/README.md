@@ -1,6 +1,6 @@
 # 07_Multi_Node_GPU_Example — 多節點 GPU（MPI + CUDA）
 
-本目錄提供**可編譯、可送 PJM** 的最小範例：**每個 MPI rank** 在所屬計算節點上查 GPU、依 **節點內 local rank** 呼叫 `cudaSetDevice`，並列印 hostname／裝置名稱。適合驗證多 vnode 配置、`mpirun` 與 **hostfile** 是否正確。
+本目錄提供**可編譯、可送 PJM（TCS）** 的最小範例：**每個 MPI rank** 在所屬計算節點上查 GPU、依 **節點內 local rank** 呼叫 `cudaSetDevice`，並列印 hostname／裝置名稱。適合驗證多 vnode 配置與 MPI launcher 在 **PJM allocation** 下的行為。
 
 ---
 
@@ -10,7 +10,7 @@
 |------|------|
 | [`mpi_cuda_rank_info.cu`](mpi_cuda_rank_info.cu) | 原始碼（MPI + CUDA runtime） |
 | [`Makefile`](Makefile) | `nvcc -ccbin mpicxx` 產生 `mpi_cuda_rank_info` |
-| [`job_mpi_cuda_rank_info.sh`](job_mpi_cuda_rank_info.sh) | PJM 批次：自動 `make`、組 hostfile、`mpirun` |
+| [`job_mpi_cuda_rank_info.sh`](job_mpi_cuda_rank_info.sh) | PJM 批次：自動 `make`、以 PJM allocation 直接啟動 MPI |
 
 ---
 
@@ -54,9 +54,8 @@ pjsub job_mpi_cuda_rank_info.sh
 
 腳本會：
 
-- 讀 **`PJM_O_NODEINF`** 寫入 **`hostfile.$PJM_JOBID`**（每行 `hostname slots=…`，預設用 **`PJM_PROC_BY_NODE`**，否則用 `NProcsPerNode`）。
-- 設定 **`OMPI_MCA_plm_rsh_agent=/bin/pjrsh`**（Fujitsu PJM 上常需要）。
-- 執行 **`mpirun -np -npernode -hostfile`**，最後 **`nvidia-smi`**（非致命）。
+- 檢查 **`PJM_O_NODEINF`** 是否存在（確保是在 PJM 批次內執行），並做簡單的一致性檢查（PJM 配到的 nodes vs `Nodes`）。
+- 以 **`mpiexec`**（找不到則用 `mpirun`）在 **PJM allocation** 下直接執行 **`-np`**，最後 **`nvidia-smi`**（非致命）。
 
 已編譯時可 **`export SKIP_MAKE=1`** 略過 `make`。
 
@@ -70,7 +69,7 @@ pjsub job_mpi_cuda_rank_info.sh
 
 ## 家目錄延伸：`$HOME/sample/GPU_multiNodes/`
 
-若你已有 **pi-cuda、大規模 procs、自訂 module 堆疊** 等，可繼續使用 **`$HOME/sample/GPU_multiNodes/`**（例如 `run_gpu.sh`）。本章節範例與該目錄**獨立**；進階實驗可將本目錄程式路徑替換為該處之 `CMD`，或複製本 **hostfile + mpirun** 模式到自訂腳本。
+若你已有 **pi-cuda、大規模 procs、自訂 module 堆疊** 等，可繼續使用 **`$HOME/sample/GPU_multiNodes/`**（例如 `run_gpu.sh`）。本章節範例與該目錄**獨立**；進階實驗可將本目錄程式路徑替換為該處之 `CMD`，或將本章節的 **PJM allocation + launcher** 方式整合進你的自訂腳本。
 
 ---
 
