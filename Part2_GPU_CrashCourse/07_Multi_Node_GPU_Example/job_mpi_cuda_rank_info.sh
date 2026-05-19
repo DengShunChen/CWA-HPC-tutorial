@@ -108,6 +108,10 @@ if ! command -v mpicxx >/dev/null 2>&1; then
   exit 1
 fi
 
+echo ">>> toolchain probe (before make):"
+command -v nvcc && nvcc --version | sed -n '1,4p' || true
+command -v nvidia-smi && nvidia-smi | sed -n '1,12p' || true
+
 # 編譯（若已預先編好可設 SKIP_MAKE=1）
 if [[ "${SKIP_MAKE:-0}" != 1 ]]; then
   make -s all || make all
@@ -139,6 +143,11 @@ if [[ -z "${LAUNCHER}" ]]; then
   echo "找不到 mpiexec/mpirun（請確認已 module load 正確的 MPI）" >&2
   exit 1
 fi
+
+echo ">>> launcher: ${LAUNCHER}"
+echo ">>> PJM_O_NODEINF (${PJM_O_NODEINF}):"
+cat "${PJM_O_NODEINF}" || true
+echo ">>> MCRI_EXTRA=${MCRI_EXTRA:-<unset>} MCRI_N=${MCRI_N:-<unset>} MCRI_REPEATS=${MCRI_REPEATS:-<unset>} MCRI_A=${MCRI_A:-<unset>}"
 
 "${LAUNCHER}" -np "${NProcs}" \
   -x PATH \

@@ -48,10 +48,8 @@ Host fx1000
 ### Quota 查詢（站台命令可能不同）
 
 ```bash
-quota -s
-# 若站台使用 Lustre，常見：
-lfs quota -u "$USER" /IFS
-lfs quota -u "$USER" /OFS
+showquota
+showquota_all
 ```
 
 > 若你的站台命令不同，以上改為貴中心指定指令；重點是上機前先確認配額，避免作業中途寫滿。

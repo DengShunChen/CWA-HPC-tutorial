@@ -1,0 +1,56 @@
+nvcc warning : Support for offline compilation for architectures prior to '<compute/sm/lto>_75' will be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
+>>> launcher: /package/x86_64/nvidia/hpc_sdk/Linux_x86_64/25.3/comm_libs/12.8/hpcx/hpcx-2.22.1/ompi/bin/mpiexec
+>>> PJM_O_NODEINF (/OFS/users/xb80/source_code/CWA-HPC-tutorial/Part2_GPU_CrashCourse/07_Multi_Node_GPU_Example/.d0019817075_nodeinfo):
+192.168.52.79
+192.168.52.79
+>>> MCRI_EXTRA=<unset> MCRI_N=<unset> MCRI_REPEATS=<unset> MCRI_A=<unset>
+[1776670801.662640] [gpu19:178  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670801.662668] [gpu19:180  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670801.662721] [gpu19:177  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670801.662771] [gpu19:179  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670801.688992] [gpu19:179  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670801.691597] [gpu19:178  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670801.692033] [gpu19:180  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670801.692717] [gpu19:177  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670802.035781] [gpu19:178  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670802.035785] [gpu19:177  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670802.035798] [gpu19:180  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670802.035924] [gpu19:179  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670802.040506] [gpu19:178  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670802.040510] [gpu19:177  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670802.040508] [gpu19:180  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670802.040511] [gpu19:179  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670802.403703] [gpu19:180  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670802.404617] [gpu19:178  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670802.404918] [gpu19:179  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670802.405235] [gpu19:177  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670802.405732] [gpu19:180  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670802.407925] [gpu19:178  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670802.408278] [gpu19:179  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670802.408390] [gpu19:177  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670802.520613] [gpu19:179  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670802.520716] [gpu19:177  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670802.523069] [gpu19:179  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670802.523217] [gpu19:177  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670802.530577] [gpu19:178  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670802.531581] [gpu19:180  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670802.532176] [gpu19:178  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[1776670802.533224] [gpu19:180  :0]     gdr_copy_md.c:272  UCX  WARN  could not open gdr copy, built for v2.4 but loaded v2.3
+[rank 2/4] host=gpu19 local_rank=2(env=2) node_rank=2/4 gpus_on_node=1 cudaSetDevice(0) name=NVIDIA A100-SXM4-80GB
+[rank 0/4] host=gpu19 local_rank=0(env=0) node_rank=0/4 gpus_on_node=1 cudaSetDevice(0) name=NVIDIA A100-SXM4-80GB
+[rank 3/4] host=gpu19 local_rank=3(env=3) node_rank=3/4 gpus_on_node=1 cudaSetDevice(0) name=NVIDIA A100-SXM4-80GB
+[rank 1/4] host=gpu19 local_rank=1(env=1) node_rank=1/4 gpus_on_node=1 cudaSetDevice(0) name=NVIDIA A100-SXM4-80GB
+CUDA error (saxpy launch): the provided PTX was compiled with an unsupported toolchain.
+CUDA error (saxpy launch): the provided PTX was compiled with an unsupported toolchain.
+CUDA error (saxpy launch): the provided PTX was compiled with an unsupported toolchain.
+CUDA error (saxpy launch): the provided PTX was compiled with an unsupported toolchain.
+--------------------------------------------------------------------------
+MPI_ABORT was invoked on rank 3 in communicator MPI_COMM_WORLD
+with errorcode 2.
+
+NOTE: invoking MPI_ABORT causes Open MPI to kill all MPI processes.
+You may or may not see output from other processes, depending on
+exactly when Open MPI kills them.
+--------------------------------------------------------------------------
+[gpu19:00173] 3 more processes have sent help message help-mpi-api.txt / mpi-abort
+[gpu19:00173] Set MCA parameter "orte_base_help_aggregate" to 0 to see all help / error messages
